@@ -21,7 +21,6 @@ import {
   faAngleLeft,
   faAngleRight,
   faAngleUp,
-  faApple,
   faArchive,
   faChartArea,
   faArrowCircleDown,
