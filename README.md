@@ -11,10 +11,10 @@ FoodieGo/
 │   ├── apps/             # Các ứng dụng con (users, foods, cart, orders, vouchers)
 │   ├── manage.py
 │   └── requirements.txt
-├── frontend/             # React + Vite
-│   ├── src/
-│   ├── public/
-│   └── package.json
+├── frontend/             # Multi-App Workspaces (Vite + React)
+│   ├── admin/            # Trang Quản lý & POS (DreamPOS Admin Dashboard)
+│   ├── emenu/            # Trang Đặt món Khách hàng (Smart Restaurant E-Menu)
+│   └── README.md
 └── README.md
 ```
 
@@ -55,16 +55,24 @@ python manage.py runserver
 # API sẽ chạy tại: http://localhost:8000
 ```
 
-### Frontend Setup
+### Frontend Setup (Multi-App Workspaces)
 
+Dự án frontend được chia làm 2 ứng dụng chạy song song bằng **Vite**:
+
+#### 1. Khởi động Trang Khách Hàng (E-Menu) - Cổng `5173`
 ```bash
-# 1. Cài đặt Dependencies
-cd frontend
+cd frontend/emenu
 npm install
-
-# 2. Chạy Development Server
 npm run dev
-# Frontend sẽ chạy tại: http://localhost:5173
+# App Khách hàng chạy tại: http://localhost:5173
+```
+
+#### 2. Khởi động Trang Quản Lý (DreamPOS Admin) - Cổng `3000`
+```bash
+cd frontend/admin
+npm install
+npm run dev
+# App Quản lý chạy tại: http://localhost:3000
 ```
 
 ## Tính Năng Chính
@@ -90,12 +98,13 @@ Swagger API Documentation có sẵn tại: `http://localhost:8000/api/schema/swa
 - **django-cors-headers**: Hỗ trợ CORS
 - **drf-spectacular**: Swagger/OpenAPI
 
-### Frontend
-- **React**: UI Framework
-- **Vite**: Build tool
-- **React Router**: Navigation
-- **Axios**: HTTP Client
-- **Material-UI**: Component Library
+### Frontend (Admin & E-Menu)
+- **React 18**: Framework UI chủ đạo
+- **Vite 5**: Build tool siêu nhẹ, khởi động tức thì (< 1s)
+- **Redux Toolkit**: Quản lý state toàn cục
+- **React Router v6/v7**: Điều hướng trang
+- **Bootstrap & Ant Design**: UI Component Libraries
+- **Axios**: HTTP Client kết nối API Backend
 
 ## Hướng Dẫn Phát Triển
 

@@ -1,0 +1,228 @@
+/* Menucard styles */
+.rm-menu-card {
+    width: 100%;
+    max-width: none;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(20, 30, 60, 0.06);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.rm-menu-card .rm-media {
+    position: relative;
+    height: 150px;
+    overflow: hidden;
+}
+
+.rm-detail-qty123 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex-shrink: 0;
+}
+
+.rm-cart-qty1 {
+    padding: 5px;
+}
+
+@media (max-width: 400px) {
+    .rm-menu-card .rm-badge {
+        right: 25px;
+        padding: 4px 8px;
+        font-size: 9px;
+    }
+}
+
+.rm-menu-card {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.rm-menu-card .rm-badge {
+    position: absolute;
+    top: 12px;
+    z-index: 2;
+    background: #12b886;
+    color: #fff;
+    border-radius: 50px;
+    font-weight: 700;
+    left: auto;
+    right: 12px;
+    font-size: 10px;
+    padding: 6px 10px;
+}
+
+
+.rm-add-btn1 {
+    border: 0;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #12b886;
+    color: #fff;
+    font-weight: 900;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.rm-card-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #e9ecef;
+}
+
+.rm-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 8px;
+}
+
+.rm-card-title {
+    margin: 0 0 4px 0;
+    font-size: 20px;
+    color: #0f1724;
+    font-weight: 800;
+    /* clamp to 2 lines to keep cards aligned */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rm-card-desc {
+    margin: 0 0 8px 0;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rm-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 4px;
+}
+
+.rm-price {
+    font-weight: 800;
+    font-size: 16px;
+    color: #ff8800;
+    display: flex;
+    align-items: center;
+}
+
+.rm-add-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #12b886;
+    border: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(18, 184, 134, 0.24);
+    cursor: pointer;
+}
+
+.rm-add-btn svg {
+    display: block
+}
+
+@media (max-width:420px) {
+    .rm-menu-card .rm-media {
+        height: 160px
+    }
+
+    .rm-card-title {
+        font-size: 16px
+    }
+
+    .rm-card-desc {
+        font-size: 14px;
+    }
+
+    .rm-price {
+        font-size: 15px
+    }
+}
+
+.rm-menu-card[role="button"] {
+    cursor: pointer
+}
+
+.rm-qty-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    border: 0;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: transform .12s ease;
+}
+
+.rm-qty-btn:active {
+    transform: scale(.95);
+}
+
+.rm-qty-btn--minus {
+    background: #eef1f6;
+    color: #111827;
+}
+
+.rm-qty-btn--plus {
+    background: #12b886;
+    color: #fff;
+    box-shadow: 0 14px 26px rgba(18, 184, 134, .22);
+}
+
+.rm-qty-btn--plus:hover {
+    background: #0ca678;
+}
+
+.rm-qty-val,
+.rm-qty-input {
+    width: 35px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+/* Hide spinner arrows for number input */
+.rm-qty-input::-webkit-outer-spin-button,
+.rm-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.rm-qty-input {
+    -moz-appearance: textfield;
+    appearance: textfield;
+    cursor: pointer;
+}

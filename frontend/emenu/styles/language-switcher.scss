@@ -1,0 +1,86 @@
+.rm-lang-toggle-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    background-color: #f0f2f5;
+    padding: 4px;
+    border-radius: 30px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    height: 30px;
+    width: 80px;
+    overflow: hidden;
+
+    .rm-toggle-slider {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        width: calc(50% - 4px);
+        height: calc(100% - 8px);
+        background-color: #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        z-index: 1;
+
+        &.rm-slide-right {
+            transform: translateX(100%);
+        }
+    }
+
+    .rm-lang-option {
+        flex: 1;
+        position: relative;
+        z-index: 2;
+        background: none;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        color: #8898aa;
+        transition: color 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        height: 100%;
+
+        &.rm-active {
+            color: #2d3748;
+            /* Màu chữ đậm khi active */
+            font-weight: 700;
+        }
+
+        &:hover:not(.rm-active) {
+            color: #5e72e4;
+            /* Màu hover nhẹ */
+        }
+    }
+}
+
+/* --- Dark Mode Support --- */
+@media (prefers-color-scheme: dark) {
+    .rm-lang-toggle-container {
+        background-color: #12b886;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+
+        .rm-toggle-slider {
+            background-color: #28c76f;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .rm-lang-option {
+            color: #a0aec0;
+
+            &.rm-active {
+                color: #ffffff;
+            }
+
+            &:hover:not(.rm-active) {
+                color: #63b3ed;
+            }
+        }
+    }
+}
