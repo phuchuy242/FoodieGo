@@ -14,7 +14,7 @@ const ImageWithBasePath = (props) => {
       className={props.className}
       src={fullSrc}
       height={props.height}
-      alt={props.alt}
+      alt={typeof props.alt === 'boolean' ? props.alt.toString() : (props.alt || '')}
       width={props.width}
       id={props.id}
     />
@@ -24,7 +24,7 @@ const ImageWithBasePath = (props) => {
 ImageWithBasePath.propTypes = {
   className: PropTypes.string,
   src: PropTypes.string.isRequired,
-  alt: PropTypes.string,
+  alt: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   height: PropTypes.number,
   width: PropTypes.number,
   id: PropTypes.string,

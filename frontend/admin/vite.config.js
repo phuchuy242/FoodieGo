@@ -19,6 +19,7 @@ export default defineConfig({
     'process.env': {
       PUBLIC_URL: '',
     },
+    global: 'window',
   },
   server: {
     port: 3000,
