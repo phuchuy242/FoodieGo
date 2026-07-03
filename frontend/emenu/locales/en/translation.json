@@ -1,0 +1,1646 @@
+{
+    "menu": {
+        "title": "Menu",
+        "search": "Search items",
+        "back": "Back to home",
+        "continueOrder": "Continue ordering"
+    },
+    "menucard": {
+        "bestseller": "BEST SELLER",
+        "addToCart": "Add to cart",
+        "edit": "Edit",
+        "price": "Price"
+    },
+    "cart": {
+        "title": "Your cart",
+        "subtitle": "Review your food before checkout",
+        "empty": "Your cart is empty",
+        "deliveryTo": "Delivery to",
+        "summary": "Order summary",
+        "subtotal": "Subtotal",
+        "total": "Total",
+        "confirm": "Confirm",
+        "backHome": "Back to home",
+        "remove": "Remove",
+        "edit": "Edit",
+        "note": "Note",
+        "qty": "Quantity",
+        "extras": "Extras",
+        "termsAgreement": "By placing an order, you agree to our Terms of Service."
+    },
+    "cartTablet": {
+        "title": "Your cart",
+        "subtitle": "Review your food before checkout"
+    },
+    "history": {
+        "title": "Order history",
+        "subtitle": "Track your order status during this meal",
+        "orderId": "Order ID",
+        "noOrders": "No items in history",
+        "qty": "Quantity",
+        "status": "Status",
+        "served": "Served",
+        "kitchen": "Sent to kitchen",
+        "totalAmount": "Total amount ordered",
+        "includeTax": "(Including 8% VAT)",
+        "continueOrder": "Continue ordering",
+        "checkout": "Payment now",
+        "orderNote": "Order will close after successful payment",
+        "earnPoints": "Earn member points",
+        "earnPointsDesc": "You will receive 250 points from this order",
+        "quickSupport": "Quick support",
+        "quickSupportDesc": "Need cutlery? Click the call button at your table"
+    },
+    "callstaff": {
+        "title": "Call staff",
+        "addWater": "Add water",
+        "addCutlery": "Add cutlery",
+        "others": "Others",
+        "cleanTable": "Clean table",
+        "menuAdvice": "Menu advice",
+        "note": "Add a note",
+        "notePlaceholder": "E.g., More ice, change dish...",
+        "cancel": "Cancel",
+        "submit": "Submit",
+        "selectOption": "Please select an option",
+        "sending": "Sending…",
+        "sent": "Sent!"
+    },
+    "payment": {
+        "title": "Payment",
+        "subtitle": "Choose payment method",
+        "cash": "Cash",
+        "card": "Credit/Debit Card",
+        "qr": "QR Code",
+        "total": "Total amount",
+        "processing": "Processing",
+        "error": "Payment error"
+    },
+    "login": {
+        "title": "Login",
+        "phone": "Phone number",
+        "rephone": "Re enter phone number",
+        "enterPhone": "Enter your phone number",
+        "getOtp": "Get OTP",
+        "sending": "Sending...",
+        "enterOtp": "Enter OTP",
+        "otp": "OTP verification",
+        "resend": "Resend OTP",
+        "verify": "Verify",
+        "verifying": "Verifying...",
+        "sendAgain": "Didn't receive the code?"
+    },
+    "home": {
+        "title": "Welcome",
+        "subtitle": "Order delicious food",
+        "menu": "Menu",
+        "gallery": "Gallery",
+        "reservations": "Reservations",
+        "callstaff": "Call staff",
+        "feedback": "Feedback",
+        "language": "Language",
+        "english": "English",
+        "vietnamese": "Vietnamese",
+        "viewMenu": "View Menu - Order Now",
+        "enterPhone": "Enter phone number to earn points",
+        "guestName": "Guest"
+    },
+    "orderSuccess": {
+        "title": "Order placed successfully",
+        "orderNumber": "Order number",
+        "thankYou": "Thank you for your order!",
+        "estimatedTime": "Estimated time",
+        "backHome": "Back to home",
+        "preparingTime": "Preparing in",
+        "minute": "minute",
+        "moreItems": "... and {{count}} more items"
+    },
+    "cartSummary": {
+        "viewCart": "View cart",
+        "cart": "Cart",
+        "items": "items",
+        "currency": "VND",
+        "cartError": "Error reading cart"
+    },
+    "header": {
+        "deliveryTo": "Delivery to",
+        "search": "Search...",
+        "cart": "Cart"
+    },
+    "detailProducts": {
+        "quantity": "Quantity",
+        "addToCart": "Add to cart",
+        "note": "Add a note",
+        "selectVariant": "Choose options",
+        "currency": "VND",
+        "editItem": "Edit item",
+        "back": "Back",
+        "variants": "Variants",
+        "extras": "Extras"
+    },
+    "variantModal": {
+        "title": "Adjust food",
+        "note": "Note",
+        "addNote": "Add note (e.g., less spicy...)",
+        "add": "Add item",
+        "noItems": "No items found in cart",
+        "close": "Close",
+        "ok": "OK",
+        "delete": "Delete"
+    },
+    "paymentModal": {
+        "title": "Request payment",
+        "subtitle": "Choose payment method",
+        "cash": "Cash",
+        "bankCard": "Bank card",
+        "bankTransfer": "Bank transfer",
+        "mobileApp": "Mobile app",
+        "submit": "Send request",
+        "table": "Table"
+    },
+    "feedback": {
+        "title": "Rate your experience",
+        "rating": "Rating",
+        "mealQuestion": "How was your meal today?",
+        "bestPart": "What did you like most?",
+        "pleasant_staff": "Friendly staff",
+        "fast_delivery": "Fast delivery",
+        "delicious_food": "Delicious food",
+        "nice_presentation": "Nice presentation",
+        "additionalComment": "Additional comments",
+        "comment": "Share more of your thoughts...",
+        "submit": "Submit rating",
+        "cancel": "Skip",
+        "anonymousCustomer": "Anonymous customer",
+        "guestCustomer": "Guest",
+        "thankYou": "Thank you for your {{rating}} star rating!",
+        "orderInfo": "Order #{{orderId}} • Delivered 15 minutes ago"
+    },
+    "dashboard": {
+        "common": {
+            "search": "Search",
+            "choose": "Choose",
+            "action": "Action",
+            "status": "Status",
+            "statusOn": "Enabled",
+            "statusOff": "Disabled",
+            "active": "Active",
+            "inactive": "Inactive",
+            "all": "All",
+            "cancel": "Cancel",
+            "add": "Add",
+            "save": "Save",
+            "edit": "Edit",
+            "delete": "Delete",
+            "close": "Close",
+            "error": "Error",
+            "random": "Random",
+            "currency": "VND",
+            "na": "N/A",
+            "empty": "---",
+            "null": "null"
+        },
+        "inventoryManagement": {
+            "title": "Inventory Management",
+            "cards": {
+                "totalIngredients": "Total ingredients",
+                "lowStock": "Low stock alert",
+                "expiring": "Expiring soon (7 days)",
+                "newPurchaseOrders": "New purchase orders"
+            },
+            "sections": {
+                "lowStockList": "Low stock list",
+                "expiringAlerts": "Expiration alerts"
+            },
+            "tabs": {
+                "dashboard": "Overview & Alerts",
+                "operations": "Stock movements"
+            },
+            "columns": {
+                "ingredient": "Ingredient",
+                "ingredientName": "Ingredient name",
+                "category": "Category",
+                "unit": "Unit",
+                "stock": "Stock",
+                "minStock": "Min stock",
+                "expiryDate": "Expiry date",
+                "status": "Status",
+                "date": "Date",
+                "time": "Time",
+                "type": "Type",
+                "change": "Change",
+                "note": "Note"
+            },
+            "placeholders": {
+                "quickSearch": "Quick search...",
+                "searchIngredient": "Search ingredient name...",
+                "selectCategory": "Select category",
+                "note": "Note",
+                "selectDate": "Select date"
+            },
+            "actions": {
+                "order": "Order"
+            },
+            "status": {
+                "daysLeft": "{{count}} days left"
+            },
+            "filter": {
+                "active": "Filtering: {{status}} (Click to clear)",
+                "lowStock": "Low stock",
+                "expiring": "Expiring soon"
+            },
+            "operations": {
+                "typeIn": "Stock in",
+                "typeOut": "Stock out"
+            },
+            "confirmDelete": {
+                "title": "Are you sure?",
+                "text": "You won't be able to revert this!",
+                "confirm": "Yes, delete it!"
+            },
+            "misc": {
+                "other": "Other"
+            }
+        },
+        "topping": {
+            "title": "Topping Management",
+            "columns": {
+                "id": "ID",
+                "name": "Topping name",
+                "price": "Price",
+                "status": "Status",
+                "store": "Store",
+                "updatedAt": "Updated at"
+            },
+            "actions": {
+                "updatePrice": "Update topping price"
+            },
+            "alerts": {
+                "addedTitle": "Created",
+                "addedText": "New topping has been created.",
+                "updatedTitle": "Updated",
+                "updatedText": "Topping has been updated.",
+                "priceUpdatedText": "Topping price has been updated.",
+                "deletedTitle": "Deleted",
+                "deletedText": "The topping has been removed.",
+                "saveError": "Unable to save topping.",
+                "toggleError": "Unable to update status.",
+                "deleteError": "Unable to delete topping."
+            },
+            "validation": {
+                "nameRequired": "Please enter the topping name.",
+                "priceRequired": "Please enter the topping price.",
+                "priceInvalid": "Price must be a number greater than or equal to 0.",
+                "missingStore": "Current store is not found. Please sign in again."
+            },
+            "confirmDeleteTitle": "Confirm deletion?",
+            "confirmDeleteText": "This action will remove the topping from the system.",
+            "confirmDeleteOk": "Delete",
+            "modal": {
+                "addTitle": "Add topping",
+                "editTitle": "Edit topping",
+                "namePlaceholder": "Enter topping name",
+                "pricePlaceholder": "Enter topping price",
+                "storePlaceholder": "Store is auto-filled from the current session"
+            },
+            "batch": {
+                "title": "Add toppings in bulk",
+                "switch": "Bulk create",
+                "uploadFile": "Upload file",
+                "import": "Import from Excel/JSON",
+                "guideTitle": "Topping import guide",
+                "guide": {
+                    "sheetLabel": "Sheet",
+                    "sheetDesc": "Use the first sheet in your Excel file.",
+                    "requiredLabel": "Required columns",
+                    "optionalLabel": "Optional columns",
+                    "exampleLabel": "Sample data"
+                },
+                "chooseFile": "Choose file",
+                "addRowTop": "Add row",
+                "addRowBottom": "Add another row",
+                "reorder": "Reorder",
+                "back": "Back to list",
+                "description": "Enter topping details below. You can add multiple rows and save all at once.",
+                "store": "Store/branch",
+                "storePlaceholder": "Store is auto-filled from the current session",
+                "validation": "Please enter at least one valid row (topping name and price >= 0).",
+                "savedTitle": "Saved successfully",
+                "savedText": "Created {{count}} topping(s) successfully.",
+                "savedTextWithIgnored": "Created {{count}} topping(s) successfully, ignored {{ignored}} invalid row(s).",
+                "partialTitle": "Partially saved",
+                "partialText": "Created {{success}} topping(s), {{failed}} row(s) failed.",
+                "partialTextWithIgnored": "Created {{success}} topping(s), {{failed}} row(s) failed, ignored {{ignored}} invalid row(s).",
+                "emptyImport": "No valid data was found. Please check the sample file.",
+                "importSuccess": "Loaded {{count}} row(s) from the file.",
+                "importSuccessWithSkipped": "Loaded {{count}} row(s) from the file, skipped {{skipped}} empty or invalid row(s).",
+                "importError": "Unable to read file. Supported formats: .xlsx, .xls, .csv, .json.",
+                "tipTitle": "Tip",
+                "tipText": "Use the Tab key to move quickly between fields. Click Save when done.",
+                "total": "Total toppings",
+                "totalReady": "{{count}} item(s) ready to save",
+                "cancel": "Discard changes",
+                "saveAll": "Save all changes"
+            }
+        },
+        "recipeManagement": {
+            "title": "Profit & Recipe Management",
+            "tabs": {
+                "analysis": "Profit analysis",
+                "recipe": "Recipes"
+            },
+            "columns": {
+                "id": "ID",
+                "productName": "Product",
+                "price": "Price",
+                "cogs": "COGS",
+                "profit": "Profit",
+                "margin": "Margin (%)",
+                "recipe": "Recipe",
+                "note": "Cooking notes",
+                "stock": "Stock",
+                "categoryId": "Category ID",
+                "categoryName": "Category name",
+                "ingredient": "Ingredient",
+                "dosage": "Dosage (Net)",
+                "unit": "Unit"
+            },
+            "labels": {
+                "price": "Price:",
+                "cogs": "COGS:",
+                "profit": "Profit:",
+                "margin": "Profit margin",
+                "financialMetrics": "Financial metrics",
+                "ingredients": "Ingredients",
+                "pickProduct": "Choose product",
+                "note": "Cooking notes",
+                "detailAnalysis": "Detailed profit analysis",
+                "breakdownTitle": "COGS breakdown by recipe",
+                "totalCogs": "Total COGS"
+            },
+            "placeholders": {
+                "selectProduct": "Select product",
+                "searchIngredient": "Search ingredient...",
+                "unit": "Unit",
+                "recipeNote": "Enter detailed preparation instructions..."
+            },
+            "actions": {
+                "addRecipe": "Add",
+                "continue": "Continue",
+                "editRecipe": "Edit recipe",
+                "saveRecipe": "Save recipe",
+                "addIngredient": "Add ingredient"
+            },
+            "modals": {
+                "createTitle": "Choose a product to create a recipe",
+                "viewTitle": "View recipe",
+                "editTitle": "Edit recipe"
+            },
+            "tooltips": {
+                "viewDetail": "View details",
+                "viewRecipe": "View recipe",
+                "deleteRecipe": "Delete recipe"
+            },
+            "empty": {
+                "noRecipe": "No recipe",
+                "noNote": "No notes",
+                "noProducts": "No matching products found.",
+                "noBreakdown": "No recipe available, COGS breakdown is not available.",
+                "noIngredientsHint": "No ingredients added yet. Click \"Add ingredient\" to create one."
+            },
+            "messages": {
+                "noRecipeToDelete": "This item has no recipe to delete.",
+                "deleted": "Recipe deleted.",
+                "updated": "Recipe updated for: {{name}}",
+                "productNotFound": "Product not found."
+            },
+            "confirmDelete": {
+                "title": "Delete recipe?",
+                "text": "Delete the entire recipe for \"{{name}}\"?"
+            },
+            "validation": {
+                "ingredientRequired": "Please select an ingredient",
+                "dosageRequired": "Please enter a quantity",
+                "unitRequired": "Please select a unit",
+                "duplicateIngredient": "Duplicate ingredients are not allowed in a recipe."
+            },
+            "sections": {
+                "ingredients": "Ingredients"
+            },
+            "misc": {
+                "productAbbr": "PR"
+            }
+        },
+        "sanPhamBatch": {
+            "title": "Bulk product creation",
+            "subtitle": "Cleaner table layout for faster and easier editing.",
+            "meta": {
+                "total": "Total: {{count}} products",
+                "unsaved": "Unsaved: {{count}}",
+                "selected": "Selected: {{count}}"
+            },
+            "actions": {
+                "uploadFile": "Upload file",
+                "importGuide": "Import from Excel/JSON",
+                "addRow": "Add row",
+                "addNewRowBlock": "Add new product row",
+                "selectAll": "Select all",
+                "deleteSelected": "Delete selected rows",
+                "chooseFile": "Choose file",
+                "configure": "Configure",
+                "deleteRow": "Delete row",
+                "duplicateRow": "Duplicate row",
+                "reset": "Reset",
+                "saveProducts": "Save {{count}} products",
+                "saveChanges": "Save changes"
+            },
+            "stats": {
+                "valid": "Valid",
+                "error": "Error"
+            },
+            "columns": {
+                "image": "Image",
+                "name": "Product name",
+                "category": "Category",
+                "store": "Store UUID",
+                "price": "Price",
+                "discount": "Discount",
+                "stock": "Stock",
+                "stockPrep": "Stock / Prep",
+                "status": "Status",
+                "extras": "Topping & Extras"
+            },
+            "placeholders": {
+                "name": "Product name",
+                "category": "Select category",
+                "store": "Store ID from localStorage",
+                "zero": "0",
+                "stock": "Stock",
+                "prep": "Prep (min)"
+            },
+            "labels": {
+                "bestseller": "BESTSELLER",
+                "imageHint": "Upload image"
+            },
+            "empty": "No products",
+            "summary": {
+                "rows": "Rows",
+                "products": "products",
+                "totalValue": "Total value"
+            },
+            "validation": {
+                "minOneProduct": "Please enter at least 1 product.",
+                "slugPriceRequired": "Please provide both Slug and Price.",
+                "nameRequired": "Product name is required"
+            },
+            "guide": {
+                "title": "Product import file structure",
+                "required": "Required columns:",
+                "orCategoryName": "or category name",
+                "common": "Common columns:",
+                "storeNote": "Store note:",
+                "storeNoteText": "is automatically taken from the signed-in account localStorage.",
+                "example": "Example:",
+                "jsonHint": "an object array or an object with"
+            },
+            "modal": {
+                "title": "Manage Topping & Extras",
+                "description": "Select toppings from API and enter extras as a JSON object.",
+                "toppings": "Toppings",
+                "selectTopping": "Select toppings",
+                "extras": "Extras (JSON object)"
+            },
+            "alerts": {
+                "noValidDataTitle": "No valid data",
+                "noValidDataText": "No valid rows were read from file. Please check required columns.",
+                "importSuccessTitle": "Import successful",
+                "importSuccessWithSkipped": "Loaded {{loaded}} rows. Skipped {{skipped}} empty/invalid rows.",
+                "importSuccessOnly": "Loaded {{loaded}} rows.",
+                "importFailedTitle": "Cannot import file",
+                "importFailedText": "Supported files: .xlsx, .xls, .csv, .json.",
+                "missingStoreTitle": "Missing store_id",
+                "missingStoreText": "store_id was not found in localStorage. Please sign in again.",
+                "missingInfoTitle": "Missing information",
+                "successTitle": "Success",
+                "savedWithSkipped": "Created {{created}} products. Skipped {{skipped}} rows missing Slug/Price.",
+                "savedOnly": "Created {{created}} products.",
+                "createFailedTitle": "Create failed",
+                "createFailedText": "Unable to create products."
+            }
+        },
+        "permissionManagement": {
+            "title": "Permission Management",
+            "actions": {
+                "add": "Add permission",
+                "update": "Update"
+            },
+            "columns": {
+                "module": "Module",
+                "group": "Group"
+            },
+            "placeholders": {
+                "search": "Search modules / functions...",
+                "selectRole": "Select role",
+                "moduleName": "e.g. Inventory management"
+            },
+            "fields": {
+                "moduleName": "Module name",
+                "group": "Permission group",
+                "info": "Info"
+            },
+            "modals": {
+                "addTitle": "Add permission/module",
+                "editTitle": "Edit permission/module",
+                "viewTitle": "Permission/module details"
+            },
+            "messages": {
+                "adminLocked": "Admin permissions cannot be changed!",
+                "saved": "Permissions saved!",
+                "enabled": "Module enabled",
+                "disabled": "Module disabled",
+                "deleted": "Module deleted"
+            },
+            "validation": {
+                "nameRequired": "Please enter module name.",
+                "groupRequired": "Please select a permission group."
+            },
+            "alerts": {
+                "missingInfoTitle": "Missing information",
+                "updatedTitle": "Updated",
+                "updatedText": "Permission/module updated.",
+                "addedTitle": "Added",
+                "addedText": "New permission/module added."
+            },
+            "confirmDelete": {
+                "title": "Confirm delete?",
+                "text": "This action will remove the module/permission from the system!",
+                "confirm": "Yes, delete!"
+            },
+            "empty": {
+                "noModules": "No matching modules/permissions."
+            },
+            "roles": {
+                "admin": "Admin",
+                "adminDesc": "System administrator",
+                "manager": "Manager",
+                "managerDesc": "Store manager",
+                "cashier": "Cashier",
+                "cashierDesc": "Cashier staff",
+                "waiter": "Waiter",
+                "waiterDesc": "Wait staff",
+                "kitchen": "Kitchen / Bar",
+                "kitchenDesc": "Kitchen staff"
+            },
+            "modules": {
+                "dashboard": "Dashboard",
+                "pos": "POS sales",
+                "tables": "Table management",
+                "orders": "Order management",
+                "products": "Product management",
+                "inventory": "Inventory management",
+                "recipes": "Recipes & standards",
+                "customers": "Customers",
+                "employees": "Employees",
+                "reports": "Reports",
+                "settings": "System settings"
+            },
+            "groups": {
+                "main": "Main",
+                "sales": "Sales",
+                "inventory": "Inventory",
+                "catalog": "Catalog",
+                "crm": "CRM",
+                "hrm": "HRM",
+                "reports": "Reports",
+                "settings": "Settings"
+            }
+        },
+        "rolesManagement": {
+            "title": "Role Management",
+            "columns": {
+                "role": "Role",
+                "description": "Description",
+                "level": "Level",
+                "users": "Users"
+            },
+            "placeholders": {
+                "search": "Search roles...",
+                "name": "e.g. Manager",
+                "description": "Short description",
+                "noParent": "(None)"
+            },
+            "fields": {
+                "name": "Role name",
+                "description": "Description",
+                "level": "Level",
+                "parentRole": "Parent role",
+                "info": "Info"
+            },
+            "labels": {
+                "userCount": "{{count}} users",
+                "hierarchy": "Hierarchy"
+            },
+            "levels": {
+                "level": "Level {{level}}"
+            },
+            "messages": {
+                "deleted": "Role deleted",
+                "enabled": "Role enabled",
+                "disabled": "Role disabled"
+            },
+            "validation": {
+                "nameRequired": "Please enter role name."
+            },
+            "alerts": {
+                "missingInfoTitle": "Missing information",
+                "updatedTitle": "Updated",
+                "updatedText": "Role updated.",
+                "addedTitle": "Added",
+                "addedText": "New role added."
+            },
+            "confirmDelete": {
+                "title": "Confirm delete?",
+                "text": "This action will remove the role from the system!",
+                "confirm": "Yes, delete!"
+            },
+            "empty": {
+                "noRoles": "No matching roles"
+            },
+            "modals": {
+                "addTitle": "Add role",
+                "editTitle": "Edit role",
+                "viewTitle": "Role details"
+            },
+            "actions": {
+                "update": "Update"
+            },
+            "roles": {
+                "admin": "Admin",
+                "adminDesc": "System administrator",
+                "manager": "Manager",
+                "managerDesc": "Store manager",
+                "cashier": "Cashier",
+                "cashierDesc": "Cashier staff",
+                "waiter": "Waiter",
+                "waiterDesc": "Wait staff",
+                "kitchen": "Kitchen / Bar",
+                "kitchenDesc": "Kitchen staff"
+            }
+        },
+        "rolePermissionManagement": {
+            "title": "User Role Permissions",
+            "columns": {
+                "module": "Module",
+                "group": "Group",
+                "permissions": "Permissions"
+            },
+            "placeholders": {
+                "searchModule": "Search modules...",
+                "moduleId": "e.g. products",
+                "group": "e.g. Catalog",
+                "module": "e.g. Product management",
+                "description": "Short description"
+            },
+            "fields": {
+                "group": "Permission group",
+                "module": "Module",
+                "description": "Description"
+            },
+            "labels": {
+                "permissionCount": "{{count}} / 4 permissions",
+                "group": "Group",
+                "selectAll": "Select all",
+                "toggleAll": "Toggle all permissions for this module",
+                "initialPermissions": "Initial permissions",
+                "appliesToSelected": "Applies to the selected role"
+            },
+            "permissions": {
+                "view": {
+                    "title": "View",
+                    "desc": "Can view lists and details",
+                    "short": "View"
+                },
+                "create": {
+                    "title": "Create",
+                    "desc": "Can create new records",
+                    "short": "Create"
+                },
+                "edit": {
+                    "title": "Edit",
+                    "desc": "Can edit and update records",
+                    "short": "Edit"
+                },
+                "delete": {
+                    "title": "Delete",
+                    "desc": "Can delete records",
+                    "short": "Delete"
+                }
+            },
+            "messages": {
+                "adminLocked": "Admin permissions cannot be changed!",
+                "saved": "Permissions saved!",
+                "added": "Module added.",
+                "deleted": "Module deleted."
+            },
+            "validation": {
+                "moduleRequired": "Please enter ID, Module and Group.",
+                "duplicateId": "ID already exists.",
+                "cannotDeleteDashboard": "Dashboard module cannot be deleted."
+            },
+            "confirmDelete": {
+                "text": "Are you sure you want to delete this module?"
+            },
+            "modals": {
+                "permissionTitle": "Permissions: {{module}}",
+                "addModuleTitle": "Add module"
+            },
+            "empty": {
+                "noModules": "No matching modules found."
+            },
+            "roles": {
+                "admin": "Admin",
+                "adminDesc": "System administrator",
+                "manager": "Manager",
+                "managerDesc": "Store manager",
+                "cashier": "Cashier",
+                "cashierDesc": "Cashier staff",
+                "kitchen": "Kitchen / Bar",
+                "kitchenDesc": "Kitchen staff",
+                "customer": "Customer",
+                "customerDesc": "Customer"
+            },
+            "modules": {
+                "dashboard": "Dashboard",
+                "pos": "POS sales",
+                "tables": "Table management",
+                "orders": "Order management",
+                "products": "Product management",
+                "inventory": "Inventory management",
+                "recipes": "Recipes & standards",
+                "customers": "Customers",
+                "employees": "Employees",
+                "reports": "Reports",
+                "settings": "System settings"
+            },
+            "moduleDescriptions": {
+                "dashboard": "System overview",
+                "pos": "POS sales",
+                "tables": "Table management",
+                "orders": "Order management",
+                "products": "Product management",
+                "inventory": "Inventory management",
+                "recipes": "Recipes & standards",
+                "customers": "Customers",
+                "employees": "Employees",
+                "reports": "Reports",
+                "settings": "System settings"
+            }
+        },
+        "tablesManagement": {
+            "title": "Tables Management",
+            "searchPlaceholder": "Search",
+            "addButton": "Add",
+            "columns": {
+                "id": "ID",
+                "orderId": "Order ID",
+                "name": "Table Name",
+                "qrCode": "QR code",
+                "area": "Area",
+                "capacity": "Capacity",
+                "status": "Status"
+            },
+            "filters": {
+                "date": "Select date",
+                "area": "Select area",
+                "status": "Select status",
+                "allAreas": "All areas",
+                "allStatuses": "All statuses"
+            },
+            "status": {
+                "available": "Available",
+                "occupied": "Occupied",
+                "reserved": "Reserved",
+                "cleaning": "Cleaning"
+            },
+            "capacityValue": "{{count}} guests",
+            "orderLabel": "Order #{{id}}",
+            "notSeated": "Not seated",
+            "emptyText": "---",
+            "unknownArea": "Unknown area",
+            "defaultTableName": "Table {{id}}",
+            "qrLabel": "QR code",
+            "qrTitle": "Table QR - {{name}}",
+            "qrTitleFallback": "Table QR",
+            "qrScan": "Scan to order & pay",
+            "printQr": "Print QR",
+            "viewDetail": "View details",
+            "detailTitle": "Table details - {{name}}",
+            "detailTitleFallback": "Table details",
+            "detail": {
+                "table": "Table",
+                "currentOrder": "Current order",
+                "area": "Area",
+                "capacity": "Capacity",
+                "notes": "Notes",
+                "qrCode": "QR code"
+            },
+            "confirmDeleteTitle": "Confirm delete?",
+            "confirmDeleteText": "This action will remove the table from the system!",
+            "confirmDeleteOk": "Yes, delete!",
+            "deletedTitle": "Deleted!",
+            "deletedText": "The table has been removed."
+        },
+        "employeeList": {
+            "title": "Employee List",
+            "addButton": "Add ",
+            "statusHint": "Enable to allow this employee to sign in and operate.",
+            "columns": {
+                "id": "ID",
+                "username": "Username",
+                "fullName": "Full name",
+                "email": "Email",
+                "phone": "Phone",
+                "branchId": "Branch ID",
+                "createdAt": "Created at"
+            },
+            "fields": {
+                "password": "Password",
+                "firstName": "First name",
+                "lastName": "Last name",
+                "storeId": "Store ID",
+                "groupIds": "Group IDs",
+                "permissionIds": "Permission IDs"
+            },
+            "status": {
+                "active": "Active",
+                "locked": "Locked"
+            },
+            "placeholders": {
+                "username": "Enter username",
+                "password": "Leave empty to keep current password",
+                "firstName": "Enter first name",
+                "lastName": "Enter last name",
+                "email": "Enter email",
+                "phone": "Enter phone",
+                "branchId": "Enter branch ID",
+                "storeId": "Enter store ID",
+                "groupIds": "Example: 1,2,3",
+                "permissionIds": "Example: 4,5,6"
+            },
+            "modal": {
+                "editTitle": "Update employee",
+                "viewTitle": "Employee details"
+            },
+            "validation": {
+                "usernameRequired": "Username is required."
+            },
+            "alerts": {
+                "invalidUuid": "Valid UUID was not found.",
+                "deletedTitle": "Deleted",
+                "deletedText": "Employee deleted successfully.",
+                "deleteFailTitle": "Delete failed",
+                "deleteFailText": "Unable to delete employee.",
+                "updatedText": "Employee updated successfully.",
+                "updateFailText": "Unable to update employee."
+            },
+            "confirmDeleteTitle": "Delete employee?",
+            "confirmDeleteText": "Are you sure you want to delete account {{username}}?"
+        },
+        "areas": {
+            "title": "Areas",
+            "searchPlaceholder": "Quick search...",
+            "addButton": "Add ",
+            "columns": {
+                "id": "ID",
+                "name": "Area",
+                "areaName": "Area name",
+                "branch": "Branch",
+                "description": "Description",
+                "count": "Tables"
+            },
+            "status": {
+                "active": "Active",
+                "inactive": "Inactive"
+            },
+            "defaultDesc": "Area",
+            "tablesLabel": "{{count}} tables",
+            "detailTitle": "Area details - {{name}}",
+            "detailTitleFallback": "Area details",
+            "detail": {
+                "area": "Area",
+                "status": "Status",
+                "count": "Tables",
+                "description": "Description"
+            },
+            "modal": {
+                "addTitle": "Add area",
+                "editTitle": "Edit area",
+                "viewTitle": "Area details",
+                "nameLabel": "Area name",
+                "countLabel": "Table count",
+                "iconLabel": "Icon",
+                "descriptionLabel": "Description",
+                "namePlaceholder": "Enter area name",
+                "descriptionPlaceholder": "Short description of the area",
+                "iconHome": "Main hall",
+                "iconCoffee": "Outdoor",
+                "iconUsers": "VIP"
+            },
+            "placeholders": {
+                "id": "Example: 1",
+                "name": "Example: VIP",
+                "branch": "Select branch"
+            },
+            "branchLabel": "Branch: {{name}}",
+            "idBadge": "ID {{id}}",
+            "selectedId": "Selected ID: {{id}}",
+            "emptyText": "No areas yet",
+            "actions": {
+                "editTitle": "Edit area",
+                "deleteTitle": "Delete area"
+            },
+            "validation": {
+                "idRequired": "Please enter a valid area ID.",
+                "nameRequired": "Please enter the area name.",
+                "branchRequired": "Please select a branch.",
+                "countInvalid": "Table count must be a number >= 0."
+            },
+            "alerts": {
+                "missingInfoTitle": "Missing information",
+                "addedTitle": "Added",
+                "addedText": "New area added.",
+                "updatedTitle": "Updated",
+                "updatedText": "Area updated.",
+                "deletedTitle": "Deleted!",
+                "deletedText": "The area has been removed.",
+                "saveError": "Unable to save area."
+            },
+            "confirmDeleteTitle": "Confirm delete?",
+            "confirmDeleteText": "This action will remove the area from the list.",
+            "confirmDeleteOk": "Yes, delete!"
+        },
+        "stores": {
+            "title": "Stores",
+            "searchPlaceholder": "Quick search...",
+            "addButton": "Add store",
+            "emptyText": "No stores yet",
+            "columns": {
+                "code": "Code",
+                "name": "Store name",
+                "tax": "Tax ID",
+                "phone": "Phone",
+                "owner": "Owner",
+                "action": "Actions"
+            },
+            "grid": {
+                "ownerLabel": "Owner:",
+                "ownerFallback": "—"
+            },
+            "modal": {
+                "addTitle": "Add store",
+                "editTitle": "Update store",
+                "viewTitle": "View store",
+                "image": "Store image",
+                "imageHint": "PNG, JPG, GIF up to 5MB",
+                "noImage": "No image",
+                "code": "Store code",
+                "name": "Store name",
+                "tax": "Tax ID",
+                "phone": "Phone",
+                "owner": "Owner",
+                "namePlaceholder": "Enter store name",
+                "taxPlaceholder": "Enter tax ID",
+                "phonePlaceholder": "Enter phone",
+                "ownerPlaceholder": "Enter owner name"
+            },
+            "validation": {
+                "codeRequired": "Please enter store code.",
+                "nameRequired": "Please enter store name.",
+                "taxRequired": "Please enter tax ID.",
+                "phoneRequired": "Please enter phone.",
+                "ownerRequired": "Please enter owner name."
+            },
+            "alerts": {
+                "missingTitle": "Missing information",
+                "addedTitle": "Added",
+                "addedText": "Store added.",
+                "updatedTitle": "Updated",
+                "updatedText": "Store updated.",
+                "saveError": "Unable to save store.",
+                "deletedTitle": "Deleted",
+                "deletedText": "Store deleted.",
+                "deleteError": "Unable to delete store."
+            },
+            "confirmDeleteTitle": "Delete store?",
+            "confirmDeleteText": "Are you sure you want to delete {{name}}?",
+            "confirmDeleteOk": "Delete"
+        },
+        "branches": {
+            "title": "Branches",
+            "searchPlaceholder": "Quick search...",
+            "addButton": "Add branch",
+            "emptyText": "No branches yet",
+            "columns": {
+                "id": "ID",
+                "address": "Address",
+                "phone": "Phone",
+                "manager": "Manager",
+                "storeUuid": "Store UUID",
+                "userUuid": "User UUID"
+            },
+            "grid": {
+                "managerLabel": "Manager:",
+                "managerFallback": "—"
+            },
+            "modal": {
+                "addTitle": "Add branch",
+                "editTitle": "Update branch",
+                "viewTitle": "View branch",
+                "id": "Branch ID",
+                "address": "Address",
+                "phone": "Phone",
+                "manager": "Manager name",
+                "storeUuid": "Store UUID",
+                "userUuid": "User UUID (optional)",
+                "addressPlaceholder": "Example: Da Nang",
+                "phonePlaceholder": "0909xxxxxx",
+                "managerPlaceholder": "John Doe",
+                "storeUuidPlaceholder": "store-001",
+                "userUuidPlaceholder": "u-admin-001"
+            },
+            "validation": {
+                "idRequired": "Please enter branch ID.",
+                "addressRequired": "Please enter address.",
+                "phoneRequired": "Please enter phone.",
+                "managerRequired": "Please enter manager name.",
+                "storeUuidRequired": "Please enter store UUID."
+            },
+            "alerts": {
+                "missingTitle": "Missing information",
+                "addedTitle": "Added",
+                "addedText": "Branch added.",
+                "updatedTitle": "Updated",
+                "updatedText": "Branch updated.",
+                "saveError": "Unable to save branch.",
+                "deletedTitle": "Deleted",
+                "deletedText": "Branch deleted.",
+                "deleteError": "Unable to delete branch."
+            },
+            "confirmDeleteTitle": "Delete branch?",
+            "confirmDeleteText": "Are you sure you want to delete {{name}}?",
+            "confirmDeleteOk": "Delete"
+        },
+        "productCategories": {
+            "title": "Product categories",
+            "searchPlaceholder": "Quick search...",
+            "addButton": "Add",
+            "batchModalTitle": "Quick add products",
+            "toggle": {
+                "single": "Add 1 category",
+                "batch": "+ Add multiple products"
+            },
+            "addMultipleProducts": "Add multiple products",
+            "columns": {
+                "id": "ID",
+                "name": "Category name",
+                "branch": "Branch ID"
+            },
+            "placeholders": {
+                "id": "Example: 1",
+                "name": "Example: Coffee",
+                "branch": "Example: branch-001"
+            },
+            "selectedId": "Selected ID: {{id}}",
+            "branchLabel": "Branch: {{id}}",
+            "idBadge": "ID {{id}}",
+            "emptyText": "No categories yet",
+            "branchHint": "Leave empty to apply to all branches.",
+            "modal": {
+                "addTitle": "Add category",
+                "editTitle": "Update category"
+            },
+            "batchAddRow": "Add row",
+            "batchDeleteRow": "Delete row",
+            "batchValidLabel": "Valid",
+            "batchErrorLabel": "Errors",
+            "batchEmpty": "No rows yet.",
+            "batchCountLabel": "Rows",
+            "batchItems": "products",
+            "batchTotalLabel": "Total value",
+            "batchSave": "Save {{count}} products",
+            "validation": {
+                "idRequired": "Please enter a valid category ID.",
+                "nameRequired": "Please enter the category name.",
+                "branchRequired": "Please enter the branch ID."
+            },
+            "alerts": {
+                "missingInfoTitle": "Missing information",
+                "addedTitle": "Added",
+                "addedText": "Category added.",
+                "updatedTitle": "Updated",
+                "updatedText": "Category updated.",
+                "deletedTitle": "Deleted!",
+                "deletedText": "The category has been removed.",
+                "saveError": "Unable to save category."
+            },
+            "confirmDeleteTitle": "Confirm delete?",
+            "confirmDeleteText": "This action will remove the category from the list.",
+            "confirmDeleteOk": "Yes, delete!",
+            "viewTitle": "Products in category - {{name}}",
+            "summary": {
+                "totalProducts": "Total products",
+                "totalValue": "Total value",
+                "totalItems": "Total {{total}} products"
+            },
+            "productsEmptyTitle": "No products yet",
+            "productsEmptyDesc": "This category has no products.",
+            "products": {
+                "columns": {
+                    "id": "ID",
+                    "name": "Product",
+                    "price": "Price",
+                    "status": "Status",
+                    "note": "Notes"
+                }
+            }
+        },
+        "ordersList": {
+            "title": "Orders Management",
+            "details": {
+                "title": "Order Details",
+                "notFound": "Order not found.",
+                "na": "N/A",
+                "labels": {
+                    "id": "Order ID",
+                    "status": "Status",
+                    "customer": "Customer",
+                    "phone": "Phone",
+                    "channel": "Channel",
+                    "createdAt": "Created at"
+                },
+                "payment": {
+                    "title": "Payment",
+                    "method": "Method",
+                    "paidAmount": "Paid amount",
+                    "remaining": "Remaining",
+                    "status": {
+                        "title": "Status",
+                        "paid": "Paid",
+                        "unpaid": "Unpaid"
+                    },
+                    "methods": {
+                        "cash": "Cash",
+                        "card": "Card",
+                        "transfer": "Bank transfer",
+                        "ewallet": "E-wallet",
+                        "qr": "QR",
+                        "other": "Other"
+                    }
+                },
+                "items": {
+                    "title": "Items",
+                    "total": "Total:",
+                    "empty": "This order has no items.",
+                    "headers": {
+                        "product": "Product",
+                        "price": "Price",
+                        "qty": "Qty",
+                        "status": "Status"
+                    }
+                }
+            },
+            "columns": {
+                "orderId": "Order ID",
+                "table": "Table",
+                "customer": "Customer",
+                "items": "Items",
+                "totalAmount": "Total Amount",
+                "time": "Time"
+            },
+            "status": {
+                "pending": "Pending",
+                "preparing": "Preparing",
+                "served": "Served",
+                "ready": "Ready"
+            },
+            "channel": {
+                "online": "Online",
+                "takeAway": "Take away",
+                "atTable": "At table"
+            },
+            "walkInCustomer": "Walk-in Customer",
+            "tableNA": "N/A",
+            "deleteOrder": "Delete order",
+            "confirmDeleteTitle": "Are you sure?",
+            "confirmDeleteText": "You won't be able to revert this!",
+            "confirmDeleteOk": "Yes, delete it!"
+        },
+        "tableQR": {
+            "title": "Table QR Management",
+            "addMapping": "Add",
+            "columns": {
+                "branch": "Branch",
+                "table": "Table",
+                "qrCode": "QR Code"
+            },
+            "qrLabel": "QR Code",
+            "mappingDesc": "Table mapping",
+            "actions": {
+                "print": "Print QR",
+                "edit": "Edit mapping",
+                "delete": "Delete mapping"
+            },
+            "confirmDeleteTitle": "Confirm delete?",
+            "confirmDeleteText": "This action will remove the QR mapping from the system!",
+            "confirmDeleteOk": "Yes, delete!",
+            "deletedTitle": "Deleted!",
+            "deletedText": "QR mapping has been removed.",
+            "updatedSuccess": "QR updated successfully",
+            "addedSuccess": "QR mapping added successfully",
+            "modal": {
+                "updateTitle": "Update QR Code",
+                "createTitle": "Create New QR Mapping",
+                "viewTitle": "QR - {{name}}",
+                "viewTitleFallback": "View QR"
+            },
+            "tableFallback": "Table",
+            "form": {
+                "selectBranch": "Select branch",
+                "selectBranchPlaceholder": "Select branch...",
+                "selectTable": "Select table",
+                "selectTablePlaceholder": "Select table...",
+                "qrLabel": "QR code",
+                "qrPlaceholder": "Enter QR code (or leave blank to auto-generate)",
+                "generate": "Generate",
+                "qrHint": "You can type manually or click “Generate” to auto-create.",
+                "submitUpdate": "Update QR Code",
+                "submitCreate": "Create & Save Mapping"
+            },
+            "validation": {
+                "selectTable": "Please select a table"
+            }
+        },
+        "ingredients": {
+            "title": "Ingredients categories",
+            "empty": "No matching ingredients.",
+            "altText": "ingredient",
+            "currency": "₫",
+            "deletedFilter": {
+                "active": "Not deleted",
+                "deleted": "Deleted"
+            },
+            "units": {
+                "kg": "kg",
+                "g": "g",
+                "liter": "liter",
+                "ml": "ml",
+                "bottle": "bottle",
+                "box": "box"
+            },
+            "expiry": {
+                "noDateTooltip": "No expiry date",
+                "expiredTooltip": "Expired",
+                "nearExpiredTooltip": "Expiring soon ({{days}} days left)",
+                "validTooltip": "Valid ({{days}} days left)",
+                "noDate": "No expiry",
+                "expired": "Expired",
+                "nearExpired": "Expiring soon",
+                "valid": "Valid",
+                "statusNoDate": "Status: No expiry date.",
+                "statusNoDateMsg": "Please update expiry date to enable tracking.",
+                "statusExpired": "Status: Ingredient expired.",
+                "statusExpiredMsg": "Please check and handle according to safety procedures.",
+                "statusNearExpired": "Status: Expiring soon. {{days}} days left.",
+                "statusNearExpiredMsg": "System will notify 3 days before expiry.",
+                "statusValid": "Status: Fresh. {{days}} days left."
+            },
+            "categories": {
+                "fresh": "Fresh food",
+                "staple": "Staple food",
+                "spice": "Spices/Oil",
+                "vegetable": "Vegetables"
+            },
+            "columns": {
+                "slug": "Slug",
+                "image": "Image",
+                "name": "Ingredient",
+                "category": "Category",
+                "buyDate": "Purchase date",
+                "qty": "Quantity",
+                "price": "Cost",
+                "expiry": "Expiry",
+                "note": "Notes",
+                "created": "Created",
+                "updated": "Updated",
+                "deleted": "Deleted"
+            },
+            "filters": {
+                "selectDate": "Select date",
+                "selectCategory": "Select category",
+                "expiry": "Expiry"
+            },
+            "modal": {
+                "addTitle": "Add ingredient",
+                "editTitle": "Edit ingredient",
+                "viewTitle": "Ingredient details",
+                "image": "Ingredient image",
+                "imageHint": "Supported: JPG, PNG. Max 2MB.",
+                "noImage": "No image",
+                "name": "Ingredient name",
+                "namePlaceholder": "Enter ingredient",
+                "category": "Category",
+                "categoryPlaceholder": "Select category",
+                "price": "Cost",
+                "pricePlaceholder": "Enter price",
+                "qty": "Quantity",
+                "qtyPlaceholder": "Enter quantity",
+                "unit": "Unit",
+                "buyDate": "Purchase date",
+                "time": "Time",
+                "expiry": "Expiry",
+                "note": "Notes",
+                "notePlaceholder": "Short description of the ingredient",
+                "system": "System"
+            },
+            "validation": {
+                "nameRequired": "Please enter ingredient name.",
+                "categoryRequired": "Please select a category.",
+                "unitRequired": "Please select a unit.",
+                "qtyRequired": "Please enter quantity.",
+                "qtyInvalid": "Quantity must be a number >= 0.",
+                "priceRequired": "Please enter cost.",
+                "priceInvalid": "Cost must be a number >= 0.",
+                "buyDateInvalid": "Invalid purchase date.",
+                "timeInvalid": "Invalid time.",
+                "expiryInvalid": "Invalid expiry date."
+            },
+            "alerts": {
+                "missingTitle": "Missing information",
+                "addedTitle": "Added",
+                "addedText": "New ingredient added.",
+                "updatedTitle": "Updated",
+                "updatedText": "Ingredient updated.",
+                "addError": "Cannot add ingredient.",
+                "updateError": "Cannot update ingredient.",
+                "deletedTitle": "Deleted!",
+                "deletedText": "Ingredient has been removed."
+            },
+            "categoryModal": {
+                "title": "Add ingredient category",
+                "addButton": "Add category",
+                "idLabel": "Category ID",
+                "idPlaceholder": "Example: 1",
+                "nameLabel": "Category name",
+                "namePlaceholder": "Example: Vegetables",
+                "validation": {
+                    "idRequired": "Please enter a valid category ID.",
+                    "nameRequired": "Please enter category name."
+                },
+                "alerts": {
+                    "addedTitle": "Added",
+                    "addedText": "Ingredient category added.",
+                    "addError": "Cannot add category."
+                }
+            },
+            "confirmDeleteTitle": "Confirm delete?",
+            "confirmDeleteText": "This action will remove the ingredient from the system!",
+            "confirmDeleteOk": "Yes, delete!"
+        },
+        "products": {
+            "title": "Products",
+            "empty": "No matching products.",
+            "altText": "product",
+            "unknownIngredient": "Unknown ingredient",
+            "status": {
+                "active": "Selling",
+                "inactive": "Out of stock"
+            },
+            "columns": {
+                "id": "ID",
+                "image": "Image",
+                "name": "Product",
+                "store": "Store",
+                "category": "Category",
+                "price": "Price",
+                "discount": "Discount",
+                "prepTime": "Prep time",
+                "note": "Notes",
+                "description": "Description",
+                "bestSeller": "Best seller"
+            },
+            "actions": {
+                "createBatch": "Create batch"
+            },
+            "bulk": {
+                "storeLabel": "Store",
+                "storePlaceholder": "Select store",
+                "activateAll": "Set all to DANG_BAN",
+                "missingStoreTitle": "Missing store",
+                "missingStoreText": "Please select a store before activating.",
+                "activateSuccessTitle": "Success",
+                "activateSuccessText": "All products for store {{storeId}} are now DANG_BAN.",
+                "activateSuccessTextWithBranch": "All products for store {{storeId}}, branch {{branchId}} are now DANG_BAN.",
+                "activateErrorTitle": "Update failed",
+                "activateErrorText": "Unable to update product status."
+            },
+            "shortLabel": "PR",
+            "prepTimeValue": "{{minutes}} min",
+            "placeholders": {
+                "nameStart": "Enter product name..."
+            },
+            "validation": {
+                "idRequired": "Please enter a valid product ID.",
+                "nameRequired": "Please enter product name.",
+                "categoryRequired": "Please select a category.",
+                "priceInvalid": "Price must be a number >= 0.",
+                "priceTooHigh": "Price cannot exceed 999,999,999.",
+                "discountInvalid": "Discount must be between 0 and 100.",
+                "prepTimeInvalid": "Prep time must be a number >= 0.",
+                "statusRequired": "Please select a status.",
+                "recipeIngredientRequired": "Please select ingredient for each recipe row.",
+                "recipeAmountInvalid": "Amount must be greater than 0.",
+                "recipeUnitRequired": "Please enter unit for each recipe row.",
+                "recipeDuplicateIngredient": "Duplicate ingredients are not allowed in the recipe.",
+                "recipeInvalid": "Recipe data is invalid.",
+                "extrasObject": "Extras must be a JSON object. Example: {\"ice_levels\":[\"30\",\"50\",\"70\"]}",
+                "extrasInvalid": "Invalid extras JSON."
+            },
+            "alerts": {
+                "missingTitle": "Missing information",
+                "addedTitle": "Added",
+                "addedText": "New product added.",
+                "addedWithRecipe": "Product created and recipe saved successfully.",
+                "updatedTitle": "Updated",
+                "updatedText": "Product updated.",
+                "updatedWithRecipe": "Product updated and recipe added successfully.",
+                "recipeSkippedNoProductId": "Product was created but recipe was not saved because product_id is missing.",
+                "recipeCreateFailedAfterProduct": "Product was created but saving recipe failed.",
+                "recipeCreateFailedAfterUpdate": "Product updated but adding recipe failed.",
+                "saveError": "Unable to save product.",
+                "deletedTitle": "Deleted!",
+                "deletedText": "Product has been removed.",
+                "storeIdMissing": "Cannot find store_id in localStorage. Please sign in again."
+            },
+            "confirmDeleteTitle": "Confirm delete?",
+            "confirmDeleteText": "This action will remove the product from the system!",
+            "confirmDeleteOk": "Yes, delete!",
+            "modal": {
+                "addTitle": "Add product",
+                "editTitle": "Edit product",
+                "viewTitle": "Product details",
+                "idLabel": "Product ID",
+                "idPlaceholder": "Enter ID",
+                "randomId": "Random",
+                "image": "Product image",
+                "imageHint": "PNG, JPG, GIF up to 5MB",
+                "name": "Product name",
+                "namePlaceholder": "Enter product name",
+                "category": "Category",
+                "categoryPlaceholder": "Select category",
+                "price": "Price (₫)",
+                "pricePlaceholder": "Enter price",
+                "discount": "Discount (%)",
+                "discountPlaceholder": "Enter %",
+                "prepTime": "Prep time (min)",
+                "prepTimePlaceholder": "Enter minutes",
+                "bestSeller": "Best seller",
+                "description": "Description",
+                "descriptionPlaceholder": "Short description",
+                "notePlaceholder": "Internal notes"
+            },
+            "recipe": {
+                "title": "Recipe",
+                "currentTitle": "Current recipe",
+                "noCurrent": "No recipe for this product yet.",
+                "addTitle": "Add recipe",
+                "ingredientPlaceholder": "Select ingredient",
+                "amountPlaceholder": "Amount",
+                "unitPlaceholder": "Unit",
+                "addRow": "Add recipe row"
+            }
+        },
+        "suppliers": {
+            "title": "Suppliers",
+            "empty": "No matching suppliers.",
+            "columns": {
+                "id": "ID",
+                "name": "Supplier",
+                "phone": "Phone",
+                "email": "Email",
+                "address": "Address"
+            },
+            "validation": {
+                "nameRequired": "Please enter supplier name."
+            },
+            "alerts": {
+                "missingTitle": "Missing information",
+                "addedTitle": "Added",
+                "addedText": "New supplier added.",
+                "updatedTitle": "Updated",
+                "updatedText": "Supplier updated.",
+                "saveError": "Unable to save supplier.",
+                "deletedTitle": "Deleted!",
+                "deletedText": "Supplier has been removed."
+            },
+            "confirmDeleteTitle": "Confirm delete?",
+            "confirmDeleteText": "This action will remove the supplier from the system!",
+            "confirmDeleteOk": "Yes, delete!",
+            "modal": {
+                "addTitle": "Add supplier",
+                "editTitle": "Edit supplier",
+                "viewTitle": "Supplier details",
+                "idPlaceholder": "Enter supplier ID",
+                "namePlaceholder": "Enter supplier name",
+                "phonePlaceholder": "Enter phone number",
+                "emailPlaceholder": "Enter email",
+                "addressPlaceholder": "Enter address"
+            }
+        },
+        "customerRequestsAdmin": {
+            "title": "Customer Requests",
+            "subtitle": "Track and handle call staff requests and customer feedback from the menu.",
+            "loyalty": {
+                "title": "Loyalty & Membership",
+                "subtitle": "Lookup and manage customer loyalty points and rewards",
+                "lookupTitle": "Member Points Lookup",
+                "lookupPlaceholder": "Enter phone number...",
+                "searchButton": "Search",
+                "lookupNote": "Display member points history and total spending information.",
+                "defaultMemberName": "Member Customer",
+                "defaultTier": "GOLD TIER",
+                "memberSubtitle": "Loyal Customer",
+                "memberName": "Member Customer",
+                "tierLabel": "Tier",
+                "currentPoints": "Current Points",
+                "currentPointsLabel": "Current Points",
+                "pointsLabel": "pts",
+                "totalSpending": "Total Spending",
+                "totalSpendingLabel": "Total Spending",
+                "attachmentSection": {
+                    "orderIdPlaceholder": "Order ID",
+                    "phonePlaceholder": "Phone",
+                    "customerNamePlaceholder": "Customer name (optional)",
+                    "attachButton": "Attach Points to Order"
+                }
+            },
+            "serviceRequests": {
+                "title": "Service Requests (Real-time)",
+                "tableColumn": "Table",
+                "descriptionColumn": "Description",
+                "timeColumn": "Time",
+                "statusColumn": "Status",
+                "actionColumn": "Action",
+                "resolveButton": "Resolve",
+                "filterAll": "All",
+                "filterNew": "New",
+                "filterProcessed": "Processed"
+            },
+            "feedback": {
+                "title": "Customer Feedback",
+                "tableColumn": "Table",
+                "orderColumn": "Order",
+                "contentColumn": "Content",
+                "ratingColumn": "Rating",
+                "statusColumn": "Status",
+                "actionColumn": "Action",
+                "replyButton": "Reply",
+                "filterAll": "All",
+                "filterNew": "New",
+                "filterReplied": "Replied"
+            },
+            "orderHistory": {
+                "orderIdHeader": "Order ID",
+                "orderDateHeader": "Order Date",
+                "totalAmountHeader": "Total Amount",
+                "statusHeader": "Status",
+                "searchPhonePlaceholder": "phone",
+                "searchTablePlaceholder": "table_id",
+                "searchButton": "Search",
+                "emptyMessageSearch": "No order history data",
+                "emptyMessageNoSearch": "Enter phone or table_id then click Search"
+            },
+            "bannerSection": {
+                "title": "Loyal Customer Program 2026",
+                "description": "Enhance customer experience with tier-based rewards and discounts.",
+                "goldTier": "Gold: 10% OFF",
+                "silverTier": "Silver: 5% OFF",
+                "manageButton": "Manage Program"
+            },
+            "messages": {
+                "enterPhoneWarning": "Please enter a phone number.",
+                "memberLookupSuccess": "Member lookup successful.",
+                "memberLookupError": "Cannot lookup member information.",
+                "validationError": "Please enter valid order_id and phone number.",
+                "attachmentSuccess": "Loyalty attached to order.",
+                "attachmentError": "Cannot attach loyalty to order.",
+                "orderHistoryWarning": "Enter phone number or table_id to search.",
+                "callStaffNotFound": "Cannot find call staff request ID.",
+                "callStaffUpdateSuccess": "Updated call staff request #{{id}}",
+                "callStaffUpdateError": "Cannot update call staff request status.",
+                "feedbackNotFound": "Cannot find feedback request ID.",
+                "feedbackUpdateSuccess": "Replied to feedback #{{id}}",
+                "feedbackUpdateError": "Cannot update feedback request status."
+            }
+        }
+    }
+}

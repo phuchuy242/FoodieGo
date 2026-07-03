@@ -1,0 +1,45 @@
+{
+  "name": "foodiego-emenu",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.11.2",
+    "antd": "^6.2.2",
+    "apexcharts": "^5.3.6",
+    "bootstrap": "^5.3.3",
+    "dayjs": "^1.11.13",
+    "feather-icons-react": "^1.0.0",
+    "qrcode.react": "^4.2.0",
+    "react": "^18.2.0",
+    "react-apexcharts": "^1.9.0",
+    "react-bootstrap": "^2.10.10",
+    "react-countup": "^6.5.3",
+    "react-custom-scrollbars-2": "^4.5.0",
+    "react-dom": "^18.2.0",
+    "react-feather": "^2.0.10",
+    "react-i18next": "^16.5.4",
+    "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.13.0",
+    "react-select": "^5.10.2",
+    "react-slick": "^0.31.0",
+    "react-to-print": "^3.2.0",
+    "slick-carousel": "^1.8.1",
+    "sweetalert2": "^11.26.17",
+    "sweetalert2-react-content": "^5.1.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "gh-pages": "^6.3.0",
+    "sass": "^1.97.3",
+    "vite": "^5.0.0"
+  }
+}
