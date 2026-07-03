@@ -6,7 +6,7 @@ Thư mục `frontend` được kiến trúc theo mô hình **Multi-App Workspace
 
 ```
 frontend/
-├── admin/       # [Trang Quản lý & POS - DreamPOS] Sử dụng Create React App + Bootstrap/SCSS
+├── admin/       # [Trang Quản lý & POS - DreamPOS] Sử dụng Vite + React + Bootstrap/SCSS
 └── emenu/       # [Trang Đặt món Khách hàng - Smart E-Menu] Sử dụng Vite + React + Redux/Antd
 ```
 
