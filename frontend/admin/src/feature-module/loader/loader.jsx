@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Route,Routes, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const Loader = () => {
   const [loading, setLoading] = useState(false);
@@ -26,16 +26,13 @@ const Loader = () => {
   }, [location.pathname]); // Trigger useEffect when the pathname changes
 
   return (
-    <div>
-    {loading && (
-      <div id="global-loader">
-        <div className="whirly-loader"></div>
-      </div>
-    )}
-      <Routes>
-        <Route path="/"/>
-      </Routes>
-  </div>
+    <>
+      {loading && (
+        <div id="global-loader">
+          <div className="whirly-loader"></div>
+        </div>
+      )}
+    </>
   );
 };
 

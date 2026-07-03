@@ -1,7 +1,7 @@
 
 import React from "react";
 import { BrowserRouter } from 'react-router-dom';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.bundle.js';
 import { base_path } from "./environment.jsx";
