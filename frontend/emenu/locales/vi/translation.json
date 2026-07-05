@@ -1,0 +1,1646 @@
+{
+    "menu": {
+        "title": "Thực đơn",
+        "search": "Tìm kiếm món ăn",
+        "back": "Quay lại trang chủ",
+        "continueOrder": "Tiếp tục gọi món"
+    },
+    "menucard": {
+        "bestseller": "BÁN CHẠY NHẤT",
+        "addToCart": "Thêm vào giỏ",
+        "edit": "Chỉnh sửa",
+        "price": "Giá"
+    },
+    "cart": {
+        "title": "Giỏ hàng của bạn",
+        "subtitle": "Kiểm tra lại các món ăn trước khi thanh toán",
+        "empty": "Giỏ hàng trống",
+        "deliveryTo": "Giao đến",
+        "summary": "Tóm tắt đơn hàng",
+        "subtotal": "Tạm tính",
+        "total": "Tổng tiền",
+        "confirm": "Xác nhận",
+        "backHome": "Quay lại trang chủ",
+        "remove": "Xóa",
+        "edit": "Chỉnh sửa",
+        "note": "Ghi chú",
+        "qty": "Số lượng",
+        "extras": "Thêm món",
+        "termsAgreement": "Bằng cách đặt hàng, bạn đồng ý với Điều khoản dịch vụ của chúng tôi."
+    },
+    "cartTablet": {
+        "title": "Giỏ hàng của bạn",
+        "subtitle": "Kiểm tra lại các món ăn trước khi thanh toán"
+    },
+    "history": {
+        "title": "Lịch sử gọi món",
+        "subtitle": "Theo dõi trạng thái các món đã đặt của bạn trong bữa ăn này",
+        "orderId": "Mã đơn",
+        "noOrders": "Không có món nào trong lịch sử",
+        "qty": "Số lượng",
+        "status": "Trạng thái",
+        "served": "Đã phục vụ",
+        "kitchen": "Đã gửi bếp",
+        "totalAmount": "Tổng tiền các món đã gọi",
+        "includeTax": "(Bao gồm thuế VAT 8%)",
+        "continueOrder": "Tiếp tục gọi món",
+        "checkout": "Thanh toán ngay",
+        "orderNote": "Đơn hàng sẽ được đóng sau khi thanh toán thành công",
+        "earnPoints": "Tích điểm thành viên",
+        "earnPointsDesc": "Bạn sẽ nhận được 250 điểm từ đơn hàng này",
+        "quickSupport": "Hỗ trợ nhanh",
+        "quickSupportDesc": "Cần thêm bát đũa? Nhấn nút gọi nhân viên tại bàn"
+    },
+    "callstaff": {
+        "title": "Gọi nhân viên",
+        "addWater": "Thêm nước lọc",
+        "addCutlery": "Thêm bát đũa",
+        "others": "Khác",
+        "cleanTable": "Dọn bàn",
+        "menuAdvice": "Tư vấn món",
+        "note": "Thêm ghi chú",
+        "notePlaceholder": "Ví dụ: Xin thêm đá, đổi món...",
+        "cancel": "Hủy",
+        "submit": "Gửi",
+        "selectOption": "Vui lòng chọn một tùy chọn",
+        "sending": "Đang gửi…",
+        "sent": "Đã gửi!"
+    },
+    "payment": {
+        "title": "Thanh toán",
+        "subtitle": "Chọn phương thức thanh toán",
+        "cash": "Tiền mặt",
+        "card": "Thẻ tín dụng/Ghi nợ",
+        "qr": "Mã QR",
+        "total": "Tổng tiền thanh toán",
+        "processing": "Đang xử lý",
+        "error": "Lỗi thanh toán"
+    },
+    "login": {
+        "title": "Đăng nhập",
+        "phone": "Số điện thoại",
+        "rephone": "Nhập lại số điện thoại",
+        "enterPhone": "Nhập số điện thoại để tiếp tục",
+        "getOtp": "Lấy mã OTP",
+        "sending": "Đang gửi...",
+        "enterOtp": "Nhập mã OTP",
+        "otp": "Mã OTP",
+        "resend": "Gửi lại",
+        "verify": "Xác minh",
+        "verifying": "Đang xác minh...",
+        "sendAgain": "Không nhận được mã?"
+    },
+    "home": {
+        "title": "Xin chào",
+        "subtitle": "Đang gọi món ở bàn",
+        "menu": "Thực đơn",
+        "gallery": "Thư viện ảnh",
+        "reservations": "Đặt bàn",
+        "callstaff": "Gọi nhân viên",
+        "feedback": "Góp ý",
+        "language": "Ngôn ngữ",
+        "english": "Tiếng Anh",
+        "vietnamese": "Tiếng Việt",
+        "viewMenu": "Xem Menu - Gọi món",
+        "enterPhone": "Nhập số điện thoại để tích điểm",
+        "guestName": "Quý khách"
+    },
+    "orderSuccess": {
+        "title": "Đặt hàng thành công",
+        "orderNumber": "Số đơn hàng",
+        "thankYou": "Cảm ơn bạn đã đặt hàng!",
+        "estimatedTime": "Thời gian dự kiến",
+        "backHome": "Quay lại trang chủ",
+        "preparingTime": "Đang chuẩn bị",
+        "minute": "phút",
+        "moreItems": "... và {{count}} món khác"
+    },
+    "cartSummary": {
+        "viewCart": "Xem giỏ hàng",
+        "cart": "Giỏ hàng",
+        "items": "món",
+        "currency": "đ",
+        "cartError": "Lỗi đọc giỏ hàng"
+    },
+    "header": {
+        "deliveryTo": "Giao đến",
+        "search": "Tìm kiếm...",
+        "cart": "Giỏ hàng"
+    },
+    "detailProducts": {
+        "quantity": "Số lượng",
+        "addToCart": "Thêm vào giỏ",
+        "note": "Ghi chú",
+        "selectVariant": "Chọn tùy chọn",
+        "currency": "đ",
+        "editItem": "Chỉnh sửa món",
+        "back": "Quay lại",
+        "variants": "Biến thể",
+        "extras": "Thêm món"
+    },
+    "variantModal": {
+        "title": "Điều chỉnh món ăn",
+        "note": "Ghi chú",
+        "addNote": "Thêm ghi chú (vd: ít cay...)",
+        "add": "Thêm món",
+        "noItems": "Không tìm thấy món nào trong giỏ",
+        "close": "Đóng",
+        "ok": "OK",
+        "delete": "Xóa"
+    },
+    "paymentModal": {
+        "title": "Gọi thanh toán",
+        "subtitle": "Chọn phương thức thanh toán",
+        "cash": "Tiền mặt",
+        "bankCard": "Thẻ ngân hàng",
+        "bankTransfer": "Chuyển khoản ngân hàng",
+        "mobileApp": "Ứng dụng điện thoại",
+        "submit": "Gửi yêu cầu",
+        "table": "Bàn"
+    },
+    "feedback": {
+        "title": "Đánh giá trải nghiệm",
+        "rating": "Đánh giá",
+        "mealQuestion": "Bữa ăn hôm nay của bạn thế nào?",
+        "bestPart": "Bạn hài lòng nhất điều gì?",
+        "pleasant_staff": "Nhân viên thân thiện",
+        "fast_delivery": "Giao nhanh",
+        "delicious_food": "Đồ ăn ngon",
+        "nice_presentation": "Trình bày đẹp",
+        "additionalComment": "Nhận xét thêm",
+        "comment": "Hãy chia sẻ thêm cảm nhận của bạn...",
+        "submit": "Gửi đánh giá",
+        "cancel": "Bỏ qua",
+        "anonymousCustomer": "Khách hàng ẩn danh",
+        "guestCustomer": "Quý khách",
+        "thankYou": "Cảm ơn bạn đã đánh giá {{rating}} sao!",
+        "orderInfo": "Đơn hàng #{{orderId}} • Đã giao 15 phút trước"
+    },
+    "dashboard": {
+        "common": {
+            "search": "Tìm kiếm",
+            "choose": "Chọn",
+            "action": "Thao tác",
+            "status": "Trạng thái",
+            "statusOn": "Đang bật",
+            "statusOff": "Đang tắt",
+            "active": "Hoạt động",
+            "inactive": "Tắt",
+            "all": "Tất cả",
+            "cancel": "Hủy",
+            "add": "Thêm",
+            "save": "Lưu",
+            "edit": "Sửa",
+            "delete": "Xóa",
+            "close": "Đóng",
+            "error": "Lỗi",
+            "random": "Random",
+            "currency": "đ",
+            "na": "—",
+            "empty": "---",
+            "null": "null"
+        },
+        "inventoryManagement": {
+            "title": "Quản lý Kho",
+            "cards": {
+                "totalIngredients": "Tổng nguyên liệu",
+                "lowStock": "Cảnh báo tồn thấp",
+                "expiring": "Sắp hết hạn (7 ngày)",
+                "newPurchaseOrders": "Đơn mua hàng mới"
+            },
+            "sections": {
+                "lowStockList": "Danh sách tồn kho thấp",
+                "expiringAlerts": "Cảnh báo hết hạn"
+            },
+            "tabs": {
+                "dashboard": "Tổng quan & Cảnh báo",
+                "operations": "Biến động kho"
+            },
+            "columns": {
+                "ingredient": "Nguyên liệu",
+                "ingredientName": "Tên nguyên liệu",
+                "category": "Danh mục",
+                "unit": "Đơn vị",
+                "stock": "Tồn kho",
+                "minStock": "Định mức",
+                "expiryDate": "Hạn sử dụng",
+                "status": "Tình trạng",
+                "date": "Ngày",
+                "time": "Giờ",
+                "type": "Loại",
+                "change": "Thay đổi",
+                "note": "Ghi chú"
+            },
+            "placeholders": {
+                "quickSearch": "Tìm nhanh...",
+                "searchIngredient": "Tìm tên nguyên liệu...",
+                "selectCategory": "Chọn danh mục",
+                "note": "Ghi chú",
+                "selectDate": "Chọn ngày"
+            },
+            "actions": {
+                "order": "Đặt hàng"
+            },
+            "status": {
+                "daysLeft": "Còn {{count}} ngày"
+            },
+            "filter": {
+                "active": "Đang lọc: {{status}} (Nhấp để xóa lọc)",
+                "lowStock": "Tồn kho thấp",
+                "expiring": "Sắp hết hạn"
+            },
+            "operations": {
+                "typeIn": "Nhập kho",
+                "typeOut": "Xuất kho"
+            },
+            "confirmDelete": {
+                "title": "Bạn chắc chắn?",
+                "text": "Bạn sẽ không thể hoàn tác!",
+                "confirm": "Đồng ý xóa!"
+            },
+            "misc": {
+                "other": "Khác"
+            }
+        },
+        "topping": {
+            "title": "Quản lý topping",
+            "columns": {
+                "id": "ID",
+                "name": "Tên topping",
+                "price": "Giá",
+                "status": "Trạng thái",
+                "store": "Cửa hàng",
+                "updatedAt": "Cập nhật"
+            },
+            "actions": {
+                "updatePrice": "Cập nhật giá topping"
+            },
+            "alerts": {
+                "addedTitle": "Đã thêm",
+                "addedText": "Đã thêm topping mới.",
+                "updatedTitle": "Đã cập nhật",
+                "updatedText": "Đã cập nhật topping.",
+                "priceUpdatedText": "Đã cập nhật giá topping.",
+                "deletedTitle": "Đã xóa",
+                "deletedText": "Topping đã được gỡ bỏ.",
+                "saveError": "Không thể lưu topping.",
+                "toggleError": "Không thể cập nhật trạng thái.",
+                "deleteError": "Không thể xóa topping."
+            },
+            "validation": {
+                "nameRequired": "Vui lòng nhập tên topping.",
+                "priceRequired": "Vui lòng nhập giá topping.",
+                "priceInvalid": "Giá topping phải là số lớn hơn hoặc bằng 0.",
+                "missingStore": "Không tìm thấy cửa hàng hiện tại. Vui lòng đăng nhập lại."
+            },
+            "confirmDeleteTitle": "Xác nhận xóa?",
+            "confirmDeleteText": "Hành động này sẽ xóa topping khỏi hệ thống.",
+            "confirmDeleteOk": "Đồng ý xóa",
+            "modal": {
+                "addTitle": "Thêm topping",
+                "editTitle": "Sửa topping",
+                "namePlaceholder": "Nhập tên topping",
+                "pricePlaceholder": "Nhập giá topping",
+                "storePlaceholder": "Cửa hàng tự động theo phiên đăng nhập"
+            },
+            "batch": {
+                "title": "Thêm topping hàng loạt",
+                "switch": "Tạo hàng loạt",
+                "uploadFile": "Tải file",
+                "import": "Nhập từ Excel/JSON",
+                "guideTitle": "Hướng dẫn nhập file topping",
+                "guide": {
+                    "sheetLabel": "Sheet",
+                    "sheetDesc": "Dùng sheet đầu tiên của file Excel.",
+                    "requiredLabel": "Cột bắt buộc",
+                    "optionalLabel": "Cột tùy chọn",
+                    "exampleLabel": "Ví dụ dữ liệu"
+                },
+                "chooseFile": "Chọn file",
+                "addRowTop": "Thêm dòng",
+                "addRowBottom": "Thêm một dòng nữa",
+                "reorder": "Sắp xếp",
+                "back": "Quay lại danh sách",
+                "description": "Nhập thông tin topping bên dưới. Bạn có thể thêm nhiều dòng rồi lưu cùng lúc.",
+                "store": "Cửa hàng/chi nhánh",
+                "storePlaceholder": "Cửa hàng tự động theo phiên đăng nhập",
+                "validation": "Vui lòng nhập ít nhất 1 dòng hợp lệ (tên topping và giá >= 0).",
+                "savedTitle": "Lưu thành công",
+                "savedText": "Đã tạo {{count}} topping thành công.",
+                "savedTextWithIgnored": "Đã tạo {{count}} topping thành công, bỏ qua {{ignored}} dòng chưa hợp lệ.",
+                "partialTitle": "Lưu một phần",
+                "partialText": "Đã tạo {{success}} topping, {{failed}} dòng bị lỗi.",
+                "partialTextWithIgnored": "Đã tạo {{success}} topping, {{failed}} dòng bị lỗi, bỏ qua {{ignored}} dòng chưa hợp lệ.",
+                "emptyImport": "Không tìm thấy dữ liệu hợp lệ. Vui lòng kiểm tra lại file mẫu.",
+                "importSuccess": "Đã nạp {{count}} dòng từ file.",
+                "importSuccessWithSkipped": "Đã nạp {{count}} dòng từ file, bỏ qua {{skipped}} dòng trống hoặc không hợp lệ.",
+                "importError": "Không thể đọc file. Hỗ trợ .xlsx, .xls, .csv, .json.",
+                "tipTitle": "Mẹo nhỏ",
+                "tipText": "Bạn có thể dùng phím Tab để di chuyển nhanh giữa các ô. Sau khi nhập xong hãy nhấn Lưu.",
+                "total": "Tổng số topping",
+                "totalReady": "{{count}} mục sẵn sàng lưu",
+                "cancel": "Hủy thay đổi",
+                "saveAll": "Lưu tất cả thay đổi"
+            }
+        },
+        "recipeManagement": {
+            "title": "Lợi nhuận & Công thức món",
+            "tabs": {
+                "analysis": "Phân tích Lợi nhuận",
+                "recipe": "Công thức món"
+            },
+            "columns": {
+                "id": "ID",
+                "productName": "Tên món / Sản phẩm",
+                "price": "Giá bán",
+                "cogs": "Giá vốn (COGS)",
+                "profit": "Lợi nhuận",
+                "margin": "Tỷ suất (%)",
+                "recipe": "Công thức",
+                "note": "Ghi chú cách làm",
+                "stock": "Tồn kho",
+                "categoryId": "ID danh mục",
+                "categoryName": "Tên danh mục",
+                "ingredient": "Nguyên liệu",
+                "dosage": "Định lượng (Net)",
+                "unit": "Đơn vị"
+            },
+            "labels": {
+                "price": "Giá bán:",
+                "cogs": "Giá vốn:",
+                "profit": "Lợi nhuận:",
+                "margin": "Tỷ suất lợi nhuận",
+                "financialMetrics": "Chỉ số tài chính",
+                "ingredients": "Nguyên liệu",
+                "pickProduct": "Chọn món / sản phẩm",
+                "note": "Ghi chú cách làm",
+                "detailAnalysis": "Phân tích lợi nhuận chi tiết",
+                "breakdownTitle": "Chi tiết giá vốn theo công thức",
+                "totalCogs": "Tổng giá vốn"
+            },
+            "placeholders": {
+                "selectProduct": "Chọn sản phẩm",
+                "searchIngredient": "Tìm nguyên liệu...",
+                "unit": "Đơn vị",
+                "recipeNote": "Nhập hướng dẫn chi tiết về cách pha chế..."
+            },
+            "actions": {
+                "addRecipe": "Thêm",
+                "continue": "Tiếp tục",
+                "editRecipe": "Sửa công thức",
+                "saveRecipe": "Lưu công thức",
+                "addIngredient": "Thêm thành phần"
+            },
+            "modals": {
+                "createTitle": "Chọn món để tạo công thức",
+                "viewTitle": "Xem công thức",
+                "editTitle": "Chỉnh sửa công thức"
+            },
+            "tooltips": {
+                "viewDetail": "Xem chi tiết",
+                "viewRecipe": "Xem công thức",
+                "deleteRecipe": "Xóa công thức"
+            },
+            "empty": {
+                "noRecipe": "Chưa có",
+                "noNote": "Chưa có",
+                "noProducts": "Không tìm thấy sản phẩm phù hợp.",
+                "noBreakdown": "Chưa có công thức nên chưa thể phân rã giá vốn.",
+                "noIngredientsHint": "Chưa có thêm nguyên liệu nào. Nhấn nút \"Thêm thành phần\" để thêm mới."
+            },
+            "messages": {
+                "noRecipeToDelete": "Món này chưa có công thức để xóa.",
+                "deleted": "Đã xóa công thức.",
+                "updated": "Đã cập nhật công thức cho món: {{name}}",
+                "productNotFound": "Không tìm thấy sản phẩm."
+            },
+            "confirmDelete": {
+                "title": "Xóa công thức món?",
+                "text": "Xóa toàn bộ công thức của \"{{name}}\"?"
+            },
+            "validation": {
+                "ingredientRequired": "Vui lòng chọn nguyên liệu",
+                "dosageRequired": "Nhập số lượng",
+                "unitRequired": "Chọn đơn vị",
+                "duplicateIngredient": "Không được chọn trùng nguyên liệu trong 1 công thức."
+            },
+            "sections": {
+                "ingredients": "Thành phần"
+            },
+            "misc": {
+                "productAbbr": "SP"
+            }
+        },
+        "sanPhamBatch": {
+            "title": "Thêm nhiều sản phẩm",
+            "subtitle": "Giao diện bảng gọn hơn để thao tác nhanh và dễ đọc.",
+            "meta": {
+                "total": "Tổng cộng: {{count}} sản phẩm",
+                "unsaved": "Chưa lưu: {{count}}",
+                "selected": "Đã chọn: {{count}}"
+            },
+            "actions": {
+                "uploadFile": "Upload file",
+                "importGuide": "Nhập từ Excel/JSON",
+                "addRow": "Thêm dòng mới",
+                "addNewRowBlock": "Thêm dòng sản phẩm mới",
+                "selectAll": "Chọn tất cả",
+                "deleteSelected": "Xóa dòng đã chọn",
+                "chooseFile": "Chọn file",
+                "configure": "Cấu hình",
+                "deleteRow": "Xóa dòng",
+                "duplicateRow": "Nhân bản dòng",
+                "reset": "Làm mới",
+                "saveProducts": "Lưu {{count}} sản phẩm",
+                "saveChanges": "Lưu thay đổi"
+            },
+            "stats": {
+                "valid": "Hợp lệ",
+                "error": "Lỗi"
+            },
+            "columns": {
+                "image": "Hình ảnh",
+                "name": "Tên sản phẩm",
+                "category": "Danh mục",
+                "store": "Store UUID",
+                "price": "Giá",
+                "discount": "Giảm giá",
+                "stock": "Tồn kho",
+                "stockPrep": "Tồn kho / Chuẩn bị",
+                "status": "Trạng thái",
+                "extras": "Topping & Extras"
+            },
+            "placeholders": {
+                "name": "Tên sản phẩm",
+                "category": "Chọn danh mục",
+                "store": "Store ID từ localStorage",
+                "zero": "0",
+                "stock": "Tồn kho",
+                "prep": "Chuẩn bị (phút)"
+            },
+            "labels": {
+                "bestseller": "BÁN CHẠY",
+                "imageHint": "Tải ảnh lên"
+            },
+            "empty": "Không có sản phẩm nào",
+            "summary": {
+                "rows": "Số dòng",
+                "products": "sản phẩm",
+                "totalValue": "Tổng giá trị"
+            },
+            "validation": {
+                "minOneProduct": "Vui lòng nhập ít nhất 1 sản phẩm.",
+                "slugPriceRequired": "Vui lòng nhập đủ Slug và Price.",
+                "nameRequired": "Tên sản phẩm không được để trống"
+            },
+            "guide": {
+                "title": "Cấu trúc file Nhập sản phẩm",
+                "required": "Cột bắt buộc:",
+                "orCategoryName": "hoặc tên danh mục",
+                "common": "Cột thường dùng:",
+                "storeNote": "Lưu ý store:",
+                "storeNoteText": "sẽ tự động lấy từ localStorage của tài khoản đăng nhập.",
+                "example": "Ví dụ:",
+                "jsonHint": "mảng object hoặc object có"
+            },
+            "modal": {
+                "title": "Quản lý Topping & Extras",
+                "description": "Chọn topping từ API topping và nhập extras dạng JSON object.",
+                "toppings": "Toppings",
+                "selectTopping": "Chọn topping",
+                "extras": "Extras (JSON object)"
+            },
+            "alerts": {
+                "noValidDataTitle": "Không có dữ liệu hợp lệ",
+                "noValidDataText": "Không đọc được dòng dữ liệu nào từ file. Vui lòng kiểm tra lại cột bắt buộc.",
+                "importSuccessTitle": "Nhập dữ liệu thành công",
+                "importSuccessWithSkipped": "Đã nạp {{loaded}} dòng. Bỏ qua {{skipped}} dòng trống/không hợp lệ.",
+                "importSuccessOnly": "Đã nạp {{loaded}} dòng.",
+                "importFailedTitle": "Không thể nhập file",
+                "importFailedText": "Hỗ trợ file .xlsx, .xls, .csv, .json.",
+                "missingStoreTitle": "Thiếu store_id",
+                "missingStoreText": "Không tìm thấy store_id trong localStorage. Vui lòng đăng nhập lại.",
+                "missingInfoTitle": "Thiếu thông tin",
+                "successTitle": "Thành công",
+                "savedWithSkipped": "Đã tạo {{created}} sản phẩm. Bỏ qua {{skipped}} dòng chưa đủ Slug/Price.",
+                "savedOnly": "Đã tạo {{created}} sản phẩm.",
+                "createFailedTitle": "Tạo thất bại",
+                "createFailedText": "Không thể tạo sản phẩm."
+            }
+        },
+        "permissionManagement": {
+            "title": "Quản lý Quyền hạn",
+            "actions": {
+                "add": "Thêm quyền",
+                "update": "Cập nhật"
+            },
+            "columns": {
+                "module": "Tên module",
+                "group": "Nhóm quyền"
+            },
+            "placeholders": {
+                "search": "Tìm kiếm module / chức năng...",
+                "selectRole": "Chọn vai trò",
+                "moduleName": "Ví dụ: Quản lý kho"
+            },
+            "fields": {
+                "moduleName": "Tên module",
+                "group": "Nhóm quyền",
+                "info": "Thông tin"
+            },
+            "modals": {
+                "addTitle": "Thêm quyền/module",
+                "editTitle": "Sửa quyền/module",
+                "viewTitle": "Chi tiết quyền/module"
+            },
+            "messages": {
+                "adminLocked": "Không thể thay đổi quyền của Admin!",
+                "saved": "Đã lưu cập nhật phân quyền!",
+                "enabled": "Đã bật trạng thái module",
+                "disabled": "Đã tắt trạng thái module",
+                "deleted": "Đã xóa module/quyền"
+            },
+            "validation": {
+                "nameRequired": "Vui lòng nhập Tên module.",
+                "groupRequired": "Vui lòng chọn Nhóm quyền."
+            },
+            "alerts": {
+                "missingInfoTitle": "Thiếu thông tin",
+                "updatedTitle": "Đã cập nhật",
+                "updatedText": "Đã cập nhật quyền/module.",
+                "addedTitle": "Đã thêm",
+                "addedText": "Đã thêm quyền/module mới."
+            },
+            "confirmDelete": {
+                "title": "Xác nhận xóa?",
+                "text": "Hành động này sẽ xóa module/quyền khỏi hệ thống!",
+                "confirm": "Đồng ý, xóa!"
+            },
+            "empty": {
+                "noModules": "Không có module/quyền phù hợp."
+            },
+            "roles": {
+                "admin": "Admin",
+                "adminDesc": "Quản trị viên hệ thống",
+                "manager": "Quản lý",
+                "managerDesc": "Quản lý cửa hàng",
+                "cashier": "Thu ngân",
+                "cashierDesc": "Nhân viên thu ngân",
+                "waiter": "Phục vụ",
+                "waiterDesc": "Nhân viên phục vụ bàn",
+                "kitchen": "Bếp / Bar",
+                "kitchenDesc": "Nhân viên bếp"
+            },
+            "modules": {
+                "dashboard": "Dashboard",
+                "pos": "Bán hàng (POS)",
+                "tables": "Quản lý Bàn",
+                "orders": "Quản lý Đơn hàng",
+                "products": "Quản lý Sản phẩm",
+                "inventory": "Quản lý Kho",
+                "recipes": "Công thức & Định mức",
+                "customers": "Khách hàng",
+                "employees": "Nhân viên",
+                "reports": "Báo cáo",
+                "settings": "Cài đặt hệ thống"
+            },
+            "groups": {
+                "main": "Chính",
+                "sales": "Bán hàng",
+                "inventory": "Kho",
+                "catalog": "Danh mục",
+                "crm": "CRM",
+                "hrm": "Nhân sự",
+                "reports": "Báo cáo",
+                "settings": "Cài đặt"
+            }
+        },
+        "rolesManagement": {
+            "title": "Quản lý Vai trò",
+            "columns": {
+                "role": "Vai trò",
+                "description": "Mô tả",
+                "level": "Cấp bậc",
+                "users": "Số người dùng"
+            },
+            "placeholders": {
+                "search": "Tìm kiếm vai trò...",
+                "name": "Ví dụ: Quản lý",
+                "description": "Mô tả ngắn",
+                "noParent": "(Không có)"
+            },
+            "fields": {
+                "name": "Tên vai trò",
+                "description": "Mô tả",
+                "level": "Cấp bậc",
+                "parentRole": "Vai trò cha",
+                "info": "Thông tin"
+            },
+            "labels": {
+                "userCount": "{{count}} người dùng",
+                "hierarchy": "Cấu trúc phân cấp"
+            },
+            "levels": {
+                "level": "Level {{level}}"
+            },
+            "messages": {
+                "deleted": "Đã xóa vai trò",
+                "enabled": "Đã bật trạng thái vai trò",
+                "disabled": "Đã tắt trạng thái vai trò"
+            },
+            "validation": {
+                "nameRequired": "Vui lòng nhập Tên vai trò."
+            },
+            "alerts": {
+                "missingInfoTitle": "Thiếu thông tin",
+                "updatedTitle": "Đã cập nhật",
+                "updatedText": "Đã cập nhật vai trò.",
+                "addedTitle": "Đã thêm",
+                "addedText": "Đã thêm vai trò mới."
+            },
+            "confirmDelete": {
+                "title": "Xác nhận xóa?",
+                "text": "Hành động này sẽ xóa vai trò khỏi hệ thống!",
+                "confirm": "Đồng ý, xóa!"
+            },
+            "empty": {
+                "noRoles": "Không tìm thấy vai trò phù hợp"
+            },
+            "modals": {
+                "addTitle": "Thêm vai trò",
+                "editTitle": "Sửa vai trò",
+                "viewTitle": "Chi tiết vai trò"
+            },
+            "actions": {
+                "update": "Cập nhật"
+            },
+            "roles": {
+                "admin": "Admin",
+                "adminDesc": "Quản trị viên hệ thống",
+                "manager": "Quản lý",
+                "managerDesc": "Quản lý cửa hàng",
+                "cashier": "Thu ngân",
+                "cashierDesc": "Nhân viên thu ngân",
+                "waiter": "Phục vụ",
+                "waiterDesc": "Nhân viên phục vụ bàn",
+                "kitchen": "Bếp / Bar",
+                "kitchenDesc": "Nhân viên bếp"
+            }
+        },
+        "rolePermissionManagement": {
+            "title": "Phân quyền người dùng",
+            "columns": {
+                "module": "Module",
+                "group": "Nhóm quyền",
+                "permissions": "Quyền hạn"
+            },
+            "placeholders": {
+                "searchModule": "Tìm module...",
+                "moduleId": "Ví dụ: products",
+                "group": "Ví dụ: Catalog",
+                "module": "Ví dụ: Quản lý Sản phẩm",
+                "description": "Mô tả ngắn"
+            },
+            "fields": {
+                "group": "Nhóm quyền",
+                "module": "Module",
+                "description": "Mô tả"
+            },
+            "labels": {
+                "permissionCount": "{{count}} / 4 quyền",
+                "group": "Nhóm quyền",
+                "selectAll": "Chọn tất cả",
+                "toggleAll": "Bật/tắt toàn bộ quyền của module",
+                "initialPermissions": "Quyền hạn ban đầu",
+                "appliesToSelected": "Áp dụng cho vai trò đang chọn"
+            },
+            "permissions": {
+                "view": {
+                    "title": "Xem (View)",
+                    "desc": "Cho phép xem danh sách và chi tiết dữ liệu",
+                    "short": "Xem"
+                },
+                "create": {
+                    "title": "Thêm (Create)",
+                    "desc": "Cho phép tạo mới bản ghi và thêm dữ liệu",
+                    "short": "Thêm"
+                },
+                "edit": {
+                    "title": "Sửa (Edit)",
+                    "desc": "Cho phép chỉnh sửa và cập nhật thông tin",
+                    "short": "Sửa"
+                },
+                "delete": {
+                    "title": "Xóa (Delete)",
+                    "desc": "Cho phép xóa bản ghi khỏi hệ thống",
+                    "short": "Xóa"
+                }
+            },
+            "messages": {
+                "adminLocked": "Không thể thay đổi quyền của Admin!",
+                "saved": "Đã lưu cập nhật phân quyền!",
+                "added": "Đã thêm module.",
+                "deleted": "Đã xóa module."
+            },
+            "validation": {
+                "moduleRequired": "Vui lòng nhập ID, Module và Nhóm quyền.",
+                "duplicateId": "ID đã tồn tại.",
+                "cannotDeleteDashboard": "Không thể xóa module Dashboard."
+            },
+            "confirmDelete": {
+                "text": "Bạn có chắc muốn xóa module này?"
+            },
+            "modals": {
+                "permissionTitle": "Phân quyền: {{module}}",
+                "addModuleTitle": "Thêm module"
+            },
+            "empty": {
+                "noModules": "Không tìm thấy module phù hợp."
+            },
+            "roles": {
+                "admin": "Admin",
+                "adminDesc": "Quản trị viên hệ thống",
+                "manager": "Quản lý",
+                "managerDesc": "Quản lý cửa hàng",
+                "cashier": "Thu ngân",
+                "cashierDesc": "Nhân viên thu ngân",
+                "kitchen": "Bếp / Bar",
+                "kitchenDesc": "Nhân viên bếp",
+                "customer": "Khách hàng",
+                "customerDesc": "Khách hàng"
+            },
+            "modules": {
+                "dashboard": "Dashboard",
+                "pos": "Bán hàng (POS)",
+                "tables": "Quản lý Bàn",
+                "orders": "Quản lý Đơn hàng",
+                "products": "Quản lý Sản phẩm",
+                "inventory": "Quản lý Kho",
+                "recipes": "Công thức & Định mức",
+                "customers": "Khách hàng",
+                "employees": "Nhân viên",
+                "reports": "Báo cáo",
+                "settings": "Cài đặt hệ thống"
+            },
+            "moduleDescriptions": {
+                "dashboard": "Tổng quan hệ thống",
+                "pos": "Bán hàng",
+                "tables": "Quản lý Bàn",
+                "orders": "Quản lý Đơn hàng",
+                "products": "Quản lý Sản phẩm",
+                "inventory": "Quản lý Kho",
+                "recipes": "Công thức & Định mức",
+                "customers": "Khách hàng",
+                "employees": "Nhân viên",
+                "reports": "Báo cáo",
+                "settings": "Cài đặt hệ thống"
+            }
+        },
+        "tablesManagement": {
+            "title": "Quản lý Bàn",
+            "searchPlaceholder": "Tìm kiếm",
+            "addButton": "Thêm",
+            "columns": {
+                "id": "ID",
+                "orderId": "Đơn hàng",
+                "name": "Tên bàn",
+                "qrCode": "Mã QR",
+                "area": "Khu vực",
+                "capacity": "Sức chứa",
+                "status": "Trạng thái"
+            },
+            "filters": {
+                "date": "Chọn ngày",
+                "area": "Chọn khu vực",
+                "status": "Chọn trạng thái",
+                "allAreas": "Tất cả khu vực",
+                "allStatuses": "Tất cả trạng thái"
+            },
+            "status": {
+                "available": "Trống",
+                "occupied": "Đang phục vụ",
+                "reserved": "Đã đặt",
+                "cleaning": "Đang dọn"
+            },
+            "capacityValue": "{{count}} khách",
+            "orderLabel": "Đơn #{{id}}",
+            "notSeated": "Chưa ngồi",
+            "emptyText": "---",
+            "unknownArea": "Không xác định",
+            "defaultTableName": "Bàn {{id}}",
+            "qrLabel": "Mã QR",
+            "qrTitle": "Mã QR Bàn - {{name}}",
+            "qrTitleFallback": "Mã QR Bàn",
+            "qrScan": "Quét mã để chọn món & thanh toán",
+            "printQr": "In Mã QR",
+            "viewDetail": "Xem chi tiết",
+            "detailTitle": "Chi tiết bàn - {{name}}",
+            "detailTitleFallback": "Chi tiết bàn",
+            "detail": {
+                "table": "Bàn",
+                "currentOrder": "Đơn hiện tại",
+                "area": "Khu vực",
+                "capacity": "Sức chứa",
+                "notes": "Ghi chú",
+                "qrCode": "Mã QR"
+            },
+            "confirmDeleteTitle": "Xác nhận xóa?",
+            "confirmDeleteText": "Hành động này sẽ xóa bàn khỏi hệ thống!",
+            "confirmDeleteOk": "Đồng ý, xóa!",
+            "deletedTitle": "Đã xóa!",
+            "deletedText": "Bàn đã được gỡ bỏ."
+        },
+        "employeeList": {
+            "title": "Danh sách nhân viên",
+            "addButton": "Thêm",
+            "statusHint": "Bật để cho phép nhân viên đăng nhập và thao tác.",
+            "columns": {
+                "id": "ID",
+                "username": "Tên đăng nhập",
+                "fullName": "Họ tên",
+                "email": "Email",
+                "phone": "Số điện thoại",
+                "branchId": "ID chi nhánh",
+                "createdAt": "Tạo lúc"
+            },
+            "fields": {
+                "password": "Mật khẩu",
+                "firstName": "Tên",
+                "lastName": "Họ",
+                "storeId": "Store ID",
+                "groupIds": "Nhóm quyền",
+                "permissionIds": "Quyền chi tiết"
+            },
+            "status": {
+                "active": "Hoạt động",
+                "locked": "Khóa"
+            },
+            "placeholders": {
+                "username": "Nhập tên đăng nhập",
+                "password": "Để trống nếu không đổi mật khẩu",
+                "firstName": "Nhập tên",
+                "lastName": "Nhập họ",
+                "email": "Nhập email",
+                "phone": "Nhập số điện thoại",
+                "branchId": "Nhập ID chi nhánh",
+                "storeId": "Nhập store ID",
+                "groupIds": "Ví dụ: 1,2,3",
+                "permissionIds": "Ví dụ: 4,5,6"
+            },
+            "modal": {
+                "editTitle": "Cập nhật nhân viên",
+                "viewTitle": "Thông tin nhân viên"
+            },
+            "validation": {
+                "usernameRequired": "Tên đăng nhập là bắt buộc."
+            },
+            "alerts": {
+                "invalidUuid": "Không tìm thấy UUID hợp lệ.",
+                "deletedTitle": "Đã xóa",
+                "deletedText": "Đã xóa nhân viên thành công.",
+                "deleteFailTitle": "Xóa thất bại",
+                "deleteFailText": "Không thể xóa nhân viên.",
+                "updatedText": "Cập nhật nhân viên thành công.",
+                "updateFailText": "Không thể cập nhật nhân viên."
+            },
+            "confirmDeleteTitle": "Xóa nhân viên?",
+            "confirmDeleteText": "Bạn có chắc muốn xóa tài khoản {{username}}?"
+        },
+        "areas": {
+            "title": "Khu vực",
+            "searchPlaceholder": "Tìm kiếm nhanh...",
+            "addButton": "Thêm",
+            "columns": {
+                "id": "ID",
+                "name": "Khu vực",
+                "areaName": "Tên khu vực",
+                "branch": "Chi nhánh",
+                "description": "Mô tả",
+                "count": "Số bàn"
+            },
+            "status": {
+                "active": "Hoạt động",
+                "inactive": "Ngừng"
+            },
+            "defaultDesc": "Khu vực",
+            "tablesLabel": "{{count}} bàn",
+            "detailTitle": "Chi tiết khu vực - {{name}}",
+            "detailTitleFallback": "Chi tiết khu vực",
+            "detail": {
+                "area": "Khu vực",
+                "status": "Trạng thái",
+                "count": "Số bàn",
+                "description": "Mô tả"
+            },
+            "modal": {
+                "addTitle": "Thêm khu vực",
+                "editTitle": "Sửa khu vực",
+                "viewTitle": "Chi tiết khu vực",
+                "nameLabel": "Tên khu vực",
+                "countLabel": "Số lượng bàn",
+                "iconLabel": "Icon",
+                "descriptionLabel": "Mô tả",
+                "namePlaceholder": "Nhập tên khu vực",
+                "descriptionPlaceholder": "Mô tả ngắn về khu vực",
+                "iconHome": "Sảnh chính",
+                "iconCoffee": "Ngoài trời",
+                "iconUsers": "VIP"
+            },
+            "placeholders": {
+                "id": "Ví dụ: 1",
+                "name": "Ví dụ: Khu VIP",
+                "branch": "Chọn chi nhánh"
+            },
+            "branchLabel": "Chi nhánh: {{name}}",
+            "idBadge": "ID {{id}}",
+            "selectedId": "ID đang chọn: {{id}}",
+            "emptyText": "Chưa có khu vực",
+            "actions": {
+                "editTitle": "Sửa khu vực",
+                "deleteTitle": "Xóa khu vực"
+            },
+            "validation": {
+                "idRequired": "Vui lòng nhập ID khu vực hợp lệ.",
+                "nameRequired": "Vui lòng nhập tên khu vực.",
+                "branchRequired": "Vui lòng chọn chi nhánh.",
+                "countInvalid": "Số bàn phải là số >= 0."
+            },
+            "alerts": {
+                "missingInfoTitle": "Thiếu thông tin",
+                "addedTitle": "Đã thêm",
+                "addedText": "Đã thêm khu vực mới.",
+                "updatedTitle": "Đã cập nhật",
+                "updatedText": "Đã cập nhật khu vực.",
+                "deletedTitle": "Đã xóa!",
+                "deletedText": "Khu vực đã được gỡ bỏ.",
+                "saveError": "Không thể lưu khu vực."
+            },
+            "confirmDeleteTitle": "Xác nhận xóa?",
+            "confirmDeleteText": "Hành động này sẽ xóa khu vực khỏi danh sách hiển thị.",
+            "confirmDeleteOk": "Đồng ý, xóa!"
+        },
+        "stores": {
+            "title": "Cửa hàng",
+            "searchPlaceholder": "Tìm kiếm nhanh...",
+            "addButton": "Thêm cửa hàng",
+            "emptyText": "Chưa có cửa hàng",
+            "columns": {
+                "code": "Mã",
+                "name": "Tên cửa hàng",
+                "tax": "Mã số thuế",
+                "phone": "SĐT",
+                "owner": "Chủ cửa hàng",
+                "action": "Thao tác"
+            },
+            "grid": {
+                "ownerLabel": "Chủ:",
+                "ownerFallback": "—"
+            },
+            "modal": {
+                "addTitle": "Thêm cửa hàng",
+                "editTitle": "Cập nhật cửa hàng",
+                "viewTitle": "Xem cửa hàng",
+                "image": "Ảnh cửa hàng",
+                "imageHint": "PNG, JPG, GIF up to 5MB",
+                "noImage": "Không có ảnh",
+                "code": "Mã cửa hàng",
+                "name": "Tên cửa hàng",
+                "tax": "Mã số thuế",
+                "phone": "Số điện thoại",
+                "owner": "Chủ cửa hàng",
+                "namePlaceholder": "Nhập tên cửa hàng",
+                "taxPlaceholder": "Nhập mã số thuế",
+                "phonePlaceholder": "Nhập số điện thoại",
+                "ownerPlaceholder": "Nhập tên chủ cửa hàng"
+            },
+            "validation": {
+                "codeRequired": "Vui lòng nhập mã cửa hàng.",
+                "nameRequired": "Vui lòng nhập tên cửa hàng.",
+                "taxRequired": "Vui lòng nhập mã số thuế.",
+                "phoneRequired": "Vui lòng nhập số điện thoại.",
+                "ownerRequired": "Vui lòng nhập tên chủ."
+            },
+            "alerts": {
+                "missingTitle": "Thiếu thông tin",
+                "addedTitle": "Đã thêm",
+                "addedText": "Đã thêm cửa hàng.",
+                "updatedTitle": "Đã cập nhật",
+                "updatedText": "Đã cập nhật cửa hàng.",
+                "saveError": "Không thể lưu cửa hàng.",
+                "deletedTitle": "Đã xóa",
+                "deletedText": "Đã xóa cửa hàng.",
+                "deleteError": "Không thể xóa cửa hàng."
+            },
+            "confirmDeleteTitle": "Xóa cửa hàng?",
+            "confirmDeleteText": "Bạn có chắc muốn xóa cửa hàng {{name}}?",
+            "confirmDeleteOk": "Xóa"
+        },
+        "branches": {
+            "title": "Chi nhánh",
+            "searchPlaceholder": "Tìm kiếm nhanh...",
+            "addButton": "Thêm chi nhánh",
+            "emptyText": "Chưa có chi nhánh",
+            "columns": {
+                "id": "ID",
+                "address": "Địa chỉ",
+                "phone": "SĐT",
+                "manager": "Quản lý",
+                "storeUuid": "UUID cửa hàng",
+                "userUuid": "UUID user"
+            },
+            "grid": {
+                "managerLabel": "Quản lý:",
+                "managerFallback": "—"
+            },
+            "modal": {
+                "addTitle": "Thêm chi nhánh",
+                "editTitle": "Cập nhật chi nhánh",
+                "viewTitle": "Xem chi nhánh",
+                "id": "ID chi nhánh",
+                "address": "Địa chỉ",
+                "phone": "Số điện thoại",
+                "manager": "Tên quản lý",
+                "storeUuid": "UUID cửa hàng",
+                "userUuid": "UUID user (tuỳ chọn)",
+                "addressPlaceholder": "Ví dụ: Đà Nẵng",
+                "phonePlaceholder": "0909xxxxxx",
+                "managerPlaceholder": "Nguyễn Văn A",
+                "storeUuidPlaceholder": "store-001",
+                "userUuidPlaceholder": "u-admin-001"
+            },
+            "validation": {
+                "idRequired": "Vui lòng nhập ID chi nhánh.",
+                "addressRequired": "Vui lòng nhập địa chỉ.",
+                "phoneRequired": "Vui lòng nhập số điện thoại.",
+                "managerRequired": "Vui lòng nhập tên quản lý.",
+                "storeUuidRequired": "Vui lòng nhập UUID cửa hàng."
+            },
+            "alerts": {
+                "missingTitle": "Thiếu thông tin",
+                "addedTitle": "Đã thêm",
+                "addedText": "Đã thêm chi nhánh.",
+                "updatedTitle": "Đã cập nhật",
+                "updatedText": "Đã cập nhật chi nhánh.",
+                "saveError": "Không thể lưu chi nhánh.",
+                "deletedTitle": "Đã xóa",
+                "deletedText": "Đã xóa chi nhánh.",
+                "deleteError": "Không thể xóa chi nhánh."
+            },
+            "confirmDeleteTitle": "Xóa chi nhánh?",
+            "confirmDeleteText": "Bạn có chắc muốn xóa chi nhánh {{name}}?",
+            "confirmDeleteOk": "Xóa"
+        },
+        "productCategories": {
+            "title": "Danh mục sản phẩm",
+            "searchPlaceholder": "Tìm kiếm nhanh...",
+            "addButton": "Thêm",
+            "batchModalTitle": "Thêm nhanh nhiều sản phẩm",
+            "toggle": {
+                "single": "Thêm 1 danh mục",
+                "batch": "+ Thêm nhiều sản phẩm"
+            },
+            "addMultipleProducts": "Thêm nhiều sản phẩm",
+            "columns": {
+                "id": "ID",
+                "name": "Tên sản phẩm",
+                "branch": "ID chi nhánh"
+            },
+            "placeholders": {
+                "id": "Ví dụ: 1",
+                "name": "Nhập tên danh mục",
+                "branch": "Nhập ID chi nhánh"
+            },
+            "selectedId": "ID đang chọn: {{id}}",
+            "branchLabel": "Chi nhánh: {{id}}",
+            "idBadge": "ID {{id}}",
+            "emptyText": "Chưa có danh mục",
+            "branchHint": "Để trống nếu áp dụng cho tất cả chi nhánh.",
+            "modal": {
+                "addTitle": "Thêm danh mục",
+                "editTitle": "Cập nhật danh mục"
+            },
+            "batchAddRow": "Thêm dòng",
+            "batchDeleteRow": "Xóa dòng",
+            "batchValidLabel": "Hợp lệ",
+            "batchErrorLabel": "Lỗi",
+            "batchEmpty": "Chưa có dòng nào.",
+            "batchCountLabel": "Số dòng",
+            "batchItems": "sản phẩm",
+            "batchTotalLabel": "Tổng giá trị",
+            "batchSave": "Lưu {{count}} sản phẩm",
+            "validation": {
+                "idRequired": "Vui lòng nhập ID danh mục hợp lệ.",
+                "nameRequired": "Vui lòng nhập tên danh mục.",
+                "branchRequired": "Vui lòng nhập ID chi nhánh."
+            },
+            "alerts": {
+                "missingInfoTitle": "Thiếu thông tin",
+                "addedTitle": "Đã thêm",
+                "addedText": "Đã thêm danh mục.",
+                "updatedTitle": "Đã cập nhật",
+                "updatedText": "Đã cập nhật danh mục.",
+                "deletedTitle": "Đã xóa!",
+                "deletedText": "Danh mục đã được gỡ bỏ.",
+                "saveError": "Không thể lưu danh mục."
+            },
+            "confirmDeleteTitle": "Xác nhận xóa?",
+            "confirmDeleteText": "Hành động này sẽ xóa danh mục khỏi danh sách hiển thị.",
+            "confirmDeleteOk": "Đồng ý, xóa!",
+            "viewTitle": "Sản phẩm trong danh mục - {{name}}",
+            "summary": {
+                "totalProducts": "Tổng số sản phẩm",
+                "totalValue": "Tổng giá trị",
+                "totalItems": "Tổng {{total}} sản phẩm"
+            },
+            "productsEmptyTitle": "Chưa có sản phẩm",
+            "productsEmptyDesc": "Danh mục này chưa có sản phẩm nào.",
+            "products": {
+                "columns": {
+                    "id": "ID",
+                    "name": "Sản phẩm",
+                    "price": "Giá bán",
+                    "status": "Trạng thái",
+                    "note": "Ghi chú"
+                }
+            }
+        },
+        "ordersList": {
+            "title": "Quản lý đơn hàng",
+            "details": {
+                "title": "Chi tiết đơn hàng",
+                "notFound": "Không tìm thấy đơn hàng.",
+                "na": "N/A",
+                "labels": {
+                    "id": "Mã đơn",
+                    "status": "Trạng thái",
+                    "customer": "Khách hàng",
+                    "phone": "Số điện thoại",
+                    "channel": "Kênh",
+                    "createdAt": "Tạo lúc"
+                },
+                "payment": {
+                    "title": "Thanh toán",
+                    "method": "Phương thức",
+                    "paidAmount": "Đã thanh toán",
+                    "remaining": "Còn lại",
+                    "status": {
+                        "title": "Trạng thái",
+                        "paid": "Đã thanh toán",
+                        "unpaid": "Chưa thanh toán"
+                    },
+                    "methods": {
+                        "cash": "Tiền mặt",
+                        "card": "Thẻ",
+                        "transfer": "Chuyển khoản",
+                        "ewallet": "Ví điện tử",
+                        "qr": "QR",
+                        "other": "Khác"
+                    }
+                },
+                "items": {
+                    "title": "Danh sách món",
+                    "total": "Tổng:",
+                    "empty": "Đơn này chưa có món nào.",
+                    "headers": {
+                        "product": "Món",
+                        "price": "Giá",
+                        "qty": "SL",
+                        "status": "Trạng thái"
+                    }
+                }
+            },
+            "columns": {
+                "orderId": "Mã đơn",
+                "table": "Bàn",
+                "customer": "Khách hàng",
+                "items": "Món",
+                "totalAmount": "Tổng tiền",
+                "time": "Thời gian"
+            },
+            "status": {
+                "pending": "Chờ xử lý",
+                "preparing": "Đang chuẩn bị",
+                "served": "Đã phục vụ",
+                "ready": "Sẵn sàng"
+            },
+            "channel": {
+                "online": "Online",
+                "takeAway": "Mang về",
+                "atTable": "Tại bàn"
+            },
+            "walkInCustomer": "Khách lẻ",
+            "tableNA": "N/A",
+            "deleteOrder": "Xóa đơn",
+            "confirmDeleteTitle": "Bạn chắc chắn?",
+            "confirmDeleteText": "Bạn sẽ không thể hoàn tác!",
+            "confirmDeleteOk": "Đồng ý, xóa!"
+        },
+        "tableQR": {
+            "title": "Quản lý QR theo bàn",
+            "addMapping": "Thêm ",
+            "columns": {
+                "branch": "Chi nhánh",
+                "table": "Bàn",
+                "qrCode": "QR Code"
+            },
+            "qrLabel": "QR Code",
+            "mappingDesc": "Mapping theo bàn",
+            "actions": {
+                "print": "In QR",
+                "edit": "Sửa mapping",
+                "delete": "Xóa mapping"
+            },
+            "confirmDeleteTitle": "Xác nhận xóa?",
+            "confirmDeleteText": "Hành động này sẽ xóa mapping QR khỏi hệ thống!",
+            "confirmDeleteOk": "Đồng ý, xóa!",
+            "deletedTitle": "Đã xóa!",
+            "deletedText": "Mapping QR đã được gỡ bỏ.",
+            "updatedSuccess": "Đã cập nhật QR thành công",
+            "addedSuccess": "Đã thêm mới mapping QR thành công",
+            "modal": {
+                "updateTitle": "Cập nhật QR Code",
+                "createTitle": "Tạo Mapping QR Mới",
+                "viewTitle": "QR - {{name}}",
+                "viewTitleFallback": "Xem QR"
+            },
+            "tableFallback": "Bàn",
+            "form": {
+                "selectBranch": "Chọn chi nhánh",
+                "selectBranchPlaceholder": "Chọn chi nhánh...",
+                "selectTable": "Chọn bàn",
+                "selectTablePlaceholder": "Chọn bàn...",
+                "qrLabel": "Mã QR",
+                "qrPlaceholder": "Nhập mã QR (hoặc để trống để tự tạo)",
+                "generate": "Tạo mã",
+                "qrHint": "Có thể nhập tay hoặc bấm “Tạo mã” để tự sinh.",
+                "submitUpdate": "Cập nhật QR Code",
+                "submitCreate": "Tạo & Lưu Mapping"
+            },
+            "validation": {
+                "selectTable": "Vui lòng chọn bàn"
+            }
+        },
+        "ingredients": {
+            "title": "Danh mục nguyên liệu",
+            "empty": "Không có nguyên liệu phù hợp.",
+            "altText": "nguyen lieu",
+            "currency": "đ",
+            "deletedFilter": {
+                "active": "Chưa xóa",
+                "deleted": "Đã xóa"
+            },
+            "units": {
+                "kg": "kg",
+                "g": "g",
+                "liter": "lít",
+                "ml": "ml",
+                "bottle": "chai",
+                "box": "hộp"
+            },
+            "expiry": {
+                "noDateTooltip": "Chưa có hạn sử dụng",
+                "expiredTooltip": "Đã hết hạn",
+                "nearExpiredTooltip": "Sắp hết hạn (còn {{days}} ngày)",
+                "validTooltip": "Còn hạn (còn {{days}} ngày)",
+                "noDate": "Chưa có HSD",
+                "expired": "Hết hạn",
+                "nearExpired": "Sắp hết hạn",
+                "valid": "Còn hạn",
+                "statusNoDate": "Trạng thái: Chưa có hạn sử dụng.",
+                "statusNoDateMsg": "Vui lòng cập nhật hạn sử dụng để hệ thống theo dõi.",
+                "statusExpired": "Trạng thái: Nguyên liệu đã hết hạn.",
+                "statusExpiredMsg": "Vui lòng kiểm tra và xử lý theo quy trình an toàn.",
+                "statusNearExpired": "Trạng thái: Sắp hết hạn. Còn {{days}} ngày.",
+                "statusNearExpiredMsg": "Hệ thống sẽ tự động thông báo trước 3 ngày khi sắp hết hạn.",
+                "statusValid": "Trạng thái: Nguyên liệu còn tươi. Hạn sử dụng còn {{days}} ngày."
+            },
+            "categories": {
+                "fresh": "Thực phẩm tươi sống",
+                "staple": "Lương thực",
+                "spice": "Gia vị/Dầu ăn",
+                "vegetable": "Rau củ quả"
+            },
+            "columns": {
+                "slug": "Slug",
+                "image": "Ảnh",
+                "name": "Tên nguyên liệu",
+                "category": "Danh mục mua",
+                "buyDate": "Ngày mua",
+                "qty": "Số lượng",
+                "price": "Giá nhập",
+                "expiry": "Hạn sử dụng",
+                "note": "Ghi chú",
+                "created": "Created",
+                "updated": "Updated",
+                "deleted": "Deleted"
+            },
+            "filters": {
+                "selectDate": "Chọn ngày",
+                "selectCategory": "Chọn loại",
+                "expiry": "Hạn sử dụng"
+            },
+            "modal": {
+                "addTitle": "Thêm nguyên liệu",
+                "editTitle": "Sửa nguyên liệu",
+                "viewTitle": "Chi tiết nguyên liệu",
+                "image": "Hình ảnh nguyên liệu",
+                "imageHint": "Định dạng hỗ trợ: JPG, PNG. Tối đa 2MB.",
+                "noImage": "Không có ảnh",
+                "name": "Tên nguyên liệu",
+                "namePlaceholder": "Nhập nguyên liệu",
+                "category": "Loại",
+                "categoryPlaceholder": "Chọn loại",
+                "price": "Giá nhập",
+                "pricePlaceholder": "Nhập giá",
+                "qty": "Số lượng",
+                "qtyPlaceholder": "Nhập số lượng",
+                "unit": "Đơn vị",
+                "buyDate": "Ngày mua",
+                "time": "Thời gian",
+                "expiry": "Hạn sử dụng",
+                "note": "Ghi chú",
+                "notePlaceholder": "Mô tả ngắn về nguyên liệu",
+                "system": "Hệ thống"
+            },
+            "validation": {
+                "nameRequired": "Vui lòng nhập tên nguyên liệu.",
+                "categoryRequired": "Vui lòng chọn loại nguyên liệu.",
+                "unitRequired": "Vui lòng chọn đơn vị.",
+                "qtyRequired": "Vui lòng nhập số lượng.",
+                "qtyInvalid": "Số lượng phải là số >= 0.",
+                "priceRequired": "Vui lòng nhập giá nhập.",
+                "priceInvalid": "Giá nhập phải là số >= 0.",
+                "buyDateInvalid": "Ngày mua không hợp lệ.",
+                "timeInvalid": "Thời gian không hợp lệ.",
+                "expiryInvalid": "Hạn sử dụng không hợp lệ."
+            },
+            "alerts": {
+                "missingTitle": "Thiếu thông tin",
+                "addedTitle": "Đã thêm",
+                "addedText": "Đã thêm nguyên liệu mới.",
+                "updatedTitle": "Đã cập nhật",
+                "updatedText": "Đã cập nhật nguyên liệu.",
+                "addError": "Không thể thêm nguyên liệu.",
+                "updateError": "Không thể cập nhật nguyên liệu.",
+                "deletedTitle": "Đã xóa!",
+                "deletedText": "Nguyên liệu đã được gỡ bỏ."
+            },
+            "categoryModal": {
+                "title": "Thêm danh mục nguyên liệu",
+                "addButton": "Thêm danh mục",
+                "idLabel": "ID danh mục",
+                "idPlaceholder": "Ví dụ: 1",
+                "nameLabel": "Tên danh mục",
+                "namePlaceholder": "Ví dụ: Rau củ",
+                "validation": {
+                    "idRequired": "Vui lòng nhập ID danh mục hợp lệ.",
+                    "nameRequired": "Vui lòng nhập tên danh mục."
+                },
+                "alerts": {
+                    "addedTitle": "Đã thêm",
+                    "addedText": "Đã thêm danh mục nguyên liệu.",
+                    "addError": "Không thể thêm danh mục."
+                }
+            },
+            "confirmDeleteTitle": "Xác nhận xóa?",
+            "confirmDeleteText": "Hành động này sẽ xóa nguyên liệu khỏi hệ thống!",
+            "confirmDeleteOk": "Đồng ý, xóa!"
+        },
+        "products": {
+            "title": "Quản Lý Sản phẩm",
+            "empty": "Không tìm thấy sản phẩm phù hợp.",
+            "altText": "san pham",
+            "unknownIngredient": "Nguyên liệu không xác định",
+            "status": {
+                "active": "Đang bán",
+                "inactive": "Tạm hết"
+            },
+            "columns": {
+                "id": "ID",
+                "image": "Ảnh",
+                "name": "Tên sản phẩm",
+                "store": "Cửa hàng",
+                "category": "Danh mục",
+                "price": "Giá bán",
+                "discount": "Giảm giá",
+                "prepTime": "Thời gian",
+                "note": "Ghi chú",
+                "description": "Mô tả",
+                "bestSeller": "Bán chạy"
+            },
+            "actions": {
+                "createBatch": "Tạo batch"
+            },
+            "bulk": {
+                "storeLabel": "Cửa hàng",
+                "storePlaceholder": "Chọn cửa hàng",
+                "activateAll": "Cập nhật toàn bộ sang DANG_BAN",
+                "missingStoreTitle": "Thiếu cửa hàng",
+                "missingStoreText": "Vui lòng chọn cửa hàng trước khi kích hoạt.",
+                "activateSuccessTitle": "Thành công",
+                "activateSuccessText": "Đã cập nhật toàn bộ sản phẩm của cửa hàng {{storeId}} sang DANG_BAN.",
+                "activateSuccessTextWithBranch": "Đã cập nhật toàn bộ sản phẩm của cửa hàng {{storeId}}, chi nhánh {{branchId}} sang DANG_BAN.",
+                "activateErrorTitle": "Cập nhật thất bại",
+                "activateErrorText": "Không thể cập nhật trạng thái sản phẩm."
+            },
+            "shortLabel": "SP",
+            "prepTimeValue": "{{minutes}} phút",
+            "placeholders": {
+                "nameStart": "Nhập tên sản phẩm..."
+            },
+            "validation": {
+                "idRequired": "Vui lòng nhập ID sản phẩm hợp lệ.",
+                "nameRequired": "Vui lòng nhập tên sản phẩm.",
+                "categoryRequired": "Vui lòng chọn danh mục.",
+                "priceInvalid": "Giá bán phải là số >= 0.",
+                "priceTooHigh": "Giá bán không được vượt quá 999.999.999.",
+                "discountInvalid": "Giảm giá phải nằm trong 0 - 100.",
+                "prepTimeInvalid": "Thời gian chế biến phải là số >= 0.",
+                "statusRequired": "Vui lòng chọn trạng thái.",
+                "recipeIngredientRequired": "Vui lòng chọn nguyên liệu cho mỗi dòng công thức.",
+                "recipeAmountInvalid": "Định lượng phải là số lớn hơn 0.",
+                "recipeUnitRequired": "Vui lòng nhập đơn vị cho mỗi dòng công thức.",
+                "recipeDuplicateIngredient": "Nguyên liệu bị trùng trong công thức.",
+                "recipeInvalid": "Công thức chưa hợp lệ.",
+                "extrasObject": "Extras phải là JSON object. Ví dụ: {\"ice_levels\":[\"30\",\"50\",\"70\"]}",
+                "extrasInvalid": "Extras JSON không hợp lệ."
+            },
+            "alerts": {
+                "missingTitle": "Thiếu thông tin",
+                "addedTitle": "Đã thêm",
+                "addedText": "Đã thêm sản phẩm mới.",
+                "addedWithRecipe": "Đã thêm sản phẩm và lưu công thức thành công.",
+                "updatedTitle": "Đã cập nhật",
+                "updatedText": "Đã cập nhật sản phẩm.",
+                "updatedWithRecipe": "Đã cập nhật sản phẩm và thêm công thức thành công.",
+                "recipeSkippedNoProductId": "Sản phẩm đã tạo nhưng chưa lưu công thức vì không lấy được product_id.",
+                "recipeCreateFailedAfterProduct": "Sản phẩm đã tạo nhưng lưu công thức thất bại.",
+                "recipeCreateFailedAfterUpdate": "Đã cập nhật sản phẩm nhưng thêm công thức thất bại.",
+                "saveError": "Không thể lưu sản phẩm.",
+                "deletedTitle": "Đã xóa!",
+                "deletedText": "Sản phẩm đã được gỡ bỏ.",
+                "storeIdMissing": "Không tìm thấy store_id trong localStorage. Vui lòng đăng nhập lại."
+            },
+            "confirmDeleteTitle": "Xác nhận xóa?",
+            "confirmDeleteText": "Hành động này sẽ xóa sản phẩm khỏi hệ thống!",
+            "confirmDeleteOk": "Đồng ý, xóa!",
+            "modal": {
+                "addTitle": "Thêm sản phẩm",
+                "editTitle": "Sửa sản phẩm",
+                "viewTitle": "Chi tiết sản phẩm",
+                "idLabel": "ID sản phẩm",
+                "idPlaceholder": "Nhập ID",
+                "randomId": "Random",
+                "image": "Hình ảnh sản phẩm",
+                "imageHint": "PNG, JPG, GIF tối đa 5MB",
+                "name": "Tên sản phẩm",
+                "namePlaceholder": " Nhập tên sản phẩm",
+                "category": "Danh mục",
+                "categoryPlaceholder": "Chọn danh mục",
+                "price": "Giá bán (đ)",
+                "pricePlaceholder": "Nhập giá",
+                "discount": "Giảm giá (%)",
+                "discountPlaceholder": "Nhập %",
+                "prepTime": "Thời gian chế biến (phút)",
+                "prepTimePlaceholder": "Nhập phút",
+                "bestSeller": "Bán chạy",
+                "description": "Mô tả",
+                "descriptionPlaceholder": "Mô tả ngắn",
+                "notePlaceholder": "Ghi chú nội bộ"
+            },
+            "recipe": {
+                "title": "Công thức",
+                "currentTitle": "Công thức hiện tại",
+                "noCurrent": "Chưa có công thức cho sản phẩm này.",
+                "addTitle": "Thêm công thức",
+                "ingredientPlaceholder": "Chọn nguyên liệu",
+                "amountPlaceholder": "Định lượng",
+                "unitPlaceholder": "Đơn vị",
+                "addRow": "Thêm dòng công thức"
+            }
+        },
+        "suppliers": {
+            "title": "Nhà cung cấp",
+            "empty": "Không tìm thấy nhà cung cấp phù hợp.",
+            "columns": {
+                "id": "ID",
+                "name": "Nhà cung cấp",
+                "phone": "SĐT",
+                "email": "Gmail",
+                "address": "Địa chỉ"
+            },
+            "validation": {
+                "nameRequired": "Vui lòng nhập tên nhà cung cấp."
+            },
+            "alerts": {
+                "missingTitle": "Thiếu thông tin",
+                "addedTitle": "Đã thêm",
+                "addedText": "Đã thêm nhà cung cấp mới.",
+                "updatedTitle": "Đã cập nhật",
+                "updatedText": "Đã cập nhật nhà cung cấp.",
+                "saveError": "Không thể lưu nhà cung cấp.",
+                "deletedTitle": "Đã xóa!",
+                "deletedText": "Nhà cung cấp đã được gỡ bỏ."
+            },
+            "confirmDeleteTitle": "Xác nhận xóa?",
+            "confirmDeleteText": "Hành động này sẽ xóa nhà cung cấp khỏi hệ thống!",
+            "confirmDeleteOk": "Đồng ý, xóa!",
+            "modal": {
+                "addTitle": "Thêm nhà cung cấp",
+                "editTitle": "Sửa nhà cung cấp",
+                "viewTitle": "Chi tiết nhà cung cấp",
+                "idPlaceholder": "Nhập ID nhà cung cấp",
+                "namePlaceholder": "Nhập tên nhà cung cấp",
+                "phonePlaceholder": "Nhập số điện thoại",
+                "emailPlaceholder": "Nhập email",
+                "addressPlaceholder": "Nhập địa chỉ"
+            }
+        },
+        "customerRequestsAdmin": {
+            "title": "Yêu cầu Khách Hàng",
+            "subtitle": "Theo dõi và xử lý yêu cầu gọi nhân viên, góp ý từ menu khách.",
+            "loyalty": {
+                "title": "Loyalty & Thành viên",
+                "subtitle": "Tra cứu và quản lý điểm thưởng của khách hàng",
+                "lookupTitle": "Tra cứu điểm thành viên",
+                "lookupPlaceholder": "Nhập số điện thoại...",
+                "searchButton": "Tìm",
+                "lookupNote": "Hiển thị lịch sử điểm và tổng chi tiêu của khách hàng.",
+                "defaultMemberName": "Khách hàng thành viên",
+                "defaultTier": "HẠNG VÀNG",
+                "memberSubtitle": "Khách hàng thân thiết",
+                "memberName": "Khách hàng thành viên",
+                "tierLabel": "Hạng",
+                "currentPoints": "Điểm hiện tại",
+                "currentPointsLabel": "Điểm hiện tại",
+                "pointsLabel": "pts",
+                "totalSpending": "Tổng chi tiêu",
+                "totalSpendingLabel": "Tổng chi tiêu",
+                "attachmentSection": {
+                    "orderIdPlaceholder": "Mã đơn",
+                    "phonePlaceholder": "Số điện thoại",
+                    "customerNamePlaceholder": "Tên khách hàng (tùy chọn)",
+                    "attachButton": "Gắn điểm vào đơn"
+                }
+            },
+            "serviceRequests": {
+                "title": "Yêu cầu phục vụ (Real-time)",
+                "tableColumn": "Bàn",
+                "descriptionColumn": "Nội dung",
+                "timeColumn": "Thời gian",
+                "statusColumn": "Trạng thái",
+                "actionColumn": "Thao tác",
+                "resolveButton": "Đã xử lý",
+                "filterAll": "Tất cả",
+                "filterNew": "Mới",
+                "filterProcessed": "Đã xử lý"
+            },
+            "feedback": {
+                "title": "Góp ý khách hàng",
+                "tableColumn": "Bàn",
+                "orderColumn": "Đơn",
+                "contentColumn": "Nội dung",
+                "ratingColumn": "Rating",
+                "statusColumn": "Trạng thái",
+                "actionColumn": "Thao tác",
+                "replyButton": "Phản hồi",
+                "filterAll": "Tất cả",
+                "filterNew": "Mới",
+                "filterReplied": "Đã phản hồi"
+            },
+            "orderHistory": {
+                "orderIdHeader": "Mã đơn",
+                "orderDateHeader": "Ngày đặt",
+                "totalAmountHeader": "Tổng tiền",
+                "statusHeader": "Trạng thái",
+                "searchPhonePlaceholder": "phone",
+                "searchTablePlaceholder": "table_id",
+                "searchButton": "Tra cứu",
+                "emptyMessageSearch": "Không có dữ liệu lịch sử đơn hàng",
+                "emptyMessageNoSearch": "Nhập SĐT hoặc table_id rồi bấm Tra cứu"
+            },
+            "bannerSection": {
+                "title": "Chương trình Khách hàng Thân thiết 2026",
+                "description": "Nâng cao trải nghiệm khách hàng bằng các mức ưu đãi theo hạng thành viên.",
+                "goldTier": "Vàng: 10% OFF",
+                "silverTier": "Bạc: 5% OFF",
+                "manageButton": "Quản lý chương trình"
+            },
+            "messages": {
+                "enterPhoneWarning": "Vui lòng nhập số điện thoại.",
+                "memberLookupSuccess": "Tra cứu tích điểm thành công.",
+                "memberLookupError": "Không thể tra cứu tích điểm.",
+                "validationError": "Vui lòng nhập order_id và số điện thoại hợp lệ.",
+                "attachmentSuccess": "Đã gắn số điện thoại vào đơn.",
+                "attachmentError": "Không thể gắn số điện thoại.",
+                "orderHistoryWarning": "Nhập SĐT hoặc table_id để tra cứu.",
+                "callStaffNotFound": "Không tìm thấy ID yêu cầu gọi nhân viên.",
+                "callStaffUpdateSuccess": "Đã cập nhật yêu cầu #{{id}}",
+                "callStaffUpdateError": "Không thể cập nhật trạng thái yêu cầu.",
+                "feedbackNotFound": "Không tìm thấy ID góp ý.",
+                "feedbackUpdateSuccess": "Đã phản hồi góp ý #{{id}}",
+                "feedbackUpdateError": "Không thể cập nhật trạng thái góp ý."
+            }
+        }
+    }
+}
