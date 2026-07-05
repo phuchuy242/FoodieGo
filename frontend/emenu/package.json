@@ -16,6 +16,7 @@
     "bootstrap": "^5.3.3",
     "dayjs": "^1.11.13",
     "feather-icons-react": "^1.0.0",
+    "i18next": "^26.3.4",
     "qrcode.react": "^4.2.0",
     "react": "^18.2.0",
     "react-apexcharts": "^1.9.0",
