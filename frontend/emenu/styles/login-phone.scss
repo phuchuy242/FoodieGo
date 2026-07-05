@@ -4,8 +4,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
     z-index: 10000;
     display: flex;
     align-items: center;
@@ -14,26 +14,66 @@
 }
 
 .rm-auth-card {
-    background: white;
+    background: #ffffff;
     width: 90%;
-    max-width: 400px;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
     border-radius: 24px;
-    padding: 32px 24px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    padding: 32px 28px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     position: relative;
     animation: auth-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .rm-auth-close-btn {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    top: 18px;
+    right: 20px;
+    background: #f3f4f6;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 20px;
+    color: #4b5563;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.rm-auth-close-btn:hover {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+/* Tabs */
+.rm-auth-tabs {
+    display: flex;
+    border-bottom: 2px solid #f3f4f6;
+    margin-bottom: 24px;
+    gap: 8px;
+}
+
+.rm-auth-tab {
+    flex: 1;
+    padding: 12px 0;
     background: none;
     border: none;
-    font-size: 24px;
+    border-bottom: 2px solid transparent;
+    font-size: 16px;
+    font-weight: 700;
     color: #9ca3af;
     cursor: pointer;
-    line-height: 1;
+    transition: all 0.2s;
+    margin-bottom: -2px;
+}
+
+.rm-auth-tab.active {
+    color: #ff7a18;
+    border-bottom-color: #ff7a18;
 }
 
 .rm-auth-header {
@@ -55,106 +95,170 @@
     line-height: 1.5;
 }
 
+.rm-auth-row {
+    display: flex;
+    gap: 12px;
+}
+
+.rm-auth-row .rm-auth-input-group {
+    flex: 1;
+}
+
 .rm-auth-input-group {
-    margin-bottom: 24px;
+    margin-bottom: 18px;
 }
 
 .rm-auth-label {
     display: block;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     color: #374151;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .rm-auth-input {
     width: 100%;
-    padding: 14px 16px;
-    font-size: 16px;
+    padding: 12px 16px;
+    font-size: 15px;
     border: 2px solid #e5e7eb;
     border-radius: 12px;
     outline: none;
     transition: all 0.2s;
     box-sizing: border-box;
     font-weight: 500;
+    color: #111827;
 }
 
 .rm-auth-input:focus {
-    border-color: #12b886;
-    background-color: #fff7ed;
+    border-color: #ff7a18;
+    background-color: #fffaf5;
 }
 
-.rm-auth-input-otp {
-    text-align: center;
-    letter-spacing: 12px;
-    font-size: 24px;
-    font-weight: 700;
-    color: #12b886;
-}
-
-.rm-auth-input-otp::placeholder {
-    letter-spacing: 4px;
+.rm-auth-input::placeholder {
+    color: #9ca3af;
     font-weight: 400;
-    color: #d1d5db;
 }
 
 .rm-auth-btn-primary {
     width: 100%;
     padding: 14px;
-    background-color: #12b886;
+    background: linear-gradient(135deg, #ff7a18 0%, #ff5200 100%);
     color: white;
     font-weight: 700;
     font-size: 16px;
     border: none;
     border-radius: 12px;
     cursor: pointer;
-    transition: transform 0.1s, background-color 0.2s;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(255, 122, 24, 0.3);
+    margin-top: 8px;
 }
 
-.rm-auth-resend-wrapper {
-    margin-top: 20px;
-    text-align: center;
+.rm-auth-btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(255, 122, 24, 0.4);
 }
 
-.rm-auth-text-sm {
-    font-size: 13px;
-    color: #6b7280;
-    margin-bottom: 4px;
+.rm-auth-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #d1d5db;
+    box-shadow: none;
 }
 
-.rm-auth-btn-resend {
-    background: none;
+.rm-auth-btn-secondary {
+    width: 100%;
+    padding: 14px;
+    background-color: #ef4444;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
     border: none;
-    color: #f97316;
-    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
+}
+
+.rm-auth-btn-secondary:hover {
+    background-color: #dc2626;
+}
+
+.rm-auth-error {
+    background-color: #fef2f2;
+    border: 1px solid #fee2e2;
+    color: #b91c1c;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 18px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.rm-auth-success {
+    background-color: #f0fdf4;
+    border: 1px solid #dcfce7;
+    color: #15803d;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 18px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.rm-auth-profile-box {
+    background: #f9fafb;
+    border: 1px solid #f3f4f6;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.rm-auth-profile-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed #e5e7eb;
     font-size: 14px;
-    cursor: pointer;
-    padding: 4px 8px;
 }
 
-.rm-auth-btn-resend:hover {
-    text-decoration: underline;
+.rm-auth-profile-row:last-child {
+    border-bottom: none;
 }
 
-.rm-auth-btn-resend.disabled {
-    color: #9ca3af;
-    cursor: default;
-    text-decoration: none;
+.rm-auth-profile-label {
+    color: #6b7280;
+    font-weight: 500;
 }
 
-.rm-auth-link {
-    color: #f97316;
-    cursor: pointer;
-    font-weight: 600;
+.rm-auth-profile-val {
+    color: #111827;
+    font-weight: 700;
+}
+
+.rm-auth-avatar-circle {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #ff7a18 0%, #ff5200 100%);
+    color: white;
+    font-size: 28px;
+    font-weight: 800;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px auto;
+    box-shadow: 0 8px 20px rgba(255, 122, 24, 0.25);
 }
 
 @keyframes auth-fade-in {
     from {
         opacity: 0;
     }
-
     to {
         opacity: 1;
     }
@@ -165,7 +269,6 @@
         transform: translateY(20px);
         opacity: 0;
     }
-
     to {
         transform: translateY(0);
         opacity: 1;
@@ -175,11 +278,11 @@
 @media (max-width: 480px) {
     .rm-auth-card {
         width: 100%;
-        height: auto;
+        max-height: 85vh;
         position: absolute;
         bottom: 0;
         border-radius: 24px 24px 0 0;
-        padding-bottom: 40px;
+        padding: 24px 20px 36px 20px;
         max-width: none;
     }
 
