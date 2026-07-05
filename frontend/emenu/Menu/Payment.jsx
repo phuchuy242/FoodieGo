@@ -120,8 +120,8 @@ export default function Payment({
             <div className="rm-payment-card">
                 <div className="rm-payment-grip" aria-hidden />
                 <div className="rm-payment-header">
-                    <h2>{t(title)}{tableCode ? ` - ${t('paymentModal.table')} ${tableCode}` : ''}</h2>
-                    <p>{t(subtitle)}</p>
+                    <h2>{t(title) || 'Phương Thức Thanh Toán'}</h2>
+                    <p>{t(subtitle) || 'Chọn hình thức thanh toán thuận tiện nhất'}</p>
                 </div>
 
                 {/* Paid success screen */}
@@ -160,7 +160,7 @@ export default function Payment({
                             <label className={`rm-payment-option ${method === 'cash' ? 'selected' : ''}`}>
                                 <div className="rm-left">
                                     <div className="rm-icon rm-icon--green"><FaMoneyBillWave /></div>
-                                    <div className="rm-label">{t('paymentModal.cash')}</div>
+                                    <div className="rm-label">Thanh toán khi nhận hàng (COD)</div>
                                 </div>
                                 <input name="payment-method" type="radio" value="cash" checked={method === 'cash'} onChange={() => setMethod('cash')} />
                             </label>
