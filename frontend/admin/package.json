@@ -19,6 +19,7 @@
     "antd": "^5.15.2",
     "apexcharts": "^3.47.0",
     "bootstrap": "^5.3.3",
+    "bootstrap-daterangepicker": "^3.1.0",
     "boxicons": "^2.1.4",
     "chart.js": "^4.4.2",
     "chartjs": "^0.3.24",
