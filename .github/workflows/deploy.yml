@@ -1,4 +1,4 @@
-name: Deploy E-Menu to GitHub Pages
+name: Deploy E-Menu & Admin to GitHub Pages
 
 on:
   # Runs on pushes targeting main branch only
@@ -23,9 +23,6 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend/emenu
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,21 +32,37 @@ jobs:
         with:
           node-version: "24"
           cache: "npm"
-          cache-dependency-path: ./frontend/emenu/package-lock.json
+          cache-dependency-path: ./frontend/*/package-lock.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Install dependencies
+      - name: Install E-Menu dependencies
+        working-directory: ./frontend/emenu
         run: npm install --legacy-peer-deps
 
-      - name: Build project
+      - name: Build E-Menu project
+        working-directory: ./frontend/emenu
         run: npm run build
+
+      - name: Install Admin dependencies
+        working-directory: ./frontend/admin
+        run: npm install --legacy-peer-deps
+
+      - name: Build Admin project
+        working-directory: ./frontend/admin
+        run: npm run build
+
+      - name: Prepare combined deployment artifact
+        run: |
+          mkdir -p ./deploy_dist/admin
+          cp -r ./frontend/emenu/dist/* ./deploy_dist/
+          cp -r ./frontend/admin/build/* ./deploy_dist/admin/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./frontend/emenu/dist
+          path: ./deploy_dist
 
   # Deployment job
   deploy:

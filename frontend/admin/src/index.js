@@ -1,6 +1,6 @@
 
 import React from "react";
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import ReactDOM from 'react-dom/client';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.bundle.js';
@@ -25,10 +25,9 @@ if (rootElement) {
   root.render(
     <React.StrictMode>
     <Provider store={store} >
-      <BrowserRouter basename={base_path}>
+      <HashRouter>
       <AllRoutes />
-
-      </BrowserRouter>
+      </HashRouter>
     </Provider>
   </React.StrictMode>
   );
