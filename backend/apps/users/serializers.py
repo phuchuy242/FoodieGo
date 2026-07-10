@@ -8,18 +8,31 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user_name', read_only=True)
+    role = serializers.SerializerMethodField()
+    points = serializers.SerializerMethodField()
+    membership_tier = serializers.SerializerMethodField()
+    avatar = serializers.CharField(source='avatar_url', read_only=True)
+    default_address = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = (
             'id',
             'uuid',
+            'username',
             'user_name',
             'email',
             'phone_number',
             'first_name',
             'last_name',
             'full_name',
+            'avatar',
             'avatar_url',
+            'role',
+            'points',
+            'membership_tier',
+            'default_address',
             'is_active',
             'is_verified',
             'is_staff',
@@ -27,6 +40,18 @@ class UserSerializer(serializers.ModelSerializer):
             'updated_at',
         )
         read_only_fields = fields
+
+    def get_role(self, obj):
+        return 'admin' if obj.is_staff else 'customer'
+
+    def get_points(self, obj):
+        return getattr(obj, 'points', 0)
+
+    def get_membership_tier(self, obj):
+        return getattr(obj, 'membership_tier', 'Standard')
+
+    def get_default_address(self, obj):
+        return getattr(obj, 'default_address', '120 Hoàng Minh Thảo, Hòa Khánh, Đà Nẵng')
 
 
 # REGISTER SERIALIZER

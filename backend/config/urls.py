@@ -24,4 +24,10 @@ urlpatterns = [
     path('api/v1/restaurants/', include('apps.restaurants.urls')),
     path('api/v1/ingredient/', include('apps.ingredient.urls')),
     path('api/v1/dishingredient/', include('apps.dishingredient.urls')),
+    path('api/v1/vouchers/', include('apps.vouchers.urls')),
+    path('api/v1/admin/menu/', include('apps.menu.urls')),
+    path('api/v1/admin/orders/', include('apps.orders.admin_urls')),
+    path('api/v1/admin/reports/', include('apps.reports.urls')),
+    path('api/v1/admin/vouchers/', include('apps.vouchers.urls')),
+    path('api/v1/shipper/', include('apps.orders.shipper_urls')),
 ]
