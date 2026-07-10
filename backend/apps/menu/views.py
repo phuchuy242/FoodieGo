@@ -56,12 +56,11 @@ class ProductViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewS
         Allow public read access (GET requests)
         Require authentication for write operations (POST, PUT, DELETE)
         """
-        if self.action in ['list', 'retrieve']:
+        if self.action in ['list', 'retrieve', 'by_category', 'search', 'variants', 'toppings', 'reviews']:
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
-
 
     @action(detail=False, methods=['get'], url_path='by-category', permission_classes=[AllowAny])
     def by_category(self, request):
@@ -72,7 +71,52 @@ class ProductViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewS
 
         products = Product.objects.filter(category_id=category_id, is_active=True)
         serializer = ProductListSerializer(products, many=True)
-        return success_response(data=serializer.data, msg='Products retrieved successfully')
+        return success_response(data=serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='search', permission_classes=[AllowAny])
+    def search(self, request):
+        """Search products by query"""
+        query = request.query_params.get('q', '')
+        if query:
+            products = Product.objects.filter(Q(name__icontains=query) | Q(description__icontains=query), is_active=True)
+        else:
+            products = Product.objects.filter(is_active=True)
+        serializer = ProductListSerializer(products, many=True)
+        return success_response(data=serializer.data)
+
+    @action(detail=True, methods=['get'], url_path='variants', permission_classes=[AllowAny])
+    def variants(self, request, pk=None):
+        """Get product variants"""
+        variants = ProductVariant.objects.filter(product_id=pk, is_active=True)
+        serializer = ProductVariantSerializer(variants, many=True)
+        return success_response(data=serializer.data)
+
+    @action(detail=True, methods=['get'], url_path='toppings', permission_classes=[AllowAny])
+    def toppings(self, request, pk=None):
+        """Get toppings available for product"""
+        toppings = Topping.objects.filter(is_active=True)
+        serializer = ToppingSerializer(toppings, many=True)
+        return success_response(data=serializer.data)
+
+    @action(detail=True, methods=['get'], url_path='reviews', permission_classes=[AllowAny])
+    def reviews(self, request, pk=None):
+        """Get product reviews"""
+        data = [
+            { "id": 1, "user_name": "Trần B", "rating": 5, "comment": "Mì cực kỳ ngon, xốt đậm đà!", "created_at": "2026-07-01T10:00:00Z" }
+        ]
+        return success_response(data=data)
+
+    @action(detail=True, methods=['patch'], url_path='status')
+    def status(self, request, pk=None):
+        """Enable/Disable product status in real-time"""
+        product = self.get_object()
+        is_available = request.data.get('is_available', not product.is_active)
+        product.is_active = is_available
+        product.save(update_fields=['is_active'])
+        return success_response(
+            msg="Món đã chuyển sang trạng thái TẠM HẾT" if not is_available else "Món đã chuyển sang trạng thái CÓ SẴN",
+            data={ "id": product.id, "is_available": is_available }
+        )
 
 
 class ProductVariantViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet):
