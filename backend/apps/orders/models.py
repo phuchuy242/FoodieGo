@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
+# pyrefly: ignore [missing-import]
 from apps.tables.models import Table
+# pyrefly: ignore [missing-import]
 from apps.menu.models import ProductVariant, Topping
 import random
 import string
@@ -13,12 +15,15 @@ class Order(models.Model):
         ('awaiting_payment', 'Awaiting Payment'),
         ('confirmed', 'Confirmed'),
         ('preparing', 'Preparing'),
+        ('cooking', 'Cooking'),
+        ('ready', 'Ready for Pickup'),
+        ('delivering', 'Delivering'),
         ('served', 'Served'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     ]
 
-    table = models.ForeignKey(Table, on_delete=models.CASCADE, related_name='orders')
+    table = models.ForeignKey(Table, on_delete=models.CASCADE, related_name='orders', null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='orders')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     pay_code = models.CharField(max_length=50, unique=True, null=True, blank=True)
@@ -35,7 +40,9 @@ class Order(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Order #{self.id} - Table {self.table.table_number}"
+        if self.table:
+            return f"Order #{self.id} - Table {self.table.table_number}"
+        return f"Order #{self.id} - Delivery"
 
     @staticmethod
     def generate_pay_code():

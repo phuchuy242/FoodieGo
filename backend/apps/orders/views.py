@@ -318,24 +318,39 @@ class AdminOrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderListSerializer
     permission_classes = [AllowAny]
 
-    @action(detail=True, methods=['patch'], url_path='status')
-    def status(self, request, pk=None):
+    @action(detail=True, methods=['patch'], url_path='confirm')
+    def confirm(self, request, pk=None):
         order = self.get_object()
-        new_status = request.data.get('status', 'processing')
-        order.status = new_status
+        order.status = 'cooking'
+        if not order.confirmed_at:
+            from django.utils import timezone
+            order.confirmed_at = timezone.now()
+        order.save(update_fields=['status', 'confirmed_at'])
+        return success_response(
+            msg="Đã duyệt đơn! Chuyển sang bếp làm món.",
+            data={ "id": order.id, "status": "cooking" }
+        )
+
+    @action(detail=True, methods=['patch'], url_path='ready')
+    def ready(self, request, pk=None):
+        order = self.get_object()
+        order.status = 'ready'
         order.save(update_fields=['status'])
         return success_response(
-            msg="Cập nhật trạng thái đơn hàng thành công",
-            data={ "id": order.id, "status": new_status }
+            msg="Món đã xong! Đang gọi Tài xế tới lấy.",
+            data={ "id": order.id, "status": "ready" }
         )
 
     @action(detail=True, methods=['post'], url_path='assign-shipper')
     def assign_shipper(self, request, pk=None):
         order = self.get_object()
         shipper_id = request.data.get('shipper_id')
+        # In a real app, we would assign shipper_id to the order here
+        order.status = 'delivering'
+        order.save(update_fields=['status'])
         return success_response(
-            msg="Điều phối tài xế thành công",
-            data={ "order_id": order.id, "shipper_id": shipper_id, "status": "delivering" }
+            msg=f"Đã gán đơn cho tài xế",
+            data={ "order_id": order.id, "status": "delivering" }
         )
 
 
