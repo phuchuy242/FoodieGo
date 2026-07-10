@@ -72,7 +72,7 @@ INSTALLED_APPS = [
     'apps.sessions',
     'apps.menu',
     'apps.orders',
-    # 'apps.payments',
+    'apps.payments',
     'apps.inventory',
     'apps.staff',
     'apps.staff_calls',
