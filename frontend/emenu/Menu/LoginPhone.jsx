@@ -83,14 +83,14 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
                 }),
             });
             const json = await res.json();
-            if (!res.ok) {
-                const msg = json?.message || json?.msg || json?.detail || 'Đăng nhập thất bại. Kiểm tra lại thông tin.';
+            if (!res.ok || json.status === 'error') {
+                const msg = json?.msg || json?.message || json?.detail || 'Đăng nhập thất bại. Kiểm tra lại thông tin.';
                 throw new Error(msg);
             }
 
-            const token = json.access_token || json.access || json.data?.access_token || json.data?.access;
-            const refresh = json.refresh_token || json.refresh || json.data?.refresh_token || json.data?.refresh;
-            const usr = json.user || json.data?.user || json.data || {};
+            const token = json.data?.access_token || json.data?.access || json.access_token || json.access;
+            const refresh = json.data?.refresh_token || json.data?.refresh || json.refresh_token || json.refresh;
+            const usr = json.data?.user || json.data || json.user || {};
 
             if (!token) throw new Error('Không nhận được token từ máy chủ.');
 
@@ -126,7 +126,7 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: email.trim(),
-                    user_name: userName.trim(),
+                    username: userName.trim(),
                     phone_number: phoneNumber.trim(),
                     password: regPassword,
                     password_confirm: regPasswordConfirm,
@@ -135,9 +135,15 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
                 }),
             });
             const json = await res.json();
-            if (!res.ok) {
-                let msg = json?.message || json?.msg || 'Đăng ký tài khoản thất bại.';
-                if (json?.errors) {
+            if (!res.ok || json.status === 'error') {
+                let msg = json?.msg || json?.message || 'Đăng ký tài khoản thất bại.';
+                if (json?.data && typeof json.data === 'object' && !Array.isArray(json.data) && !json.data.access) {
+                    const errKeys = Object.keys(json.data);
+                    if (errKeys.length > 0) {
+                        const firstErr = json.data[errKeys[0]];
+                        msg = Array.isArray(firstErr) ? `${errKeys[0]}: ${firstErr[0]}` : String(firstErr);
+                    }
+                } else if (json?.errors) {
                     const errKeys = Object.keys(json.errors);
                     if (errKeys.length > 0) {
                         const firstErr = json.errors[errKeys[0]];
@@ -147,10 +153,10 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
                 throw new Error(msg);
             }
 
-            const token = json.access_token || json.access || json.data?.access_token || json.data?.access;
-            const refresh = json.refresh_token || json.refresh || json.data?.refresh_token || json.data?.refresh;
-            const usr = json.user || json.data?.user || json.data || {
-                email, user_name: userName, phone_number: phoneNumber, first_name: firstName, last_name: lastName
+            const token = json.data?.access_token || json.data?.access || json.access_token || json.access;
+            const refresh = json.data?.refresh_token || json.data?.refresh || json.refresh_token || json.refresh;
+            const usr = json.data?.user || json.data || json.user || {
+                email, username: userName, phone_number: phoneNumber, first_name: firstName, last_name: lastName
             };
 
             if (token) {
@@ -221,7 +227,7 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
                             <div className="rm-auth-profile-row">
                                 <span className="rm-auth-profile-label">Họ và tên:</span>
                                 <span className="rm-auth-profile-val">
-                                    {localStorage.getItem('customerName') || currentUser?.user_name || 'Khách hàng'}
+                                    {localStorage.getItem('customerName') || currentUser?.username || currentUser?.user_name || 'Khách hàng'}
                                 </span>
                             </div>
                             {(currentUser?.email || localStorage.getItem('customerEmail')) && (

@@ -50,7 +50,7 @@ export default function DetailProducts({
             .then((r) => r.json())
             .then((json) => {
                 if (cancelled) return;
-                if (json.status && json.data) setFetchedProduct(json.data);
+                if ((json.status === 'success' || json.status === true) && json.data) setFetchedProduct(json.data);
             })
             .catch((e) => console.error('product fetch error', e))
             .finally(() => { if (!cancelled) setLoading(false); });
@@ -65,8 +65,9 @@ export default function DetailProducts({
             .then((r) => r.json())
             .then((json) => {
                 if (cancelled) return;
-                if (json.status && Array.isArray(json.data)) {
-                    const filtered = json.data
+                const varArray = json?.data?.results || json?.results || json?.data;
+                if ((json.status === 'success' || json.status === true) && Array.isArray(varArray)) {
+                    const filtered = varArray
                         .filter((v) => v.is_active && String(v.product) === String(idToUse))
                         .sort((a, b) => (SIZE_ORDER[a.size] ?? 99) - (SIZE_ORDER[b.size] ?? 99));
                     setVariants(filtered);

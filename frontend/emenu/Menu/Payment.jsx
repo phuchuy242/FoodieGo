@@ -11,15 +11,25 @@ export default function Payment({
     tableCode = '',
     onClose = () => { },
     onSubmit = (method) => { },
+    autoStartQR = false,
 }) {
     const { t } = useTranslation();
-    const [method, setMethod] = useState('cash');
+    const [method, setMethod] = useState(autoStartQR ? 'transfer' : 'cash');
     const [submitting, setSubmitting] = useState(false);
     const [cancelling, setCancelling] = useState(false);
     const [qrData, setQrData] = useState(null);
     const [qrError, setQrError] = useState('');
     const [paidSuccess, setPaidSuccess] = useState(false);
     const pollRef = useRef(null);
+    const hasAutoStarted = useRef(false);
+
+    useEffect(() => {
+        if (open && autoStartQR && !hasAutoStarted.current) {
+            hasAutoStarted.current = true;
+            handleSubmit();
+        }
+        if (!open) hasAutoStarted.current = false;
+    }, [open, autoStartQR]);
 
     // Poll payment status every 10s when QR is shown
     useEffect(() => {
@@ -35,7 +45,8 @@ export default function Payment({
                 const res = await apiFetch(`${API_BASE}/api/v1/payments/by_pay_code/?pay_code=${encodeURIComponent(pay_code)}`);
                 if (!res.ok) return;
                 const json = await res.json();
-                const status = json?.payment_status || json?.data?.payment_status || '';
+                if (json.status === 'error') return;
+                const status = json?.data?.payment_status || json?.payment_status || '';
                 if (status === 'completed' || status === 'paid') {
                     clearInterval(pollRef.current);
                     setPaidSuccess(true);
@@ -71,14 +82,17 @@ export default function Payment({
                 const json = await res.json();
 
                 // Nếu payment đã tồn tại, GET lại thông tin QR cũ
-                if (!res.ok) {
-                    const alreadyExists = json?.errors?.pay_code?.some?.((m) =>
+                if (!res.ok || json.status === 'error') {
+                    const alreadyExists = json?.data?.pay_code?.some?.((m) =>
                         String(m).toLowerCase().includes('already exists')
-                    );
+                    ) || json?.errors?.pay_code?.some?.((m) =>
+                        String(m).toLowerCase().includes('already exists')
+                    ) || (json.msg && json.msg.toLowerCase().includes('already exists'));
+                    
                     if (alreadyExists) {
                         const getRes = await apiFetch(`${API_BASE}/api/v1/payments/by_pay_code/?pay_code=${encodeURIComponent(pay_code)}`);
                         const getData = await getRes.json();
-                        if (!getRes.ok) throw new Error(getData?.msg || 'Không thể lấy thông tin thanh toán.');
+                        if (!getRes.ok || getData.status === 'error') throw new Error(getData?.msg || 'Không thể lấy thông tin thanh toán.');
                         const data = getData.data ?? getData;
                         setQrData(data);
                         return;
@@ -154,34 +168,37 @@ export default function Payment({
                             {cancelling ? 'Đang hủy...' : 'Hủy thanh toán'}
                         </button>
                     </div>
+                ) : !autoStartQR ? (
+                    <div className="rm-payment-body">
+                        <p className="rm-payment-subtitle">{t(subtitle)}</p>
+
+                        <div className="rm-payment-methods">
+                            <label className={`rm-method-label ${method === 'cash' ? 'active' : ''}`}>
+                                <input type="radio" name="payment_method" value="cash" checked={method === 'cash'} onChange={(e) => setMethod(e.target.value)} />
+                                <FaMoneyBillWave className="rm-method-icon" />
+                                <span>Tiền mặt / Tại quầy</span>
+                            </label>
+                            <label className={`rm-method-label ${method === 'transfer' ? 'active' : ''}`}>
+                                <input type="radio" name="payment_method" value="transfer" checked={method === 'transfer'} onChange={(e) => setMethod(e.target.value)} />
+                                <FaUniversity className="rm-method-icon" />
+                                <span>Chuyển khoản QR</span>
+                            </label>
+                        </div>
+
+                        {qrError && <div className="rm-payment-error">{qrError}</div>}
+
+                        <button
+                            className="rm-payment-submit"
+                            onClick={handleSubmit}
+                            disabled={submitting}
+                        >
+                            {submitting ? 'Đang xử lý...' : (method === 'transfer' ? 'Lấy mã QR' : 'Xác nhận thanh toán')}
+                        </button>
+                    </div>
                 ) : (
-                    <>
-                        <div className="rm-payment-list">
-                            <label className={`rm-payment-option ${method === 'cash' ? 'selected' : ''}`}>
-                                <div className="rm-left">
-                                    <div className="rm-icon rm-icon--green"><FaMoneyBillWave /></div>
-                                    <div className="rm-label">Thanh toán khi nhận hàng (COD)</div>
-                                </div>
-                                <input name="payment-method" type="radio" value="cash" checked={method === 'cash'} onChange={() => setMethod('cash')} />
-                            </label>
-
-                            <label className={`rm-payment-option ${method === 'transfer' ? 'selected' : ''}`}>
-                                <div className="rm-left">
-                                    <div className="rm-icon rm-icon--blue"><FaUniversity /></div>
-                                    <div className="rm-label">{t('paymentModal.bankTransfer')}</div>
-                                </div>
-                                <input name="payment-method" type="radio" value="transfer" checked={method === 'transfer'} onChange={() => setMethod('transfer')} />
-                            </label>
-                        </div>
-
-                        {qrError && <p className="rm-qr-error">{qrError}</p>}
-
-                        <div className="rm-payment-actions">
-                            <button className="rm-payment-submit" disabled={submitting} onClick={handleSubmit}>
-                                {submitting ? 'Đang tạo QR...' : t('paymentModal.submit')}
-                            </button>
-                        </div>
-                    </>
+                    <div className="rm-payment-body" style={{ textAlign: 'center', padding: '2rem' }}>
+                        {qrError ? <div className="rm-payment-error">{qrError}</div> : <div className="spinner">Đang tạo mã QR...</div>}
+                    </div>
                 )}
             </div>
         </div>
