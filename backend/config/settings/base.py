@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     'apps.orders',
     # 'apps.payments',
     # 'apps.inventory',
-    # 'apps.staff',
+    'apps.staff',
     # 'apps.staff_calls',
     # 'apps.reports',
     # 'apps.ingredient',

@@ -11,8 +11,8 @@ urlpatterns = [
     path('health/', health, name='health'),
 
     # API v1 endpoints (will be enabled per feature branch)
-    # path('api/v1/users/', include('apps.users.urls')),
-    # path('api/v1/staff/', include('apps.staff.urls')),
+    path('api/v1/users/', include('apps.users.urls')),
+    path('api/v1/staff/', include('apps.staff.urls')),
     # path('api/v1/staff-calls/', include('apps.staff_calls.urls')),
     # path('api/v1/menu/', include('apps.menu.urls')),
     # path('api/v1/tables/', include('apps.tables.urls')),
