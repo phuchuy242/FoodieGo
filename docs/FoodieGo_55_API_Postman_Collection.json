@@ -1,7 +1,7 @@
 {
     "info": {
-        "name": "FoodieGo 55+ API - Auto Test",
-        "description": "Collection tự động test các API của FoodieGo (Customer, Admin POS, Shipper).",
+        "name": "FoodieGo 55+ API - Auto Test (Full)",
+        "description": "Collection tự động test các API của FoodieGo (Customer, Admin POS, Shipper). Đã bổ sung Payments.",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "variable": [
@@ -651,6 +651,151 @@
                                 "body": {
                                     "mode": "raw",
                                     "raw": "{\n  \"code\": \"WELCOME10\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "5. Payments",
+                    "item": [
+                        {
+                            "name": "5.1 Lấy tài khoản ngân hàng",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "pm.test(\"Status code is 200\", function () {",
+                                            "    pm.response.to.have.status(200);",
+                                            "});",
+                                            "pm.test(\"Response envelope is correct (status, msg, data/errors)\", function () {",
+                                            "    var jsonData = pm.response.json();",
+                                            "    pm.expect(jsonData.status).to.be.oneOf([\"success\", \"error\"]);",
+                                            "});"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/v1/payments/bank-accounts/",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "payments",
+                                        "bank-accounts",
+                                        ""
+                                    ]
+                                },
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{access_token}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "5.2 Lấy thông tin thanh toán",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "pm.test(\"Status code is 200\", function () {",
+                                            "    pm.response.to.have.status(200);",
+                                            "});",
+                                            "pm.test(\"Response envelope is correct (status, msg, data/errors)\", function () {",
+                                            "    var jsonData = pm.response.json();",
+                                            "    pm.expect(jsonData.status).to.be.oneOf([\"success\", \"error\"]);",
+                                            "});"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/v1/payments/",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "payments",
+                                        ""
+                                    ]
+                                },
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{access_token}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "5.3 Webhook Sepay",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "pm.test(\"Status code is 200\", function () {",
+                                            "    pm.response.to.have.status(200);",
+                                            "});",
+                                            "pm.test(\"Response envelope is correct (status, msg, data/errors)\", function () {",
+                                            "    var jsonData = pm.response.json();",
+                                            "    pm.expect(jsonData.status).to.be.oneOf([\"success\", \"error\"]);",
+                                            "});"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/v1/payments/webhook/sepay/",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "payments",
+                                        "webhook",
+                                        "sepay",
+                                        ""
+                                    ]
+                                },
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"id\": 1,\n  \"gateway\": \"Sepay\",\n  \"transactionDate\": \"2026-07-10 10:00:00\",\n  \"accountNumber\": \"12345\",\n  \"subAccount\": \"\",\n  \"transferType\": \"in\",\n  \"transferAmount\": 50000,\n  \"accumulated\": 150000,\n  \"code\": \"SEPAY123\",\n  \"transactionContent\": \"Thanh toan don hang FDG123\",\n  \"referenceNumber\": \"REF123\",\n  \"body\": \"Thanh toan\"\n}",
                                     "options": {
                                         "raw": {
                                             "language": "json"
