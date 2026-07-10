@@ -19,7 +19,7 @@ urlpatterns = [
     path('api/v1/orders/', include('apps.orders.urls')),
     path('api/v1/inventory/', include('apps.inventory.urls')),
     path('api/v1/payments/', include('apps.payments.urls')),
-    # path('api/v1/reports/', include('apps.reports.urls')),
+    path('api/v1/reports/', include('apps.reports.urls')),
     path('api/v1/sessions/', include('apps.sessions.urls')),
     path('api/v1/restaurants/', include('apps.restaurants.urls')),
     path('api/v1/ingredient/', include('apps.ingredient.urls')),
