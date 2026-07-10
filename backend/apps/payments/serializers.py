@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Payment, BankAccount
+# pyrefly: ignore [missing-import]
 from apps.orders.models import Order
 
 
@@ -43,7 +44,7 @@ class PaymentSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at', 'paid_at', 'notes'
         ]
         read_only_fields = [
-            'id', 'order', 'payment_status', 'qr_code_url', 'qr_data',
+            'id', 'order', 'payment_status', 'qr_code_url', 'qr_data',      
             'transaction_id', 'gateway_transaction_id',
             'created_at', 'updated_at', 'paid_at'
         ]
@@ -53,7 +54,7 @@ class PaymentSerializer(serializers.ModelSerializer):
         return {
             'id': obj.order.id,
             'pay_code': obj.order.pay_code,
-            'table_number': obj.order.table.table_number,
+            'table_number': obj.order.table.table_number if obj.order.table else None,
             'total_amount': str(obj.order.total_amount),
             'status': obj.order.status
         }

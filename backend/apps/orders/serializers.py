@@ -1,8 +1,12 @@
 from rest_framework import serializers
 from .models import Order, OrderItem, OrderItemTopping
+# pyrefly: ignore [missing-import]
 from apps.tables.serializers import TableSerializer
+# pyrefly: ignore [missing-import]
 from apps.menu.serializers import ProductVariantSerializer, ToppingSerializer
+# pyrefly: ignore [missing-import]
 from apps.menu.models import ProductVariant
+# pyrefly: ignore [missing-import]
 from apps.tables.models import Table
 
 class OrderItemToppingSerializer(serializers.ModelSerializer):
@@ -112,23 +116,31 @@ class OrderItemCreateSerializer(serializers.Serializer):
 class OrderCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating an order with items"""
     items = OrderItemCreateSerializer(many=True)
-    table = serializers.PrimaryKeyRelatedField(queryset=Table.objects.all())
+    table = serializers.PrimaryKeyRelatedField(queryset=Table.objects.all(), required=False, allow_null=True)
+    restaurant_id = serializers.IntegerField(required=False, allow_null=True)
+    address_id = serializers.IntegerField(required=False, allow_null=True)
+    payment_method = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
     class Meta:
         model = Order
-        fields = ['table', 'items', 'notes']
+        fields = ['table', 'restaurant_id', 'address_id', 'payment_method', 'items', 'notes']
 
     def create(self, validated_data):
-        items_data = validated_data.pop('items')
-        table = validated_data['table']
+        items_data = validated_data.pop('items', [])
+        table = validated_data.get('table')
+        validated_data.pop('restaurant_id', None)
+        validated_data.pop('address_id', None)
+        validated_data.pop('payment_method', None)
 
         # 1. Check if there's an active order for this table
         # Active statuses: pending, confirmed, preparing, served
         # Exclude awaiting_payment (user needs to cancel payment first)
-        active_order = Order.objects.filter(
-            table=table,
-            status__in=['pending', 'confirmed', 'preparing', 'served']
-        ).first()
+        active_order = None
+        if table:
+            active_order = Order.objects.filter(
+                table=table,
+                status__in=['pending', 'confirmed', 'preparing', 'served']
+            ).first()
 
         if active_order:
             # Use existing active order

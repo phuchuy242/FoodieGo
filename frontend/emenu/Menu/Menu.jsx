@@ -59,17 +59,24 @@ export default function Menu({
                 const prodJson = await prodRes.json();
                 const varJson = await varRes.json();
                 if (cancelled) return;
-                if (catJson.status && Array.isArray(catJson.data)) {
-                    const names = catJson.data.map((c) => c.name);
+                
+                const getArray = (json) => json?.data?.results || json?.results || json?.data;
+                const catArray = getArray(catJson);
+                const prodArray = getArray(prodJson);
+                const varArray = getArray(varJson);
+
+                if ((catJson.status === 'success' || catJson.status === true) && Array.isArray(catArray)) {
+                    const names = catArray.map((c) => c.name);
                     setCategories(names);
                     if (names.length > 0) setActiveCategory(names[0]);
                 }
-                if (prodJson.status && Array.isArray(prodJson.data)) {
-                    setMenuItems(prodJson.data.filter((p) => p.is_active));
+                
+                if ((prodJson.status === 'success' || prodJson.status === true) && Array.isArray(prodArray)) {
+                    setMenuItems(prodArray.filter((p) => p.is_active));
                 }
-                if (varJson.status && Array.isArray(varJson.data)) {
+                if ((varJson.status === 'success' || varJson.status === true) && Array.isArray(varArray)) {
                     const map = {};
-                    varJson.data.filter((v) => v.is_active).forEach((v) => {
+                    varArray.filter((v) => v.is_active).forEach((v) => {
                         if (!map[v.product]) map[v.product] = [];
                         map[v.product].push(v);
                     });

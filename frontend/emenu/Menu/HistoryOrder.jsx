@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import '../styles/history-order.scss';
 import '../styles/modals-extra.scss';
 import { API_BASE, apiFetch } from '../config';
-import Payment from './Payment';
 import {
     ArrowLeft,
     PlusCircle,
@@ -37,10 +36,10 @@ export default function HistoryOrder() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [imageMap, setImageMap] = useState({});
-    const [showPayment, setShowPayment] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
+    const [paymentInfo, setPaymentInfo] = useState(null);
 
     const fetchOrder = async () => {
         const paycode = localStorage.getItem('paycode');
@@ -53,12 +52,13 @@ export default function HistoryOrder() {
         setError('');
         try {
             if (paycode) {
-                const [orderRes, productsRes] = await Promise.all([
+                const [orderRes, productsRes, paymentRes] = await Promise.all([
                     apiFetch(`${API_BASE}/api/v1/orders/by-paycode/?pay_code=${encodeURIComponent(paycode)}`),
                     apiFetch(`${API_BASE}/api/v1/menu/products/?page=1&per_page=200`),
+                    apiFetch(`${API_BASE}/api/v1/payments/by_pay_code/?pay_code=${encodeURIComponent(paycode)}`).catch(() => ({ ok: false }))
                 ]);
                 const orderJson = await orderRes.json();
-                if (!orderRes.ok || !orderJson.status) {
+                if (!orderRes.ok || orderJson.status === 'error') {
                     // Fallback to local storage if API fails
                     if (lastOrderRaw) {
                         setOrder(JSON.parse(lastOrderRaw));
@@ -66,15 +66,30 @@ export default function HistoryOrder() {
                         throw new Error(orderJson?.msg || 'Không thể tra cứu đơn hàng.');
                     }
                 } else {
-                    setOrder(orderJson.data);
+                    const apiOrder = orderJson.data;
+                    const localOrder = lastOrderRaw ? JSON.parse(lastOrderRaw) : {};
+                    if (localOrder.paycode === apiOrder.pay_code || localOrder.id === apiOrder.id) {
+                        setOrder({ ...localOrder, ...apiOrder });
+                    } else {
+                        setOrder(apiOrder);
+                    }
                 }
 
                 if (productsRes.ok) {
                     const productsJson = await productsRes.json();
-                    const products = productsJson?.data?.results || productsJson?.results || productsJson?.data || [];
-                    const map = {};
-                    products.forEach(p => { if (p.id) map[p.id] = p.image_url || p.image || ''; });
-                    setImageMap(map);
+                    if (productsJson.status === 'success' || productsJson.status === true) {
+                        const products = productsJson?.data?.results || productsJson?.results || productsJson?.data || [];
+                        const map = {};
+                        products.forEach(p => { if (p.id) map[p.id] = p.image_url || p.image || ''; });
+                        setImageMap(map);
+                    }
+                }
+
+                if (paymentRes && paymentRes.ok) {
+                    const payJson = await paymentRes.json();
+                    if (payJson.status === 'success' || payJson.status === true) {
+                        setPaymentInfo(payJson.data || payJson);
+                    }
                 }
             } else if (lastOrderRaw) {
                 setOrder(JSON.parse(lastOrderRaw));
@@ -110,7 +125,7 @@ export default function HistoryOrder() {
         return Object.values(map);
     }, [order]);
 
-    const totalAmount = order ? Number(order.total_amount || order.total || 0) : 0;
+    const totalAmount = order?.total !== undefined ? Number(order.total) : (order ? Number(order.total_amount || 0) : 0);
     const currentStatus = order?.status || 'delivering'; // Mock default delivering for demo
 
     const getStepIndex = (st) => {
@@ -127,6 +142,22 @@ export default function HistoryOrder() {
         e.preventDefault();
         alert(`🎉 Cảm ơn bạn đã đánh giá ${rating} sao! Nhận xét: "${comment}". Bạn đã nhận được +100 điểm thưởng hội viên!`);
         setShowReviewModal(false);
+    };
+
+    const handleCancelOrder = async () => {
+        if (!order || !order.id) return;
+        if (!window.confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) return;
+        
+        try {
+            const res = await apiFetch(`${API_BASE}/api/v1/orders/${order.id}/cancel/`, { method: 'POST' });
+            const json = await res.json();
+            if (!res.ok || json.status === 'error') throw new Error(json.msg || 'Không thể hủy đơn hàng.');
+            
+            alert('Hủy đơn hàng thành công.');
+            fetchOrder();
+        } catch (e) {
+            alert(e.message || 'Lỗi khi hủy đơn hàng.');
+        }
     };
 
     return (
@@ -287,6 +318,41 @@ export default function HistoryOrder() {
 
                 {/* Summary */}
                 <section className="rm-history-card rm-summary-card">
+                    {(() => {
+                        const hasBreakdown = order?.shippingFee !== undefined;
+                        let subtotal = order?.subtotal;
+                        let shippingFee = order?.shippingFee;
+                        let voucherDiscount = order?.voucherDiscount;
+                        
+                        if (!hasBreakdown && items.length > 0) {
+                            subtotal = items.reduce((acc, it) => acc + (it.total_price || (it.price * it.quantity)), 0);
+                            shippingFee = Math.max(0, (totalAmount || order?.total || 0) - subtotal);
+                        }
+                        
+                        if (subtotal !== undefined) {
+                            return (
+                                <>
+                                    <div className="rm-summary-row" style={{ fontSize: '14px', marginBottom: '8px' }}>
+                                        <span className="rm-summary-label" style={{ fontWeight: 'normal', color: '#6b7280' }}>Tạm tính:</span>
+                                        <span>{formatPrice(subtotal)}</span>
+                                    </div>
+                                    <div className="rm-summary-row" style={{ fontSize: '14px', marginBottom: '8px' }}>
+                                        <span className="rm-summary-label" style={{ fontWeight: 'normal', color: '#6b7280' }}>Phí giao hàng:</span>
+                                        <span>{shippingFee === 0 ? <strong style={{ color: '#10b981' }}>MIỄN PHÍ</strong> : formatPrice(shippingFee)}</span>
+                                    </div>
+                                    {voucherDiscount > 0 && (
+                                        <div className="rm-summary-row" style={{ fontSize: '14px', marginBottom: '8px', color: '#10b981' }}>
+                                            <span className="rm-summary-label" style={{ fontWeight: 'normal' }}>Giảm giá Voucher:</span>
+                                            <span style={{ fontWeight: 'bold' }}>-{formatPrice(voucherDiscount)}</span>
+                                        </div>
+                                    )}
+                                    <div className="rm-divider" style={{ margin: '8px 0' }} />
+                                </>
+                            );
+                        }
+                        return null;
+                    })()}
+
                     <div className="rm-summary-row">
                         <span className="rm-summary-label">Tổng thanh toán:</span>
                         <div className="rm-summary-right p-2">
@@ -295,27 +361,42 @@ export default function HistoryOrder() {
                         </div>
                     </div>
 
+                    <div className="rm-summary-row" style={{ marginTop: '8px', borderTop: '1px dashed #e5e7eb', paddingTop: '12px' }}>
+                        <span className="rm-summary-label">Thanh toán:</span>
+                        <div className="rm-summary-right p-2">
+                            {(() => {
+                                const pMethod = order?.payment_method || order?.paymentMethod || 'cash';
+                                if (pMethod === 'cash') {
+                                    return <span style={{ color: '#ff5200', fontWeight: 'bold' }}>Thanh toán khi nhận hàng</span>;
+                                }
+                                if (paymentInfo && paymentInfo.payment_status === 'completed') {
+                                    return <span style={{ color: '#10b981', fontWeight: 'bold' }}>Đã thanh toán (QR)</span>;
+                                }
+                                return (
+                                    <>
+                                        <span style={{ color: '#f59e0b', fontWeight: 'bold' }}>Chưa thanh toán (Chờ QR)</span>
+                                        <div style={{ fontSize: '12px', marginTop: '4px', color: '#6b7280' }}>
+                                            Cần thanh toán: {formatPrice(totalAmount || order?.total || 0)}
+                                        </div>
+                                    </>
+                                );
+                            })()}
+                        </div>
+                    </div>
+
                     <div className="rm-divider" />
 
-                    <div className="rm-actions11">
-                        <button className="rm-btn-outline rm-btn-outline-orange rm-btnnnn" onClick={() => navigate('/menu')}>
-                            <PlusCircle size={22} /> Đặt Thêm Món
-                        </button>
-                        <button className="rm-btn-primary rm-btn-primary-green rm-btnnnn" onClick={() => setShowPayment(true)}>
-                            <CreditCard size={22} /> Thanh Toán COD / QR
-                        </button>
-                    </div>
-                    <div className="rm-info-note"><Info size={14} /> Kiểm tra kỹ món ăn trước khi thanh toán với tài xế.</div>
+                    {(currentStatus === 'pending' || currentStatus === 'awaiting_payment') && (
+                        <div className="rm-actions11" style={{ marginBottom: '12px' }}>
+                            <button className="rm-btn-outline rm-btn-outline-orange rm-btnnnn" style={{ color: '#ef4444', borderColor: '#ef4444' }} onClick={handleCancelOrder}>
+                                Hủy Đơn Hàng
+                            </button>
+                        </div>
+                    )}
+                    
+                    <div className="rm-info-note"><Info size={14} /> Vui lòng theo dõi trạng thái đơn hàng hoặc liên hệ quán nếu cần.</div>
                 </section>
             </main>
-
-            <Payment
-                open={showPayment}
-                title={'paymentModal.title'}
-                subtitle={'paymentModal.subtitle'}
-                onClose={() => setShowPayment(false)}
-                onSubmit={() => setShowPayment(false)}
-            />
 
             {/* Modal Review (F-09) */}
             {showReviewModal && (

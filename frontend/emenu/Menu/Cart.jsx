@@ -8,6 +8,7 @@ import backIcon from '../public/images/back.png';
 import AddressModal from './AddressModal';
 import VoucherModal from './VoucherModal';
 import LoginOtp from './LoginPhone';
+import Payment from './Payment';
 
 function formatPrice(n) {
     const num = Number(n || 0);
@@ -25,6 +26,8 @@ export default function Cart({ setCartCount, setCartTotal }) {
     const [showAddressModal, setShowAddressModal] = useState(false);
     const [showVoucherModal, setShowVoucherModal] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState('cash');
 
     const [deliveryInfo, setDeliveryInfo] = useState(() => {
         try {
@@ -67,8 +70,27 @@ export default function Cart({ setCartCount, setCartTotal }) {
     }, []);
 
     const subtotal = cart.reduce((s, it) => s + Number(it.subtotal || it.price || 0), 0);
-    const shippingFee = subtotal >= 150000 ? 0 : (subtotal > 0 ? 15000 : 0);
-    const voucherDiscount = selectedVoucher ? Number(selectedVoucher.discount || 0) : 0;
+    const getDistance = (address) => {
+        if (!address) return 3;
+        const lower = address.toLowerCase();
+        if (lower.includes('hòa vang')) return 18;
+        if (lower.includes('ngũ hành sơn')) return 12;
+        if (lower.includes('sơn trà')) return 10;
+        if (lower.includes('cẩm lệ')) return 8;
+        if (lower.includes('hải châu')) return 6;
+        if (lower.includes('thanh khê')) return 4;
+        if (lower.includes('liên chiểu')) return 2;
+        return Math.max(3, Math.round(address.length / 10)); // pseudo-random fallback
+    };
+    const distance_km = getDistance(deliveryInfo?.address);
+    const shippingFee = subtotal >= 150000 ? 0 : (subtotal > 0 ? distance_km * 5000 : 0);
+    let voucherDiscount = 0;
+    if (selectedVoucher && subtotal >= (selectedVoucher.minSpend || 0)) {
+        voucherDiscount = Number(selectedVoucher.discount || 0);
+        if (selectedVoucher.code && selectedVoucher.code.toUpperCase().includes('FREESHIP')) {
+            voucherDiscount = Math.min(shippingFee, voucherDiscount);
+        }
+    }
     const total = Math.max(0, subtotal + shippingFee - voucherDiscount);
 
     const removeItem = (i) => {
@@ -140,8 +162,10 @@ export default function Cart({ setCartCount, setCartTotal }) {
             delivery_note: deliveryInfo.note || '',
             voucher_code: selectedVoucher ? selectedVoucher.code : '',
             shipping_fee: shippingFee,
+            distance_km: distance_km,
             discount_amount: voucherDiscount,
             total_amount: total,
+            payment_method: paymentMethod,
             items,
         };
 
@@ -153,7 +177,7 @@ export default function Cart({ setCartCount, setCartTotal }) {
                 body: JSON.stringify(payload),
             });
             const json = await res.json();
-            if (!res.ok) throw new Error(json?.msg || json?.message || 'Không thể tạo đơn hàng.');
+            if (!res.ok || json.status === 'error') throw new Error(json?.msg || json?.message || 'Không thể tạo đơn hàng.');
 
             const orderId = json?.data?.id || json?.id || ('ORD' + Math.floor(Date.now() / 1000));
             const paycode = json?.data?.pay_code || json?.pay_code || '';
@@ -165,6 +189,7 @@ export default function Cart({ setCartCount, setCartTotal }) {
                 shippingFee,
                 voucherDiscount,
                 total,
+                paymentMethod,
                 deliveryInfo,
                 selectedVoucher,
                 createdAt: Date.now(),
@@ -176,7 +201,11 @@ export default function Cart({ setCartCount, setCartTotal }) {
             setCart([]);
             if (typeof setCartCount === 'function') setCartCount(0);
             if (typeof setCartTotal === 'function') setCartTotal(0);
-            navigate('/odersuccessfull');
+            if (paymentMethod === 'transfer') {
+                setShowPaymentModal(true);
+            } else {
+                navigate('/history');
+            }
         } catch (e) {
             console.error('order failed', e);
             alert(e.message || 'Không thể đặt hàng. Vui lòng thử lại.');
@@ -343,6 +372,19 @@ export default function Cart({ setCartCount, setCartTotal }) {
                             <div style={{ color: '#ff5200', fontSize: '20px' }}>{formatPrice(total)}</div>
                         </div>
 
+                        {/* Payment Method Selection */}
+                        <div style={{ marginTop: '16px', background: '#fff', borderRadius: '12px', padding: '12px', border: '1px solid #e5e7eb' }}>
+                            <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '8px' }}>Phương thức thanh toán</div>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '8px' }}>
+                                <input type="radio" name="cart_payment" value="cash" checked={paymentMethod === 'cash'} onChange={() => setPaymentMethod('cash')} />
+                                <span>Tiền mặt / Thanh toán khi nhận hàng</span>
+                            </label>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                <input type="radio" name="cart_payment" value="transfer" checked={paymentMethod === 'transfer'} onChange={() => setPaymentMethod('transfer')} />
+                                <span>Chuyển khoản mã QR</span>
+                            </label>
+                        </div>
+
                         <div className="space-y-4 pt-3">
                             <button
                                 className="rm-add-btn justify-content-center"
@@ -367,6 +409,20 @@ export default function Cart({ setCartCount, setCartTotal }) {
             <AddressModal isOpen={showAddressModal} onClose={() => setShowAddressModal(false)} />
             <VoucherModal isOpen={showVoucherModal} onClose={() => setShowVoucherModal(false)} onSelect={handleSelectVoucher} subtotal={subtotal} />
             <LoginOtp isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+            {showPaymentModal && (
+                <Payment
+                    open={showPaymentModal}
+                    autoStartQR={true}
+                    onClose={() => {
+                        setShowPaymentModal(false);
+                        navigate('/history');
+                    }}
+                    onSubmit={(method) => {
+                        setShowPaymentModal(false);
+                        navigate('/history');
+                    }}
+                />
+            )}
         </div>
     );
 }
