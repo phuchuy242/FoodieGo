@@ -1,19 +1,21 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
-@admin.register(CustomUser)
-class CustomUserAdmin(UserAdmin):
-    """
-    Custom User Admin
-    """
-    fieldsets = UserAdmin.fieldsets + (
-        ('Custom Fields', {'fields': ('role', 'phone_number')}),
+@admin.register(User)
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "uuid",
+        "email",
+        "user_name",
+        "is_active",
+        "is_verified",
+        "is_staff",
+        "created_at",
     )
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        ('Custom Fields', {'fields': ('role', 'phone_number')}),
-    )
-    list_display = ['username', 'email', 'role', 'phone_number', 'is_active']
-    list_filter = UserAdmin.list_filter + ('role', 'is_active')
-    search_fields = UserAdmin.search_fields + ('phone_number',)
+    search_fields = ("email", "user_name")
+    list_filter = ("is_active", "is_verified", "is_staff")
+    ordering = ("-created_at",)

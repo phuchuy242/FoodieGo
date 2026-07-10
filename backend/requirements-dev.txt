@@ -1,0 +1,10 @@
+pytest
+pytest-django
+factory-boy
+black
+isort
+ruff
+pre-commit
+coverage
+mypy
+
