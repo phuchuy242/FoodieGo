@@ -1,0 +1,1133 @@
+{
+  "info": {
+    "name": "DineOps API Collection",
+    "description": "Complete API collection for DineOps Restaurant Management System",
+    "version": "2.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Users API",
+      "description": "User authentication and profile management",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"user_name\": \"username123\",\n  \"phone_number\": \"+84901234567\",\n  \"password\": \"password123\",\n  \"password_confirm\": \"password123\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/register/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "register", ""]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/login/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "login", ""]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/refresh/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "refresh", ""]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/logout/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "logout", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/profile/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "profile", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"John Updated\",\n  \"last_name\": \"Doe Updated\",\n  \"avatar_url\": \"https://example.com/avatar.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/profile/update/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "profile", "update", ""]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"old_password\": \"oldpassword123\",\n  \"new_password\": \"newpassword123\",\n  \"new_password_confirm\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/profile/change-password/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "profile", "change-password", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Menu API",
+      "description": "Menu management - Categories, Products, Variants, Toppings",
+      "item": [
+        {
+          "name": "Categories",
+          "item": [
+            {
+              "name": "List Categories",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/categories/?page=1&page_size=10&search=",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "categories", ""],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "10"
+                    },
+                    {
+                      "key": "search",
+                      "value": "",
+                      "disabled": true
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Category Detail",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/categories/1/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "categories", "1", ""]
+                }
+              }
+            },
+            {
+              "name": "Create Category",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Tea\",\n  \"description\": \"Various types of tea\",\n  \"is_active\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/categories/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "categories", ""]
+                }
+              }
+            },
+            {
+              "name": "Update Category",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Tea & Infusions\",\n  \"description\": \"Tea and herbal infusions\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/categories/1/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "categories", "1", ""]
+                }
+              }
+            },
+            {
+              "name": "Delete Category",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/categories/1/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "categories", "1", ""]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Products",
+          "item": [
+            {
+              "name": "List Products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/products/?page=1&page_size=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "products", ""],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Product Detail",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/products/1/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "products", "1", ""]
+                }
+              }
+            },
+            {
+              "name": "Get Products by Category",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/products/by-category/?category_id=1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "products", "by-category", ""],
+                  "query": [
+                    {
+                      "key": "category_id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Product",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"category\": 1,\n  \"name\": \"Cappuccino\",\n  \"description\": \"Espresso with steamed milk\",\n  \"is_active\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/products/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "products", ""]
+                }
+              }
+            },
+            {
+              "name": "Update Product",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Premium Cappuccino\",\n  \"description\": \"Premium espresso with steamed milk and foam\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/products/1/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "products", "1", ""]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Variants",
+          "item": [
+            {
+              "name": "List Variants",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/variants/?page=1&page_size=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "variants", ""],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Variants by Product",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/variants/by-product/?product_id=1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "variants", "by-product", ""],
+                  "query": [
+                    {
+                      "key": "product_id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Variant",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"product\": 1,\n  \"size\": \"S\",\n  \"price\": \"25000.00\",\n  \"is_active\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/variants/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "variants", ""]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Toppings",
+          "item": [
+            {
+              "name": "List Toppings",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/toppings/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "toppings", ""]
+                }
+              }
+            },
+            {
+              "name": "Search Toppings",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/toppings/search/?q=cream",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "toppings", "search", ""],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "cream"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Topping",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Caramel Syrup\",\n  \"price\": \"8000.00\",\n  \"is_active\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/menu/toppings/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "menu", "toppings", ""]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Tables API",
+      "description": "Table management",
+      "item": [
+        {
+          "name": "List Tables",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/tables/?page=1&page_size=10&status=",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "tables", ""],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Table Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/tables/1/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "tables", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Available Tables",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/tables/available/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "tables", "available", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Table Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"occupied\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/tables/1/update-status/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "tables", "1", "update-status", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Table Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/tables/1/orders/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "tables", "1", "orders", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Orders API",
+      "description": "Order management",
+      "item": [
+        {
+          "name": "List Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/?page=1&page_size=10&status=",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "orders", ""],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Order Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/1/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "orders", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Order by Pay Code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/by-paycode/?pay_code=ABC123XY",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "orders", "by-paycode", ""],
+              "query": [
+                {
+                  "key": "pay_code",
+                  "value": "ABC123XY"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"table\": 1,\n  \"items\": [\n    {\n      \"variant\": 1,\n      \"quantity\": 2,\n      \"notes\": \"\"\n    },\n    {\n      \"variant\": 5,\n      \"quantity\": 1,\n      \"notes\": \"Extra hot\"\n    }\n  ],\n  \"notes\": \"Please serve quickly\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "orders", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"confirmed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/1/update-status/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "orders", "1", "update-status", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Payments API",
+      "description": "Payment and bank account management",
+      "item": [
+        {
+          "name": "Bank Accounts",
+          "item": [
+            {
+              "name": "List Bank Accounts",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/payments/bank-accounts/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "payments", "bank-accounts", ""]
+                }
+              }
+            },
+            {
+              "name": "Get Default Bank Account",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/payments/bank-accounts/default_account/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "payments", "bank-accounts", "default_account", ""]
+                }
+              }
+            },
+            {
+              "name": "Set as Default",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/payments/bank-accounts/1/set_as_default/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "payments", "bank-accounts", "1", "set_as_default", ""]
+                }
+              }
+            },
+            {
+              "name": "Toggle Active Status",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/payments/bank-accounts/1/toggle_active/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "payments", "bank-accounts", "1", "toggle_active", ""]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Payments",
+          "item": [
+            {
+              "name": "List Payments",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/payments/?page=1&page_size=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "payments", ""],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Payment with QR",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"order_id\": 1,\n  \"payment_method\": \"bank_transfer\",\n  \"bank_account_id\": 1\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/payments/create_with_qr/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "payments", "create_with_qr", ""]
+                }
+              }
+            },
+            {
+              "name": "Get Payment by Pay Code",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/payments/by_pay_code/?pay_code=ABC123XY",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "payments", "by_pay_code", ""],
+                  "query": [
+                    {
+                      "key": "pay_code",
+                      "value": "ABC123XY"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Webhook - MBBank (Test)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": 39867600,\n  \"gateway\": \"MBBank\",\n  \"transactionDate\": \"2026-01-24 09:25:00\",\n  \"accountNumber\": \"0796791500\",\n  \"subAccount\": null,\n  \"code\": null,\n  \"content\": \"DH ABC12XYZ\",\n  \"transferType\": \"in\",\n  \"description\": \"BankAPINotify payment\",\n  \"transferAmount\": 20000,\n  \"referenceCode\": \"FT26024469748414\",\n  \"accumulated\": 2232708\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/payments/webhook/sepay/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "payments", "webhook", "sepay", ""]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6. Inventory API",
+      "description": "Ingredient and recipe management",
+      "item": [
+        {
+          "name": "Ingredients",
+          "item": [
+            {
+              "name": "List Ingredients",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/inventory/ingredients/?page=1&page_size=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "inventory", "ingredients", ""],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Low Stock Ingredients",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/inventory/ingredients/low-stock/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "inventory", "ingredients", "low-stock", ""]
+                }
+              }
+            },
+            {
+              "name": "Adjust Ingredient Stock",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"adjustment\": 10.5,\n  \"reason\": \"Restocking from supplier\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/inventory/ingredients/1/adjust-stock/",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "inventory", "ingredients", "1", "adjust-stock", ""]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Variant Recipes",
+          "item": [
+            {
+              "name": "List Variant Recipes",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/inventory/variant-recipes/?page=1&page_size=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "inventory", "variant-recipes", ""],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Recipes by Variant",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/inventory/variant-recipes/by-variant/?variant_id=1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "inventory", "variant-recipes", "by-variant", ""],
+                  "query": [
+                    {
+                      "key": "variant_id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "7. Staff API",
+      "description": "Staff and role management",
+      "item": [
+        {
+          "name": "List Roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/staff/roles/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "staff", "roles", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name_vi\": \"Pha chế\",\n  \"name_en\": \"Barista\",\n  \"slug\": \"barista\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/staff/roles/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "staff", "roles", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/",
+              "host": ["{{base_url}}"],
+              "path": ["health", ""]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
+
