@@ -31,8 +31,7 @@ export const SidebarData = [
         submenuItems: [
           { label: "Products", link: "/product-list", icon:<Icon.Box />,showSubRoute: false,submenu: false },
           { label: "Create Product", link: "/add-product", icon:  <Icon.PlusSquare />,showSubRoute: false, submenu: false },
-          { label: "Expired Products", link: "/expired-products", icon:  <Icon.Codesandbox  />,showSubRoute: false,submenu: false },          { label: "Category", link: "/category-list", icon:  <Icon.Codepen />,showSubRoute: false,submenu: false },
-          { label: "Sub Category", link: "/sub-categories", icon:  <Icon.Speaker  />,showSubRoute: false,submenu: false },
+          { label: "Category", link: "/category-list", icon:  <Icon.Codepen />,showSubRoute: false,submenu: false },
           { label: "Variant Attributes", link: "/variant-attributes", icon:  <Icon.Layers />,showSubRoute: false,submenu: false },
         ]
       },
