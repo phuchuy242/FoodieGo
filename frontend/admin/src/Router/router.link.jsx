@@ -6,11 +6,8 @@ import AddProduct from "../feature-module/inventory/addproduct";
 import SalesDashbaord from "../feature-module/dashboard/salesdashbaord";
 import BrandList from "../feature-module/inventory/brandlist";
 import VariantAttributes from "../feature-module/inventory/variantattributes";
-
 import PrintBarcode from "../feature-module/inventory/printbarcode";
-
 import DragDrop from "../feature-module/uiinterface/advancedui/dragdrop";
-
 import Rating from "../feature-module/uiinterface/advancedui/rating";
 import TextEditor from "../feature-module/uiinterface/advancedui/texteditor";
 import Counter from "../feature-module/uiinterface/advancedui/counter";
@@ -50,9 +47,7 @@ import FormValidation from "../feature-module/uiinterface/forms/formelements/lay
 import FormSelect2 from "../feature-module/uiinterface/forms/formelements/layouts/form-select2";
 import Ribbon from "../feature-module/uiinterface/advancedui/ribbon";
 import FormWizard from "../feature-module/uiinterface/forms/formelements/form-wizard";
-import ExpiredProduct from "../feature-module/inventory/expiredproduct";
 import CategoryList from "../feature-module/inventory/categorylist";
-import SubCategories from "../feature-module/inventory/subcategories";
 import EditProduct from "../feature-module/inventory/editproduct";
 
 import PurchasesList from "../feature-module/purchases/purchaseslist";
@@ -417,25 +412,10 @@ export const publicRoutes = [
     route: Route,
   },
   {
-    id: 58,
-    path: routes.expiredproduct,
-    name: "expiredproduct",
-    element: <ExpiredProduct />,
-    route: Route,
-  },
-  {
     id: 60,
     path: routes.categorylist,
     name: "categorylist",
     element: <CategoryList />,
-    route: Route,
-  },
-
-  {
-    id: 64,
-    path: routes.subcategories,
-    name: "subcategories",
-    element: <SubCategories />,
     route: Route,
   },
   {

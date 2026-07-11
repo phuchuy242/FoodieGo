@@ -69,10 +69,8 @@ export const all_routes = {
   ribbon: "/ui-ribbon",
 
   wizard: "/form-wizard",
-  expiredproduct: "/expired-products",
   lowstock: "/low-stocks",
   categorylist: "/category-list",
-  subcategories: "/sub-categories",
   productdetails: "/product-details",
   editproduct: "/edit-product",
   expenselist: "/expense-list",
