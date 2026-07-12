@@ -1,16 +1,91 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import ImageWithBasePath from "../../../core/img/imagewithbasebath";
-import { Link } from "react-router-dom";
 import { all_routes } from "../../../Router/all_routes";
+import axios from "axios";
 
 const Signin = () => {
   const route = all_routes;
+
+  const [email, setEmail] = useState(
+    localStorage.getItem("adminEmail") || ""
+  );
+
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [remember, setRemember] = useState(
+    !!localStorage.getItem("adminEmail")
+  );
+
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  function validate() {
+    const newErrors = {};
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Email address is invalid";
+    }
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    return newErrors;
+  }
+
+  async function handleSignIn(e) {
+    e.preventDefault();
+    const validationErrors = validate();
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/users/login/",
+        {
+          email,
+          password,
+        }
+      );
+      const { access_token, refresh_token } = res.data.data;
+
+      console.log(res.data.data);
+
+      localStorage.setItem("token", access_token);
+      localStorage.setItem("refresh_token", refresh_token);
+
+
+      if (remember) {
+        localStorage.setItem("adminEmail", email);
+      } else {
+        localStorage.removeItem("adminEmail");
+      }
+
+      navigate("/");
+
+    } catch (error) {
+      setErrors({ login: error.response?.data?.message || "An error occurred during sign in. Please try again." });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+
   return (
     <div className="main-wrapper">
       <div className="account-content">
         <div className="login-wrapper bg-img">
           <div className="login-content">
-            <form action="index">
+            <form onSubmit={handleSignIn}>
               <div className="login-userset">
                 <div className="login-logo logo-normal">
                   <ImageWithBasePath src="assets/img/logo.png" alt="img" />
@@ -27,7 +102,12 @@ const Signin = () => {
                 <div className="form-login mb-3">
                   <label className="form-label">Email Address</label>
                   <div className="form-addons">
-                    <input type="text" className="form- control" />
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
                     <ImageWithBasePath
                       src="assets/img/icons/mail.svg"
                       alt="img"
@@ -40,6 +120,8 @@ const Signin = () => {
                     <input
                       type="password"
                       className="pass-input form-control"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <span className="fas toggle-password fa-eye-slash" />
                   </div>
@@ -63,7 +145,7 @@ const Signin = () => {
                   </div>
                 </div>
                 <div className="form-login">
-                  <Link to={route.dashboard} className="btn btn-login">
+                  <Link to="#" className="btn btn-login" onClick={handleSignIn}>
                     Sign In
                   </Link>
                 </div>
