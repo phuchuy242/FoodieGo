@@ -1,28 +1,40 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from django.utils import timezone
+from django.db.models import Q
 from rest_framework_simplejwt.tokens import RefreshToken as SimpleJWTRefreshToken
-from core.responses import success_response, error_response
+from core.responses import (
+    success_response,
+    error_response,
+    created_response,
+    deleted_response,
+    StandardResultsSetPagination,
+)
+from core.mixins import FilterSortMixin, StandardResponseMixin
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
     UserSerializer,
     PasswordChangeSerializer,
     RefreshTokenSerializer,
+    UserCreateSerializer,
+    UserUpdateSerializer,
 )
 from .models import User, RefreshToken
 import jwt
 import hashlib
 
 
-class UserViewSet(viewsets.GenericViewSet):
+class UserViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet):
     """
-    ViewSet for User Authentication and Profile Management.
-    Combines Auth and User Profile features into one consistent ViewSet.
+    ViewSet for User Authentication, Profile Management, and Admin CRUD operations.
+    Combines Auth, Self-service Profile, and Admin User management into one consistent ViewSet.
     """
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('-created_at')
     serializer_class = UserSerializer
+    pagination_class = StandardResultsSetPagination
+    search_fields = ['email', 'phone_number', 'user_name', 'first_name', 'last_name']
 
     def get_permissions(self):
         """
@@ -30,6 +42,8 @@ class UserViewSet(viewsets.GenericViewSet):
         """
         if self.action in ['register', 'login', 'refresh_token', 'forgot_password', 'verify_otp']:
             permission_classes = [AllowAny]
+        elif self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
+            permission_classes = [IsAuthenticated, IsAdminUser]
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
@@ -43,7 +57,49 @@ class UserViewSet(viewsets.GenericViewSet):
             return RefreshTokenSerializer
         elif self.action == 'change_password':
             return PasswordChangeSerializer
+        elif self.action == 'create':
+            return UserCreateSerializer
+        elif self.action in ['update', 'partial_update']:
+            return UserUpdateSerializer
         return UserSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Filter by role
+        role = self.request.query_params.get('role')
+        if role:
+            if role in ['admin', 'staff']:
+                queryset = queryset.filter(is_staff=True)
+            elif role == 'customer':
+                queryset = queryset.filter(is_staff=False)
+                
+        # Filter by active status
+        is_active = self.request.query_params.get('is_active')
+        if is_active is not None:
+            if is_active.lower() in ['true', '1']:
+                queryset = queryset.filter(is_active=True)
+            elif is_active.lower() in ['false', '0']:
+                queryset = queryset.filter(is_active=False)
+
+        # Keyword / search filter support
+        search = self.request.query_params.get('search')
+        if search and not self.request.query_params.get('keyword'):
+            q_objects = Q()
+            for field in self.search_fields:
+                q_objects |= Q(**{f'{field}__icontains': search})
+            queryset = queryset.filter(q_objects)
+            
+        return queryset
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.id == request.user.id:
+            return error_response(
+                msg="Bạn không thể tự xóa hoặc vô hiệu hóa tài khoản của chính mình",
+                code=status.HTTP_400_BAD_REQUEST
+            )
+        return super().destroy(request, *args, **kwargs)
 
     @action(detail=False, methods=['post'])
     def register(self, request):
