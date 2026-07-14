@@ -13,26 +13,61 @@ const Register = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+
+  const [agree, setAgree] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-
+  function validate() {
     const newErrors = {};
 
-    if (!username.trim()) newErrors.username = "Name is required";
-    if (!email.trim()) newErrors.email = "Email is required";
-    if (!phoneNumber.trim()) newErrors.phone = "Phone number is required";
-    if (!password) newErrors.password = "Password is required";
-    if (password !== passwordConfirm) {
+    if (!username.trim()) {
+      newErrors.username = "Name is required";
+    }
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Email address is invalid";
+    }
+
+    if (!phoneNumber.trim()) {
+      newErrors.phoneNumber = "Phone number is required";
+    } else if (!/^[0-9]{9,11}$/.test(phoneNumber)) {
+      newErrors.phoneNumber = "Phone number must be 9 to 11 digits";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    if (!passwordConfirm) {
+      newErrors.passwordConfirm = "Confirm password is required";
+    } else if (password !== passwordConfirm) {
       newErrors.passwordConfirm = "Passwords do not match";
     }
 
-    setErrors(newErrors);
+    if (!agree) {
+      newErrors.agree = "You must agree to the Terms & Privacy";
+    }
 
-    if (Object.keys(newErrors).length > 0) return;
+    return newErrors;
+  }
+
+  async function handleRegister(e) {
+    e.preventDefault();
+
+    const validationErrors = validate();
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
 
     setLoading(true);
 
@@ -51,23 +86,50 @@ const Register = () => {
       const data = res.data.data;
 
       localStorage.setItem("token", data.access_token);
-      localStorage.setItem("refreshToken", data.refresh_token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("refresh_token", data.refresh_token);
 
-      alert(res.data.msg);
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
 
-      navigate(route.dashboard);
+      navigate("/");
     } catch (error) {
       setErrors({
         register:
-          error.response?.data?.msg ||
           error.response?.data?.message ||
-          "Register failed",
+          error.response?.data?.msg ||
+          error.response?.data?.detail ||
+          "Register failed. Please try again.",
       });
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  function handleGoogleLogin(e) {
+    e.preventDefault();
+    setErrors({
+      register:
+        "Google registration is not available yet. Please register with email and password.",
+    });
+  }
+
+  function handleFacebookLogin(e) {
+    e.preventDefault();
+    setErrors({
+      register:
+        "Facebook registration is not available yet. Please register with email and password.",
+    });
+  }
+
+  function handleAppleLogin(e) {
+    e.preventDefault();
+    setErrors({
+      register:
+        "Apple registration is not available yet. Please register with email and password.",
+    });
+  }
+
   return (
     <div className="main-wrapper">
       <div className="account-content">
@@ -78,13 +140,16 @@ const Register = () => {
                 <div className="login-logo logo-normal">
                   <ImageWithBasePath src="assets/img/logo.png" alt="img" />
                 </div>
+
                 <Link to={route.dashboard} className="login-logo logo-white">
-                  <ImageWithBasePath src="assets/img/logo-white.png" alt />
+                  <ImageWithBasePath src="assets/img/logo-white.png" alt="Logo" />
                 </Link>
+
                 <div className="login-userheading">
                   <h3>Register</h3>
-                  <h4>Create New Dreamspos Account</h4>
+                  <h4>Create your FoodieGo account</h4>
                 </div>
+
                 <div className="form-login">
                   <label>Name</label>
                   <div className="form-addons">
@@ -99,7 +164,11 @@ const Register = () => {
                       alt="img"
                     />
                   </div>
+                  {errors.username && (
+                    <small className="text-danger">{errors.username}</small>
+                  )}
                 </div>
+
                 <div className="form-login">
                   <label>Email Address</label>
                   <div className="form-addons">
@@ -114,65 +183,108 @@ const Register = () => {
                       alt="img"
                     />
                   </div>
+                  {errors.email && (
+                    <small className="text-danger">{errors.email}</small>
+                  )}
                 </div>
+
                 <div className="form-login">
                   <label>Phone Number</label>
-                  <div className="pass-group">
+                  <div className="form-addons">
                     <input
-                      type="number"
-                      className="pass-input"
+                      type="text"
+                      className="form-control"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                     />
-                    <span className="fas toggle-password fa-eye-slash" />
+                    <ImageWithBasePath
+                      src="assets/img/icons/phone.svg"
+                      alt="img"
+                    />
                   </div>
+                  {errors.phoneNumber && (
+                    <small className="text-danger">{errors.phoneNumber}</small>
+                  )}
                 </div>
+
                 <div className="form-login">
                   <label>Password</label>
                   <div className="pass-group">
                     <input
-                      type="password"
-                      className="pass-input"
+                      type={showPassword ? "text" : "password"}
+                      className="pass-input form-control"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
-                    <span className="fas toggle-password fa-eye-slash" />
+                    <span
+                      className={`fas toggle-password ${
+                        showPassword ? "fa-eye" : "fa-eye-slash"
+                      }`}
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{ cursor: "pointer" }}
+                    />
                   </div>
+                  {errors.password && (
+                    <small className="text-danger">{errors.password}</small>
+                  )}
                 </div>
+
                 <div className="form-login">
                   <label>Confirm Password</label>
                   <div className="pass-group">
                     <input
-                      type="password"
-                      className="pass-inputs"
+                      type={showPasswordConfirm ? "text" : "password"}
+                      className="pass-inputs form-control"
                       value={passwordConfirm}
                       onChange={(e) => setPasswordConfirm(e.target.value)}
                     />
-                    <span className="fas toggle-passwords fa-eye-slash" />
+                    <span
+                      className={`fas toggle-passwords ${
+                        showPasswordConfirm ? "fa-eye" : "fa-eye-slash"
+                      }`}
+                      onClick={() =>
+                        setShowPasswordConfirm(!showPasswordConfirm)
+                      }
+                      style={{ cursor: "pointer" }}
+                    />
                   </div>
+                  {errors.passwordConfirm && (
+                    <small className="text-danger">
+                      {errors.passwordConfirm}
+                    </small>
+                  )}
                 </div>
+
                 <div className="form-login authentication-check">
                   <div className="row">
-                    <div className="col-sm-8">
+                    <div className="col-sm-12">
                       <div className="custom-control custom-checkbox justify-content-start">
-                        <div className="custom-control custom-checkbox">
-                          <label className="checkboxs ps-4 mb-0 pb-0 line-height-1">
-                            <input type="checkbox" />
-                            <span className="checkmarks" />I agree to the{" "}
-                            <Link to="#" className="hover-a">
-                              Terms &amp; Privacy
-                            </Link>
-                          </label>
-                        </div>
+                        <label className="checkboxs ps-4 mb-0 pb-0 line-height-1">
+                          <input
+                            type="checkbox"
+                            checked={agree}
+                            onChange={(e) => setAgree(e.target.checked)}
+                          />
+                          <span className="checkmarks" />I agree to the{" "}
+                          <Link to="#" className="hover-a">
+                            Terms &amp; Privacy
+                          </Link>
+                        </label>
                       </div>
+
+                      {errors.agree && (
+                        <small className="text-danger">{errors.agree}</small>
+                      )}
                     </div>
                   </div>
                 </div>
+
                 {errors.register && (
                   <div className="alert alert-danger mt-3">
                     {errors.register}
                   </div>
                 )}
+
                 <div className="form-login">
                   <button
                     type="submit"
@@ -182,41 +294,50 @@ const Register = () => {
                     {loading ? "Signing Up..." : "Sign Up"}
                   </button>
                 </div>
+
                 <div className="signinform">
                   <h4>
-                    Already have an account ?{" "}
-                    <button
-                      type="submit"
-                      className="btn btn-login w-100"
-                      disabled={loading}
-                    >
-                      {loading ? "Signing Up..." : "Sign Up"}
-                    </button>
+                    Already have an account?{" "}
+                    <Link to={route.signin} className="hover-a">
+                      Sign In
+                    </Link>
                   </h4>
                 </div>
+
                 <div className="form-setlogin or-text">
                   <h4>OR</h4>
                 </div>
+
                 <div className="form-sociallink">
                   <ul className="d-flex">
                     <li>
-                      <Link to="#" className="facebook-logo">
+                      <Link
+                        to="#"
+                        className="facebook-logo"
+                        onClick={handleFacebookLogin}
+                      >
                         <ImageWithBasePath
                           src="assets/img/icons/facebook-logo.svg"
                           alt="Facebook"
                         />
                       </Link>
                     </li>
+
                     <li>
-                      <Link to="#">
+                      <Link to="#" onClick={handleGoogleLogin}>
                         <ImageWithBasePath
                           src="assets/img/icons/google.png"
                           alt="Google"
                         />
                       </Link>
                     </li>
+
                     <li>
-                      <Link to="#" className="apple-logo">
+                      <Link
+                        to="#"
+                        className="apple-logo"
+                        onClick={handleAppleLogin}
+                      >
                         <ImageWithBasePath
                           src="assets/img/icons/apple-logo.svg"
                           alt="Apple"
@@ -225,8 +346,9 @@ const Register = () => {
                     </li>
                   </ul>
                 </div>
+
                 <div className="my-4 d-flex justify-content-center align-items-center copyright-text">
-                  <p>Copyright © 2023 DreamsPOS. All rights reserved</p>
+                  <p>Copyright © 2026 FoodieGo. All rights reserved</p>
                 </div>
               </div>
             </form>
