@@ -40,43 +40,49 @@ const Signin = () => {
   }
 
   async function handleSignIn(e) {
-    e.preventDefault();
-    const validationErrors = validate();
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) {
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/users/login/",
-        {
-          email,
-          password,
-        }
-      );
-      const { access_token, refresh_token } = res.data.data;
+  e.preventDefault();
 
-      console.log(res.data.data);
+  const validationErrors = validate();
+  setErrors(validationErrors);
 
-      localStorage.setItem("token", access_token);
-      localStorage.setItem("refresh_token", refresh_token);
-
-
-      if (remember) {
-        localStorage.setItem("adminEmail", email);
-      } else {
-        localStorage.removeItem("adminEmail");
-      }
-
-      navigate("/");
-
-    } catch (error) {
-      setErrors({ login: error.response?.data?.message || "An error occurred during sign in. Please try again." });
-    } finally {
-      setLoading(false);
-    }
+  if (Object.keys(validationErrors).length > 0) {
+    return;
   }
+
+  setLoading(true);
+
+  try {
+    const res = await axios.post(
+      "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/users/login/",
+      {
+        email,
+        password,
+      }
+    );
+
+    const { access_token, refresh_token } = res.data.data;
+
+    localStorage.setItem("token", access_token);
+    localStorage.setItem("refresh_token", refresh_token);
+
+    if (remember) {
+      localStorage.setItem("adminEmail", email);
+    } else {
+      localStorage.removeItem("adminEmail");
+    }
+
+    navigate("/");
+  } catch (error) {
+    setErrors({
+      login:
+        error.response?.data?.message ||
+        error.response?.data?.detail ||
+        "An error occurred during sign in. Please try again.",
+    });
+  } finally {
+    setLoading(false);
+  }
+}
 
 
 
@@ -113,25 +119,42 @@ const Signin = () => {
                       alt="img"
                     />
                   </div>
+                  {errors.email && (
+                    <small className="text-danger">{errors.email}</small>
+                  )}
                 </div>
+
                 <div className="form-login mb-3">
                   <label className="form-label">Password</label>
                   <div className="pass-group">
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       className="pass-input form-control"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
-                    <span className="fas toggle-password fa-eye-slash" />
+
+                    <span
+                      className={`fas toggle-password ${showPassword ? "fa-eye" : "fa-eye-slash"}`}
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{ cursor: "pointer" }}
+                    />
                   </div>
+                  {errors.password && (
+                    <small className="text-danger">{errors.password}</small>
+                  )}
                 </div>
                 <div className="form-login authentication-check">
                   <div className="row">
                     <div className="col-12 d-flex align-items-center justify-content-between">
                       <div className="custom-control custom-checkbox">
                         <label className="checkboxs ps-4 mb-0 pb-0 line-height-1">
-                          <input type="checkbox" className="form-control" />
+                          <input
+                            type="checkbox"
+                            className="form-control"
+                            checked={remember}
+                            onChange={(e) => setRemember(e.target.checked)}
+                          />
                           <span className="checkmarks" />
                           Remember me
                         </label>
@@ -144,10 +167,15 @@ const Signin = () => {
                     </div>
                   </div>
                 </div>
+                {errors.login && (
+                  <div className="alert alert-danger py-2">
+                    {errors.login}
+                  </div>
+                )}
                 <div className="form-login">
-                  <Link to="#" className="btn btn-login" onClick={handleSignIn}>
-                    Sign In
-                  </Link>
+                  <button type="submit" className="btn btn-login" disabled={loading}>
+                    {loading ? "Signing In..." : "Sign In"}
+                  </button>
                 </div>
                 <div className="signinform">
                   <h4>
