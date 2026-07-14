@@ -1,15 +1,10 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from apps.inventory.views import VariantRecipeViewSet
 
-# Import views if they exist
-try:
-    from .views import DishIngredientViewSet
-    router = DefaultRouter()
-    router.register(r'', DishIngredientViewSet, basename='dishingredient')
-    urlpatterns = [
-        path('', include(router.urls)),
-    ]
-except ImportError:
-    # No viewset defined yet
-    urlpatterns = []
+router = DefaultRouter()
+router.register(r'', VariantRecipeViewSet, basename='dishingredient')
 
+urlpatterns = [
+    path('', include(router.urls)),
+]
