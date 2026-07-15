@@ -50,11 +50,6 @@ export default function Payment({
                 if (status === 'completed' || status === 'paid') {
                     clearInterval(pollRef.current);
                     setPaidSuccess(true);
-                    setTimeout(() => {
-                        setPaidSuccess(false);
-                        setQrData(null);
-                        onSubmit('transfer');
-                    }, 2500);
                 }
             } catch { /* ignore */ }
         }, 10000);
@@ -151,7 +146,7 @@ export default function Payment({
     };
 
     return (
-        <div className="rm-payment-overlay" role="dialog" aria-modal="true" onClick={(e) => { if (e.target === e.currentTarget) { onClose(); setQrData(null); setQrError(''); } }}>
+        <div className="rm-payment-overlay" role="dialog" aria-modal="true" onClick={(e) => { if (e.target === e.currentTarget) { if (paidSuccess) { setPaidSuccess(false); setQrData(null); onSubmit('transfer'); } else { onClose(); setQrData(null); setQrError(''); } } }}>
             <div className="rm-payment-card">
                 <div className="rm-payment-grip" aria-hidden />
                 <div className="rm-payment-header">
@@ -161,10 +156,21 @@ export default function Payment({
 
                 {/* Paid success screen */}
                 {paidSuccess ? (
-                    <div className="rm-payment-qr">
-                        <div className="rm-qr-success-icon">✓</div>
-                        <p className="rm-qr-amount"><strong>Thanh toán thành công!</strong></p>
-                        <p className="rm-qr-bank">Đơn hàng của bạn đã được xác nhận.</p>
+                    <div className="rm-payment-qr" style={{ padding: '24px 16px', textAlign: 'center' }}>
+                        <div className="rm-qr-success-icon" style={{ fontSize: '48px', color: '#10b981', margin: '0 auto 12px' }}>✓</div>
+                        <p className="rm-qr-amount" style={{ fontSize: '20px', color: '#111827', marginBottom: '8px' }}><strong>Thanh toán thành công! 🎉</strong></p>
+                        <p className="rm-qr-bank" style={{ color: '#4b5563', marginBottom: '24px' }}>Hệ thống đã nhận được tiền chuyển khoản.<br />Đơn hàng của bạn đã được xác nhận và chuyển vào bếp!</p>
+                        <button
+                            className="rm-payment-submit"
+                            style={{ width: '100%', padding: '14px', borderRadius: '12px', background: '#10b981', color: '#fff', fontSize: '16px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
+                            onClick={() => {
+                                setPaidSuccess(false);
+                                setQrData(null);
+                                onSubmit('transfer');
+                            }}
+                        >
+                            Đồng ý / Hoàn tất 🚀
+                        </button>
                     </div>
                 ) : qrData ? (
                     <div className="rm-payment-qr">
