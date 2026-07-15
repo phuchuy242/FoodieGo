@@ -180,4 +180,15 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
         # 3. Calculate total
         order.calculate_total()
+        
+        # 4. Update Voucher usage
+        if voucher_code:
+            from apps.vouchers.models import Voucher
+            try:
+                voucher = Voucher.objects.get(code=voucher_code)
+                voucher.current_usage += 1
+                voucher.save(update_fields=['current_usage'])
+            except Voucher.DoesNotExist:
+                pass
+                
         return order
