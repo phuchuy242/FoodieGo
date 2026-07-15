@@ -5,7 +5,7 @@ import { IoLocationSharp, IoPartlySunnyOutline, IoPencilOutline } from 'react-ic
 import { FaGift as GiftIcon, FaCreditCard as CardIcon, FaShoppingCart as CartIcon, FaStar as StarIcon, FaArrowRight as ArrowIcon, FaTag as TagIcon } from 'react-icons/fa';
 import '../styles/home-full.scss';
 import HERO from '../public/images/home.png';
-import LanguageSwitcher from './LanguageSwitcher';
+
 import LoginOtp from './LoginPhone';
 import Payment from './Payment';
 import AddressModal from './AddressModal';
@@ -91,9 +91,6 @@ export default function Home() {
                             <p className="rm-hf-location-text">Giao đến: {deliveryAddress}</p>
                         </div>
                     </div>
-                    <div className="rm-hf-flag">
-                        <LanguageSwitcher />
-                    </div>
                 </div>
             </header>
 
@@ -113,27 +110,7 @@ export default function Home() {
 
             <div className="rm-hf-card-top">
                 <div className="rm-hf-greet">
-                    <div className="rm-hf-greet-inner">
-                        <span className="rm-hf-sun"><IoPartlySunnyOutline /></span>
-                        {editing ? (
-                            <input
-                                ref={inputRef}
-                                className="rm-hf-greet-input"
-                                value={tempName}
-                                onChange={(e) => setTempName(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') saveName();
-                                    if (e.key === 'Escape') setEditing(false);
-                                }}
-                                onBlur={saveName}
-                            />
-                        ) : (
-                            <p className="rm-hf-greet-text" onClick={() => setEditing(true)} style={{ cursor: 'pointer' }}>
-                                Xin chào, <span className="rm-hf-blue">{name}</span>
-                            </p>
-                        )}
-                        <button className="rm-hf-edit" onClick={() => setEditing(true)}><IoPencilOutline /></button>
-                    </div>
+
 
                     {/* Thay thế chọn Bàn bằng chọn Địa chỉ Giao Hàng */}
                     <div className="rm-hf-table" style={{ position: 'relative' }}>
