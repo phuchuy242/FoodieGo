@@ -23,6 +23,15 @@ export const SidebarData = [
         ]
       },
       {
+        label: "Orders List",
+        submenuOpen: true,
+        showSubRoute: false,
+        submenuHdr: "Orders List",
+        submenuItems: [
+          { label: "Orders", link: "/orders", icon: <Icon.ShoppingCart />,showSubRoute: false,submenu: false },
+        ]
+      },
+      {
         label: "Inventory",
         submenuOpen: true,
         showSubRoute: false,
@@ -33,18 +42,6 @@ export const SidebarData = [
           { label: "Create Product", link: "/add-product", icon:  <Icon.PlusSquare />,showSubRoute: false, submenu: false },
           { label: "Category", link: "/category-list", icon:  <Icon.Codepen />,showSubRoute: false,submenu: false },
           { label: "Variant Attributes", link: "/variant-attributes", icon:  <Icon.Layers />,showSubRoute: false,submenu: false },
-        ]
-      },
-      {
-        label: "Stock",
-        submenuOpen: true,
-        submenuHdr: "Stock",
-        submenu: true,
-        showSubRoute: false,
-        submenuItems: [
-          { label: "Manage Stock", link: "/manage-stocks", icon:  <Icon.Package />,showSubRoute: false,submenu: false },
-          { label: "Stock Adjustment", link: "/stock-adjustment", icon:  <Icon.Clipboard />,showSubRoute: false,submenu: false },
-          { label: "Stock Transfer", link: "/stock-transfer", icon:  <Icon.Truck />,showSubRoute: false,submenu: false }
         ]
       },
       {
@@ -67,19 +64,6 @@ export const SidebarData = [
           { label: "Purchase Return", link: "/purchase-returns", icon:  <Icon.RefreshCw />,showSubRoute: false,submenu: false }
         ]
       },
-      
-      {
-        label: "HRM",
-        submenuOpen: true,
-        showSubRoute: false,
-        submenuHdr: "HRM",
-        submenuItems: [
-          { label: "Employees", link: "/employees-grid", icon:  <Icon.Users />,showSubRoute: false },
-          { label: "Departments", link: "/department-grid", icon:  <Icon.User />,showSubRoute: false },
-          { label: "Designations", link: "/designation", icon:  <Icon.UserCheck />,showSubRoute: false }
-          
-        ],
-      },
       {
         label: "User Management",
         submenuOpen: true,
@@ -87,8 +71,6 @@ export const SidebarData = [
         submenuHdr: "User Management",
         submenuItems: [
           { label: "Users", link: "/users", icon:  <Icon.UserCheck />,showSubRoute: false },
-          { label: "Roles & Permissions", link: "/roles-permissions", icon:  <Icon.UserCheck />,showSubRoute: false },
-          { label: "Delete Account Request", link: "/delete-account", icon:  <Icon.Lock />,showSubRoute: false }
         ]
       },
       {

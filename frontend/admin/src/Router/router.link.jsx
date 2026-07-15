@@ -27,9 +27,7 @@ import FlagIcons from "../feature-module/uiinterface/icons/flagicons";
 
 const routes = all_routes;
 
-import DepartmentGrid from "../feature-module/hrm/departmentgrid";
 import DepartmentList from "../feature-module/hrm/departmentlist";
-import Designation from "../feature-module/hrm/designation";
 import ClipBoard from "../feature-module/uiinterface/advancedui/clipboard";
 import TablesBasic from "../feature-module/uiinterface/table/tables-basic";
 import DataTables from "../feature-module/uiinterface/table/data-tables";
@@ -58,10 +56,7 @@ import SocialAuthentication from "../feature-module/settings/websitesettings/soc
 
 
 import BankSetting from "../feature-module/settings/financialsettings/banksetting";
-
-import Managestock from "../feature-module/stock/managestock";
-import StockAdjustment from "../feature-module/stock/stockAdjustment";
-import StockTransfer from "../feature-module/stock/stockTransfer";
+import Order from "../feature-module/order/orderList.jsx";
 import Signin from "../feature-module/pages/login/signin";
 // import SigninTwo from "../feature-module/pages/login/signinTwo";
 // import SigninThree from "../feature-module/pages/login/signinThree";
@@ -83,10 +78,7 @@ import Twostepverification from "../feature-module/pages/twostepverification/two
 import Lockscreen from "../feature-module/pages/lockscreen";
 import Blankpage from "../feature-module/pages/blankpage";
 import Users from "../feature-module/usermanagement/users";
-import RolesPermissions from "../feature-module/usermanagement/rolespermissions";
 import Permissions from "../feature-module/usermanagement/permissions";
-import DeleteAccount from "../feature-module/usermanagement/deleteaccount";
-import EmployeesGrid from "../feature-module/hrm/employeesgrid";
 import EditEmployee from "../feature-module/hrm/editemployee";
 import AddEmployee from "../feature-module/hrm/addemployee";
 import ProductDetail from "../feature-module/inventory/productdetail";
@@ -152,14 +144,6 @@ export const publicRoutes = [
     route: Route,
   },
   {
-    id: 38,
-    path: routes.departmentgrid,
-    name: "departmentgrid",
-    element: <DepartmentGrid />,
-    route: Route,
-  },
-
-  {
     id: 39,
     path: routes.departmentlist,
     name: "departmentlist",
@@ -171,14 +155,6 @@ export const publicRoutes = [
     path: routes.rating,
     name: "rating",
     element: <Rating />,
-  },
-
-  {
-    id: 40,
-    path: routes.designation,
-    name: "designation",
-    element: <Designation />,
-    route: Route,
   },
   {
     id: 41,
@@ -468,26 +444,11 @@ export const publicRoutes = [
     element: <BankSetting />,
     route: Route,
   },
-
   {
-    id: 87,
-    path: routes.managestock,
-    name: "managestock",
-    element: <Managestock />,
-    route: Route,
-  },
-  {
-    id: 88,
-    path: routes.stockadjustment,
-    name: "stockadjustment",
-    element: <StockAdjustment />,
-    route: Route,
-  },
-  {
-    id: 89,
-    path: routes.stocktransfer,
-    name: "stocktransfer",
-    element: <StockTransfer />,
+    id: 84,
+    path: routes.orders,
+    name: "orders",
+    element: <Order />,
     route: Route,
   },
   {
@@ -505,31 +466,10 @@ export const publicRoutes = [
     route: Route,
   },
   {
-    id: 105,
-    path: routes.rolespermission,
-    name: "rolespermission",
-    element: <RolesPermissions />,
-    route: Route,
-  },
-  {
     id: 106,
     path: routes.permissions,
     name: "permissions",
     element: <Permissions />,
-    route: Route,
-  },
-  {
-    id: 107,
-    path: routes.deleteaccount,
-    name: "deleteaccount",
-    element: <DeleteAccount />,
-    route: Route,
-  },
-  {
-    id: 108,
-    path: routes.employeegrid,
-    name: "employeegrid",
-    element: <EmployeesGrid />,
     route: Route,
   },
   {
