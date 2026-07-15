@@ -303,7 +303,7 @@ const CategoryList = () => {
                                 to="#"
                                 className="btn btn-added"
                                 data-bs-toggle="modal"
-                                data-bs-target="#add-units-category"
+                                data-bs-target="#add-category"
                             >
                                 <PlusCircle className="me-2 iconsize" />
                                 Thêm danh mục mới

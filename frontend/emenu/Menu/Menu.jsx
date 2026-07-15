@@ -66,7 +66,8 @@ export default function Menu({
                 const varArray = getArray(varJson);
 
                 if ((catJson.status === 'success' || catJson.status === true) && Array.isArray(catArray)) {
-                    const names = catArray.map((c) => c.name);
+                    const activeCats = catArray.filter(c => c.is_active !== false && c.is_available !== false);
+                    const names = activeCats.map((c) => c.name);
                     setCategories(names);
                     if (names.length > 0) setActiveCategory(names[0]);
                 }

@@ -268,8 +268,8 @@ const ProductList = () => {
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
     return (item.product && item.product.toLowerCase().includes(q)) ||
-           (item.sku && item.sku.toLowerCase().includes(q)) ||
-           (item.category && item.category.toLowerCase().includes(q));
+      (item.sku && item.sku.toLowerCase().includes(q)) ||
+      (item.category && item.category.toLowerCase().includes(q));
   }).sort((a, b) => {
     if (!selectedSort || selectedSort.value === "default") return 0;
     if (selectedSort.value === "idAsc") return (a.id || 0) - (b.id || 0);
@@ -345,17 +345,7 @@ const ProductList = () => {
               Thêm sản phẩm mới
             </Link>
           </div>
-          <div className="page-btn import">
-            <Link
-              to="#"
-              className="btn btn-added color"
-              data-bs-toggle="modal"
-              data-bs-target="#view-notes"
-            >
-              <Download className="me-2" />
-              Nhập sản phẩm
-            </Link>
-          </div>
+
         </div>
         {/* /product list */}
         <div className="card table-list-card">
