@@ -62,9 +62,9 @@ const CategoryList = () => {
         return () => window.removeEventListener('refreshCategoryList', handleRefresh);
     }, []);
 
-    const [selectedSort, setSelectedSort] = useState({ value: 'default', label: 'Sắp xếp (Sort)' });
+    const [selectedSort, setSelectedSort] = useState({ value: 'default', label: 'Sắp xếp' });
     const sortOptions = [
-        { value: 'default', label: 'Mặc định (Default Sort)' },
+        { value: 'default', label: 'Mặc định' },
         { value: 'idAsc', label: 'ID Tăng dần (#1 -> #9)' },
         { value: 'idDesc', label: 'ID Giảm dần (#9 -> #1)' },
         { value: 'nameAsc', label: 'Tên A -> Z' },
@@ -74,27 +74,27 @@ const CategoryList = () => {
 
     const renderTooltip = (props) => (
         <Tooltip id="pdf-tooltip" {...props}>
-            Pdf
+            Xuất PDF
         </Tooltip>
     );
     const renderExcelTooltip = (props) => (
         <Tooltip id="excel-tooltip" {...props}>
-            Excel
+            Xuất Excel
         </Tooltip>
     );
     const renderPrinterTooltip = (props) => (
         <Tooltip id="printer-tooltip" {...props}>
-            Printer
+            In
         </Tooltip>
     );
     const renderRefreshTooltip = (props) => (
         <Tooltip id="refresh-tooltip" {...props}>
-            Refresh
+            Làm mới
         </Tooltip>
     );
     const renderCollapseTooltip = (props) => (
         <Tooltip id="refresh-tooltip" {...props}>
-            Collapse
+            Thu gọn
         </Tooltip>
     );
 
@@ -127,14 +127,14 @@ const CategoryList = () => {
 
     const showConfirmationAlert = (id) => {
         MySwal.fire({
-            title: 'Are you sure?',
-            text: "Bạn có chắc chắn muốn xóa danh mục này?",
+            title: 'Bạn có chắc chắn?',
+            text: "Danh mục này sẽ bị xóa vĩnh viễn!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#28a745',
             cancelButtonColor: '#dc3545',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel'
+            confirmButtonText: 'Có, xóa ngay!',
+            cancelButtonText: 'Hủy bỏ'
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
@@ -144,7 +144,7 @@ const CategoryList = () => {
 
                     await axios.delete(`${API_BASE}/api/v1/admin/menu/categories/${id}/`, { headers });
                     MySwal.fire({
-                        title: 'Deleted!',
+                        title: 'Đã xóa!',
                         text: 'Danh mục đã được xóa thành công.',
                         icon: 'success',
                         customClass: { confirmButton: 'btn btn-success' }
@@ -165,28 +165,28 @@ const CategoryList = () => {
             sorter: (a, b) => (a.id || 0) - (b.id || 0),
         },
         {
-            title: "Category",
+            title: "Danh mục",
             dataIndex: "category",
             sorter: (a, b) => a.category.localeCompare(b.category),
         },
         {
-            title: "Category Slug / Description",
+            title: "Mô tả / Slug",
             dataIndex: "categoryslug",
             sorter: (a, b) => (a.categoryslug || '').localeCompare(b.categoryslug || ''),
         },
         {
-            title: "Products Count",
+            title: "Số lượng món",
             dataIndex: "products_count",
             render: (count) => <span className="badge bg-light text-dark font-weight-bold">{count || 0} món</span>,
             sorter: (a, b) => (a.products_count || 0) - (b.products_count || 0),
         },
         {
-            title: "Created On",
+            title: "Ngày tạo",
             dataIndex: "createdon",
             sorter: (a, b) => (a.createdon || '').localeCompare(b.createdon || ''),
         },
         {
-            title: "Status",
+            title: "Trạng thái",
             dataIndex: "status",
             render: (text, record) => (
                 <span
@@ -201,7 +201,7 @@ const CategoryList = () => {
             sorter: (a, b) => a.status.localeCompare(b.status),
         },
         {
-            title: 'Actions',
+            title: 'Thao tác',
             dataIndex: 'actions',
             key: 'actions',
             render: (_, record) => (
@@ -247,8 +247,8 @@ const CategoryList = () => {
                     <div className="page-header">
                         <div className="add-item d-flex">
                             <div className="page-title">
-                                <h4>Category</h4>
-                                <h6>Manage your categories ({filteredData.length} items)</h6>
+                                <h4>Danh mục</h4>
+                                <h6>Quản lý danh mục ({filteredData.length} mục)</h6>
                             </div>
                         </div>
                         <ul className="table-top-head">
@@ -306,7 +306,7 @@ const CategoryList = () => {
                                 data-bs-target="#add-units-category"
                             >
                                 <PlusCircle className="me-2 iconsize" />
-                                Add New Category
+                                Thêm danh mục mới
                             </Link>
                         </div>
                     </div>
@@ -318,7 +318,7 @@ const CategoryList = () => {
                                     <div className="search-input">
                                         <input
                                             type="text"
-                                            placeholder="Search category..."
+                                            placeholder="Tìm kiếm danh mục..."
                                             className="form-control form-control-sm formsearch"
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -335,7 +335,7 @@ const CategoryList = () => {
                                         options={sortOptions}
                                         value={selectedSort}
                                         onChange={(opt) => setSelectedSort(opt)}
-                                        placeholder="Sort Options"
+                                        placeholder="Sắp xếp"
                                     />
                                 </div>
                             </div>

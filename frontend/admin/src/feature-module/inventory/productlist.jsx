@@ -74,9 +74,9 @@ const ProductList = () => {
   }, []);
 
   const route = all_routes;
-  const [selectedSort, setSelectedSort] = useState({ value: "default", label: "Sắp xếp (Sort)" });
+  const [selectedSort, setSelectedSort] = useState({ value: "default", label: "Sắp xếp" });
   const sortOptions = [
-    { value: "default", label: "Mặc định (Default Sort)" },
+    { value: "default", label: "Mặc định" },
     { value: "idAsc", label: "ID Tăng dần (#1 -> #9)" },
     { value: "idDesc", label: "ID Giảm dần (#9 -> #1)" },
     { value: "nameAsc", label: "Tên A -> Z" },
@@ -87,14 +87,14 @@ const ProductList = () => {
 
   const showConfirmationAlert = (id) => {
     MySwal.fire({
-      title: "Are you sure?",
-      text: "Bạn có chắc chắn muốn xóa sản phẩm này?",
+      title: "Bạn có chắc chắn?",
+      text: "Sản phẩm này sẽ bị xóa vĩnh viễn!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#28a745",
       cancelButtonColor: "#dc3545",
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "Cancel",
+      confirmButtonText: "Có, xóa ngay!",
+      cancelButtonText: "Hủy bỏ",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -104,7 +104,7 @@ const ProductList = () => {
 
           await axios.delete(`${API_BASE}/api/v1/admin/menu/products/${id}/`, { headers });
           MySwal.fire({
-            title: "Deleted!",
+            title: "Đã xóa!",
             text: "Sản phẩm đã được xóa thành công.",
             icon: "success",
             customClass: { confirmButton: "btn btn-success" }
@@ -125,7 +125,7 @@ const ProductList = () => {
       sorter: (a, b) => (a.id || 0) - (b.id || 0),
     },
     {
-      title: "Image",
+      title: "Hình ảnh",
       dataIndex: "productImage",
       render: (text, record) => (
         <div
@@ -154,7 +154,7 @@ const ProductList = () => {
       ),
     },
     {
-      title: "Product Name",
+      title: "Tên sản phẩm",
       dataIndex: "product",
       render: (text) => (
         <span className="font-weight-bold text-dark">{text}</span>
@@ -162,22 +162,22 @@ const ProductList = () => {
       sorter: (a, b) => (a.product || "").localeCompare(b.product || ""),
     },
     {
-      title: "SKU",
+      title: "Mã SKU",
       dataIndex: "sku",
       sorter: (a, b) => (a.sku || "").localeCompare(b.sku || ""),
     },
     {
-      title: "Category",
+      title: "Danh mục",
       dataIndex: "category",
       sorter: (a, b) => (a.category || "").localeCompare(b.category || ""),
     },
     {
-      title: "Unit",
+      title: "Đơn vị",
       dataIndex: "unit",
       sorter: (a, b) => (a.unit || "").localeCompare(b.unit || ""),
     },
     {
-      title: "Qty / Status",
+      title: "SL / Trạng thái",
       dataIndex: "qty",
       render: (text) => <span className="badge bg-light text-dark font-weight-bold">{text}</span>,
       sorter: (a, b) => (String(a.qty) || "").localeCompare(String(b.qty) || ""),
@@ -195,7 +195,7 @@ const ProductList = () => {
       sorter: (a, b) => (a.variants_count || 0) - (b.variants_count || 0),
     },
     {
-      title: "Created By",
+      title: "Người tạo",
       dataIndex: "createdby",
       render: (text, record) => (
         <span className="userimgname">
@@ -208,7 +208,7 @@ const ProductList = () => {
       sorter: (a, b) => (a.createdby || "").localeCompare(b.createdby || ""),
     },
     {
-      title: "Action",
+      title: "Thao tác",
       dataIndex: "action",
       render: (_, record) => (
         <td className="action-table-data">
@@ -240,27 +240,27 @@ const ProductList = () => {
 
   const renderTooltip = (props) => (
     <Tooltip id="pdf-tooltip" {...props}>
-      Pdf
+      Xuất PDF
     </Tooltip>
   );
   const renderExcelTooltip = (props) => (
     <Tooltip id="excel-tooltip" {...props}>
-      Excel
+      Xuất Excel
     </Tooltip>
   );
   const renderPrinterTooltip = (props) => (
     <Tooltip id="printer-tooltip" {...props}>
-      Printer
+      In
     </Tooltip>
   );
   const renderRefreshTooltip = (props) => (
     <Tooltip id="refresh-tooltip" {...props}>
-      Refresh
+      Làm mới
     </Tooltip>
   );
   const renderCollapseTooltip = (props) => (
     <Tooltip id="refresh-tooltip" {...props}>
-      Collapse
+      Thu gọn
     </Tooltip>
   );
 
@@ -285,8 +285,8 @@ const ProductList = () => {
         <div className="page-header">
           <div className="add-item d-flex">
             <div className="page-title">
-              <h4>Product List</h4>
-              <h6>Manage your products ({filteredData.length} items)</h6>
+              <h4>Danh sách sản phẩm</h4>
+              <h6>Quản lý sản phẩm ({filteredData.length} mục)</h6>
             </div>
           </div>
           <ul className="table-top-head">
@@ -342,7 +342,7 @@ const ProductList = () => {
           <div className="page-btn">
             <Link to={route.addproduct} className="btn btn-added">
               <PlusCircle className="me-2 iconsize" />
-              Add New Product
+              Thêm sản phẩm mới
             </Link>
           </div>
           <div className="page-btn import">
@@ -353,7 +353,7 @@ const ProductList = () => {
               data-bs-target="#view-notes"
             >
               <Download className="me-2" />
-              Import Product
+              Nhập sản phẩm
             </Link>
           </div>
         </div>
@@ -365,7 +365,7 @@ const ProductList = () => {
                 <div className="search-input">
                   <input
                     type="text"
-                    placeholder="Search product..."
+                    placeholder="Tìm kiếm sản phẩm..."
                     className="form-control form-control-sm formsearch"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -382,7 +382,7 @@ const ProductList = () => {
                   options={sortOptions}
                   value={selectedSort}
                   onChange={(opt) => setSelectedSort(opt)}
-                  placeholder="Sort Options"
+                  placeholder="Sắp xếp"
                 />
               </div>
             </div>
