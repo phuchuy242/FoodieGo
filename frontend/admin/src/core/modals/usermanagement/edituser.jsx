@@ -1,15 +1,13 @@
-import React, {
-  useEffect,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Swal from "sweetalert2";
 
-import ImageWithBasePath from "../../img/imagewithbasebath";
-
 const API_URL =
   "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/users/";
+
+const DEFAULT_AVATAR =
+  "/assets/img/users/default-user.jpg";
 
 const emptyForm = {
   username: "",
@@ -21,7 +19,7 @@ const emptyForm = {
   address: "",
   role: "customer",
   isActive: true,
-  img: "assets/img/users/user-15.jpg",
+  avatarUrl: "",
 };
 
 const EditUser = ({
@@ -29,17 +27,12 @@ const EditUser = ({
   loadingDetail = false,
   onUpdated,
 }) => {
-  const [formData, setFormData] =
-    useState(emptyForm);
-
+  const [formData, setFormData] = useState(emptyForm);
   const [originalData, setOriginalData] =
     useState(emptyForm);
 
-  const [errors, setErrors] =
-    useState({});
-
-  const [loading, setLoading] =
-    useState(false);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const roleOptions = [
     {
@@ -77,48 +70,36 @@ const EditUser = ({
     }
 
     const userData = {
-      username:
-        selectedUser.username || "",
-
-      firstName:
-        selectedUser.firstName || "",
-
-      lastName:
-        selectedUser.lastName || "",
-
-      fullName:
-        selectedUser.fullName || "",
+      username: selectedUser.username || "",
+      firstName: selectedUser.firstName || "",
+      lastName: selectedUser.lastName || "",
+      fullName: selectedUser.fullName || "",
 
       phone:
-        selectedUser.phone ===
-        "Not provided"
+        selectedUser.phone === "Not provided"
           ? ""
           : selectedUser.phone || "",
 
       email:
-        selectedUser.email ===
-        "Not provided"
+        selectedUser.email === "Not provided"
           ? ""
           : selectedUser.email || "",
 
       address:
-        selectedUser.address ===
-        "Not provided"
+        selectedUser.address === "Not provided"
           ? ""
           : selectedUser.address || "",
 
-      role:
-        selectedUser.role ||
-        "customer",
+      role: selectedUser.role || "customer",
 
       isActive:
         selectedUser.isActive ??
-        selectedUser.status ===
-          "Active",
+        selectedUser.status === "Active",
 
-      img:
-        selectedUser.img ||
-        "assets/img/users/user-15.jpg",
+      avatarUrl:
+        selectedUser.img === DEFAULT_AVATAR
+          ? ""
+          : selectedUser.img || "",
     };
 
     setFormData(userData);
@@ -127,8 +108,7 @@ const EditUser = ({
   }, [selectedUser]);
 
   function handleChange(event) {
-    const { name, value } =
-      event.target;
+    const { name, value } = event.target;
 
     setFormData((previousData) => ({
       ...previousData,
@@ -145,8 +125,7 @@ const EditUser = ({
   function handleRoleChange(option) {
     setFormData((previousData) => ({
       ...previousData,
-      role:
-        option?.value || "customer",
+      role: option?.value || "customer",
     }));
 
     setErrors((previousErrors) => ({
@@ -159,8 +138,7 @@ const EditUser = ({
   function handleStatusChange(option) {
     setFormData((previousData) => ({
       ...previousData,
-      isActive:
-        option?.value ?? true,
+      isActive: option?.value ?? true,
     }));
 
     setErrors((previousErrors) => ({
@@ -168,6 +146,11 @@ const EditUser = ({
       isActive: "",
       general: "",
     }));
+  }
+
+  function handleAvatarError(event) {
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = DEFAULT_AVATAR;
   }
 
   function createChangedPayload() {
@@ -181,42 +164,43 @@ const EditUser = ({
       address: "default_address",
       role: "role",
       isActive: "is_active",
+      avatarUrl: "avatar_url",
     };
 
     const payload = {};
 
-    Object.keys(fieldMap).forEach(
-      (frontendField) => {
-        if (
-          formData[frontendField] !==
-          originalData[frontendField]
-        ) {
-          payload[
-            fieldMap[frontendField]
-          ] =
-            formData[frontendField];
-        }
+    Object.keys(fieldMap).forEach((frontendField) => {
+      if (
+        formData[frontendField] !==
+        originalData[frontendField]
+      ) {
+        payload[fieldMap[frontendField]] =
+          typeof formData[frontendField] === "string"
+            ? formData[frontendField].trim()
+            : formData[frontendField];
       }
-    );
+    });
 
     return payload;
   }
 
-  function validatePayload(payload) {
+  function validateForm() {
     const validationErrors = {};
 
     if (
-      Object.prototype.hasOwnProperty.call(
-        payload,
-        "email"
-      ) &&
-      payload.email &&
-      !/\S+@\S+\.\S+/.test(
-        payload.email
-      )
+      formData.email &&
+      !/\S+@\S+\.\S+/.test(formData.email)
     ) {
       validationErrors.email =
         "Email address is invalid.";
+    }
+
+    if (
+      formData.avatarUrl &&
+      !/^https?:\/\/.+/i.test(formData.avatarUrl)
+    ) {
+      validationErrors.avatarUrl =
+        "Avatar URL must begin with http:// or https://";
     }
 
     return validationErrors;
@@ -234,19 +218,24 @@ const EditUser = ({
       return;
     }
 
-    const payload =
-      createChangedPayload();
+    const validationErrors = validateForm();
 
     if (
-      Object.keys(payload).length === 0
+      Object.keys(validationErrors).length > 0
     ) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    const payload = createChangedPayload();
+
+    if (Object.keys(payload).length === 0) {
       Swal.fire({
         icon: "info",
         title: "No changes",
         text: "No user information has been changed.",
         customClass: {
-          confirmButton:
-            "btn btn-submit",
+          confirmButton: "btn btn-submit",
         },
         buttonsStyling: false,
       });
@@ -254,19 +243,7 @@ const EditUser = ({
       return;
     }
 
-    const validationErrors =
-      validatePayload(payload);
-
-    if (
-      Object.keys(validationErrors)
-        .length > 0
-    ) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    const token =
-      localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     if (!token) {
       setErrors({
@@ -301,18 +278,14 @@ const EditUser = ({
         title: "Updated",
         text: "User profile updated successfully.",
         customClass: {
-          confirmButton:
-            "btn btn-submit",
+          confirmButton: "btn btn-submit",
         },
         buttonsStyling: false,
       });
 
       setOriginalData(formData);
 
-      if (
-        typeof onUpdated ===
-        "function"
-      ) {
+      if (typeof onUpdated === "function") {
         await onUpdated();
       }
 
@@ -336,24 +309,19 @@ const EditUser = ({
 
       setErrors({
         username:
-          apiErrors.username?.[0] ||
-          "",
+          apiErrors.username?.[0] || "",
 
         firstName:
-          apiErrors.first_name?.[0] ||
-          "",
+          apiErrors.first_name?.[0] || "",
 
         lastName:
-          apiErrors.last_name?.[0] ||
-          "",
+          apiErrors.last_name?.[0] || "",
 
         fullName:
-          apiErrors.full_name?.[0] ||
-          "",
+          apiErrors.full_name?.[0] || "",
 
         phone:
-          apiErrors.phone_number?.[0] ||
-          "",
+          apiErrors.phone_number?.[0] || "",
 
         email:
           apiErrors.email?.[0] || "",
@@ -366,7 +334,11 @@ const EditUser = ({
           apiErrors.role?.[0] || "",
 
         isActive:
-          apiErrors.is_active?.[0] ||
+          apiErrors.is_active?.[0] || "",
+
+        avatarUrl:
+          apiErrors.avatar_url?.[0] ||
+          apiErrors.avatar?.[0] ||
           "",
 
         general:
@@ -380,24 +352,27 @@ const EditUser = ({
     }
   }
 
+  function handleClose() {
+    if (selectedUser) {
+      setFormData(originalData);
+    }
+
+    setErrors({});
+  }
+
   return (
-    <div
-      className="modal fade"
-      id="edit-units"
-    >
+    <div className="modal fade" id="edit-units">
       <div className="modal-dialog modal-dialog-centered custom-modal-two modal-lg">
         <div className="modal-content">
           <div className="page-wrapper-new p-0">
             <div className="content">
               <div className="modal-header border-0 custom-modal-header">
                 <div className="page-title">
-                  <h4>
-                    Edit User Profile
-                  </h4>
+                  <h4>Edit User Profile</h4>
 
                   <p className="mb-0 text-muted">
                     Update user information,
-                    permissions and status
+                    permissions, status and avatar
                   </p>
                 </div>
 
@@ -406,10 +381,9 @@ const EditUser = ({
                   className="close"
                   data-bs-dismiss="modal"
                   aria-label="Close"
+                  onClick={handleClose}
                 >
-                  <span aria-hidden="true">
-                    ×
-                  </span>
+                  <span aria-hidden="true">×</span>
                 </button>
               </div>
 
@@ -431,13 +405,10 @@ const EditUser = ({
                   </div>
                 ) : !selectedUser ? (
                   <div className="alert alert-warning mb-0">
-                    User information is
-                    unavailable.
+                    User information is unavailable.
                   </div>
                 ) : (
-                  <form
-                    onSubmit={handleSubmit}
-                  >
+                  <form onSubmit={handleSubmit}>
                     {errors.general && (
                       <div className="alert alert-danger">
                         {errors.general}
@@ -447,19 +418,42 @@ const EditUser = ({
                     <div className="row">
                       <div className="col-lg-12">
                         <div className="new-employee-field">
-                          <span>
-                            Profile Image
-                          </span>
+                          <span>Profile Image</span>
 
                           <div className="profile-pic-upload edit-pic">
                             <div className="profile-pic">
-                              <ImageWithBasePath
+                              <img
                                 src={
-                                  formData.img
+                                  formData.avatarUrl ||
+                                  DEFAULT_AVATAR
+                                }
+                                alt={
+                                  formData.fullName ||
+                                  formData.username ||
+                                  "User"
                                 }
                                 className="user-editer"
-                                alt="User"
+                                onError={
+                                  handleAvatarError
+                                }
+                                style={{
+                                  width: "100px",
+                                  height: "100px",
+                                  borderRadius: "50%",
+                                  objectFit: "cover",
+                                }}
                               />
+                            </div>
+
+                            <div className="ms-3">
+                              <p className="mb-1">
+                                Avatar preview
+                              </p>
+
+                              <small className="text-muted">
+                                Paste a direct image URL
+                                below.
+                              </small>
                             </div>
                           </div>
                         </div>
@@ -468,68 +462,40 @@ const EditUser = ({
                       <EditInput
                         label="User Name"
                         name="username"
-                        value={
-                          formData.username
-                        }
-                        onChange={
-                          handleChange
-                        }
-                        error={
-                          errors.username
-                        }
+                        value={formData.username}
+                        onChange={handleChange}
+                        error={errors.username}
                       />
 
                       <EditInput
                         label="Full Name"
                         name="fullName"
-                        value={
-                          formData.fullName
-                        }
-                        onChange={
-                          handleChange
-                        }
-                        error={
-                          errors.fullName
-                        }
+                        value={formData.fullName}
+                        onChange={handleChange}
+                        error={errors.fullName}
                       />
 
                       <EditInput
                         label="First Name"
                         name="firstName"
-                        value={
-                          formData.firstName
-                        }
-                        onChange={
-                          handleChange
-                        }
-                        error={
-                          errors.firstName
-                        }
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        error={errors.firstName}
                       />
 
                       <EditInput
                         label="Last Name"
                         name="lastName"
-                        value={
-                          formData.lastName
-                        }
-                        onChange={
-                          handleChange
-                        }
-                        error={
-                          errors.lastName
-                        }
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        error={errors.lastName}
                       />
 
                       <EditInput
                         label="Phone Number"
                         name="phone"
-                        value={
-                          formData.phone
-                        }
-                        onChange={
-                          handleChange
-                        }
+                        value={formData.phone}
+                        onChange={handleChange}
                         error={errors.phone}
                       />
 
@@ -537,12 +503,8 @@ const EditUser = ({
                         label="Email"
                         name="email"
                         type="email"
-                        value={
-                          formData.email
-                        }
-                        onChange={
-                          handleChange
-                        }
+                        value={formData.email}
+                        onChange={handleChange}
                         error={errors.email}
                       />
 
@@ -552,9 +514,7 @@ const EditUser = ({
 
                           <Select
                             className="select"
-                            options={
-                              roleOptions
-                            }
+                            options={roleOptions}
                             value={
                               roleOptions.find(
                                 (option) =>
@@ -562,9 +522,8 @@ const EditUser = ({
                                   formData.role
                               ) || null
                             }
-                            onChange={
-                              handleRoleChange
-                            }
+                            onChange={handleRoleChange}
+                            placeholder="Choose Role"
                           />
 
                           {errors.role && (
@@ -577,15 +536,11 @@ const EditUser = ({
 
                       <div className="col-lg-6">
                         <div className="input-blocks">
-                          <label>
-                            Status
-                          </label>
+                          <label>Status</label>
 
                           <Select
                             className="select"
-                            options={
-                              statusOptions
-                            }
+                            options={statusOptions}
                             value={
                               statusOptions.find(
                                 (option) =>
@@ -596,13 +551,32 @@ const EditUser = ({
                             onChange={
                               handleStatusChange
                             }
+                            placeholder="Choose Status"
                           />
 
                           {errors.isActive && (
                             <small className="text-danger">
-                              {
-                                errors.isActive
-                              }
+                              {errors.isActive}
+                            </small>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="col-lg-12">
+                        <div className="input-blocks">
+                          <label>Default Address</label>
+
+                          <input
+                            type="text"
+                            name="address"
+                            value={formData.address}
+                            onChange={handleChange}
+                            placeholder="Enter default address"
+                          />
+
+                          {errors.address && (
+                            <small className="text-danger">
+                              {errors.address}
                             </small>
                           )}
                         </div>
@@ -611,24 +585,28 @@ const EditUser = ({
                       <div className="col-lg-12">
                         <div className="input-blocks">
                           <label>
-                            Default Address
+                            Avatar URL
                           </label>
 
                           <input
                             type="text"
-                            name="address"
+                            name="avatarUrl"
                             value={
-                              formData.address
+                              formData.avatarUrl
                             }
-                            onChange={
-                              handleChange
-                            }
-                            placeholder="Enter default address"
+                            onChange={handleChange}
+                            placeholder="https://example.com/avatar.jpg"
                           />
 
-                          {errors.address && (
-                            <small className="text-danger">
-                              {errors.address}
+                          <small className="text-muted d-block mt-1">
+                            Paste a public image URL
+                            beginning with http:// or
+                            https://
+                          </small>
+
+                          {errors.avatarUrl && (
+                            <small className="text-danger d-block">
+                              {errors.avatarUrl}
                             </small>
                           )}
                         </div>
@@ -641,6 +619,7 @@ const EditUser = ({
                         className="btn btn-cancel me-2"
                         data-bs-dismiss="modal"
                         disabled={loading}
+                        onClick={handleClose}
                       >
                         Cancel
                       </button>
