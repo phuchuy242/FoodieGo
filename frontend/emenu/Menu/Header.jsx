@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/header.scss';
-import LanguageSwitcher from './LanguageSwitcher';
+
 import AddressModal from './AddressModal';
 
 export default function Header({ address, onBack, query, onQueryChange }) {
@@ -115,7 +115,6 @@ export default function Header({ address, onBack, query, onQueryChange }) {
                         </svg>
                         {localCartCount > 0 && <span className="rm-badge">{localCartCount}</span>}
                     </button>
-                    <LanguageSwitcher />
                 </div>
             </header>
 
