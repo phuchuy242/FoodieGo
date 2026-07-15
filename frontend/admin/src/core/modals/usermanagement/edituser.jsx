@@ -30,19 +30,38 @@ const EditUser = ({
   const [formData, setFormData] = useState(emptyForm);
   const [originalData, setOriginalData] =
     useState(emptyForm);
+
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const roleOptions = [
-    { value: "customer", label: "Customer" },
-    { value: "admin", label: "Admin" },
-    { value: "staff", label: "Staff" },
-    { value: "shipper", label: "Shipper" },
+    {
+      value: "customer",
+      label: "Khách hàng",
+    },
+    {
+      value: "admin",
+      label: "Quản trị viên",
+    },
+    {
+      value: "staff",
+      label: "Nhân viên",
+    },
+    {
+      value: "shipper",
+      label: "Người giao hàng",
+    },
   ];
 
   const statusOptions = [
-    { value: true, label: "Active" },
-    { value: false, label: "Inactive" },
+    {
+      value: true,
+      label: "Hoạt động",
+    },
+    {
+      value: false,
+      label: "Không hoạt động",
+    },
   ];
 
   function buildFullName(lastName, firstName) {
@@ -93,7 +112,7 @@ const EditUser = ({
 
       isActive:
         selectedUser.isActive ??
-        selectedUser.status === "Active",
+        selectedUser.status === "Hoạt động",
 
       avatarUrl:
         !selectedUser.img ||
@@ -189,41 +208,39 @@ const EditUser = ({
 
     if (!formData.username.trim()) {
       validationErrors.username =
-        "User name is required.";
+        "Tên đăng nhập là bắt buộc.";
     }
 
     if (!formData.firstName.trim()) {
       validationErrors.firstName =
-        "First name is required.";
+        "Tên là bắt buộc.";
     }
 
     if (!formData.lastName.trim()) {
       validationErrors.lastName =
-        "Last name is required.";
+        "Họ là bắt buộc.";
     }
 
     if (!formData.phone.trim()) {
       validationErrors.phone =
-        "Phone number is required.";
+        "Số điện thoại là bắt buộc.";
     } else if (
-      !/^0\d{9}$/.test(
-        formData.phone.trim()
-      )
+      !/^0\d{9}$/.test(formData.phone.trim())
     ) {
       validationErrors.phone =
-        "Phone number must be 10 digits and start with 0.";
+        "Số điện thoại phải có 10 chữ số và bắt đầu bằng 0.";
     }
 
     if (!formData.email.trim()) {
       validationErrors.email =
-        "Email is required.";
+        "Email là bắt buộc.";
     } else if (
       !/^\S+@\S+\.\S+$/.test(
         formData.email.trim()
       )
     ) {
       validationErrors.email =
-        "Email address is invalid.";
+        "Email không hợp lệ.";
     }
 
     if (
@@ -233,7 +250,7 @@ const EditUser = ({
       )
     ) {
       validationErrors.avatarUrl =
-        "Avatar URL must begin with http:// or https://";
+        "Đường dẫn ảnh phải bắt đầu bằng http:// hoặc https://";
     }
 
     return validationErrors;
@@ -280,8 +297,9 @@ const EditUser = ({
     if (!selectedUser?.id) {
       setErrors({
         general:
-          "User information is unavailable.",
+          "Không có thông tin người dùng.",
       });
+
       return;
     }
 
@@ -299,13 +317,14 @@ const EditUser = ({
     if (Object.keys(payload).length === 0) {
       Swal.fire({
         icon: "info",
-        title: "No changes",
-        text: "No user information has been changed.",
+        title: "Không có thay đổi",
+        text: "Không có thông tin nào được thay đổi.",
         customClass: {
           confirmButton: "btn btn-submit",
         },
         buttonsStyling: false,
       });
+
       return;
     }
 
@@ -315,8 +334,9 @@ const EditUser = ({
     if (!token) {
       setErrors({
         general:
-          "Access token not found. Please sign in again.",
+          "Không tìm thấy mã truy cập. Vui lòng đăng nhập lại.",
       });
+
       return;
     }
 
@@ -395,8 +415,8 @@ const EditUser = ({
 
       await Swal.fire({
         icon: "success",
-        title: "Updated",
-        text: "User profile updated successfully.",
+        title: "Cập nhật thành công",
+        text: "Hồ sơ người dùng đã được cập nhật.",
         customClass: {
           confirmButton: "btn btn-submit",
         },
@@ -413,16 +433,47 @@ const EditUser = ({
         )
         ?.click();
     } catch (requestError) {
-      console.error(
-        "Update user error:",
-        requestError
-      );
-
       const responseData =
         requestError.response?.data;
 
       const apiErrors =
         responseData?.errors || {};
+
+      console.error("Lỗi cập nhật người dùng:", {
+        status: requestError.response?.status,
+        responseData,
+        requestPayload: payload,
+      });
+
+      const fieldMessages = Object.values(
+        apiErrors
+      )
+        .flatMap((value) => {
+          if (Array.isArray(value)) {
+            return value;
+          }
+
+          if (typeof value === "string") {
+            return [value];
+          }
+
+          return [];
+        })
+        .filter(Boolean);
+
+      const generalMessage =
+        fieldMessages.length > 0
+          ? fieldMessages.join(" ")
+          : typeof responseData?.detail ===
+              "string"
+            ? responseData.detail
+            : responseData?.msg ||
+              responseData?.message ||
+              `Không thể cập nhật người dùng${
+                requestError.response?.status
+                  ? ` (Mã lỗi ${requestError.response.status})`
+                  : ""
+              }.`;
 
       setErrors({
         username:
@@ -435,8 +486,7 @@ const EditUser = ({
           apiErrors.last_name?.[0] || "",
 
         phone:
-          apiErrors.phone_number?.[0] ||
-          "",
+          apiErrors.phone_number?.[0] || "",
 
         email:
           apiErrors.email?.[0] || "",
@@ -456,11 +506,7 @@ const EditUser = ({
           apiErrors.avatar?.[0] ||
           "",
 
-        general:
-          responseData?.msg ||
-          responseData?.message ||
-          responseData?.detail ||
-          "Unable to update user.",
+        general: generalMessage,
       });
     } finally {
       setLoading(false);
@@ -483,11 +529,13 @@ const EditUser = ({
             <div className="content">
               <div className="modal-header border-0 custom-modal-header">
                 <div className="page-title">
-                  <h4>Edit User Profile</h4>
+                  <h4>
+                    Chỉnh sửa hồ sơ người dùng
+                  </h4>
 
                   <p className="mb-0 text-muted">
-                    Update user information,
-                    permissions, status and avatar
+                    Cập nhật thông tin, vai trò,
+                    trạng thái và ảnh đại diện
                   </p>
                 </div>
 
@@ -495,7 +543,7 @@ const EditUser = ({
                   type="button"
                   className="close"
                   data-bs-dismiss="modal"
-                  aria-label="Close"
+                  aria-label="Đóng"
                   onClick={handleClose}
                 >
                   <span aria-hidden="true">
@@ -512,17 +560,17 @@ const EditUser = ({
                       role="status"
                     >
                       <span className="visually-hidden">
-                        Loading...
+                        Đang tải...
                       </span>
                     </div>
 
                     <p className="mt-3 mb-0">
-                      Loading user details...
+                      Đang tải thông tin người dùng...
                     </p>
                   </div>
                 ) : !selectedUser ? (
                   <div className="alert alert-warning mb-0">
-                    User information is unavailable.
+                    Không có thông tin người dùng.
                   </div>
                 ) : (
                   <form
@@ -539,7 +587,7 @@ const EditUser = ({
                       <div className="col-lg-12">
                         <div className="new-employee-field">
                           <span>
-                            Profile Image
+                            Ảnh đại diện
                           </span>
 
                           <div className="profile-pic-upload edit-pic">
@@ -552,7 +600,7 @@ const EditUser = ({
                                 alt={
                                   formData.fullName ||
                                   formData.username ||
-                                  "User"
+                                  "Người dùng"
                                 }
                                 className="user-editer"
                                 onError={
@@ -571,7 +619,7 @@ const EditUser = ({
                       </div>
 
                       <EditInput
-                        label="User Name"
+                        label="Tên đăng nhập"
                         name="username"
                         value={
                           formData.username
@@ -586,7 +634,7 @@ const EditUser = ({
                       />
 
                       <EditInput
-                        label="Full Name"
+                        label="Họ và tên"
                         name="fullName"
                         value={
                           formData.fullName
@@ -601,7 +649,7 @@ const EditUser = ({
                       />
 
                       <EditInput
-                        label="First Name"
+                        label="Tên"
                         name="firstName"
                         value={
                           formData.firstName
@@ -616,7 +664,7 @@ const EditUser = ({
                       />
 
                       <EditInput
-                        label="Last Name"
+                        label="Họ"
                         name="lastName"
                         value={
                           formData.lastName
@@ -631,7 +679,7 @@ const EditUser = ({
                       />
 
                       <EditInput
-                        label="Phone Number"
+                        label="Số điện thoại"
                         name="phone"
                         value={formData.phone}
                         onChange={
@@ -657,7 +705,7 @@ const EditUser = ({
 
                       <div className="col-lg-6">
                         <div className="input-blocks">
-                          <label>Role</label>
+                          <label>Vai trò</label>
 
                           <Select
                             className="select"
@@ -672,6 +720,10 @@ const EditUser = ({
                             onChange={
                               handleRoleChange
                             }
+                            placeholder="Chọn vai trò"
+                            noOptionsMessage={() =>
+                              "Không có lựa chọn"
+                            }
                           />
 
                           {errors.role && (
@@ -684,7 +736,9 @@ const EditUser = ({
 
                       <div className="col-lg-6">
                         <div className="input-blocks">
-                          <label>Status</label>
+                          <label>
+                            Trạng thái
+                          </label>
 
                           <Select
                             className="select"
@@ -699,6 +753,10 @@ const EditUser = ({
                             onChange={
                               handleStatusChange
                             }
+                            placeholder="Chọn trạng thái"
+                            noOptionsMessage={() =>
+                              "Không có lựa chọn"
+                            }
                           />
 
                           {errors.isActive && (
@@ -712,7 +770,7 @@ const EditUser = ({
                       <div className="col-lg-12">
                         <div className="input-blocks">
                           <label>
-                            Default Address
+                            Địa chỉ mặc định
                           </label>
 
                           <input
@@ -724,7 +782,7 @@ const EditUser = ({
                             onChange={
                               handleChange
                             }
-                            placeholder="Enter default address"
+                            placeholder="Nhập địa chỉ mặc định"
                           />
 
                           {errors.address && (
@@ -738,7 +796,7 @@ const EditUser = ({
                       <div className="col-lg-12">
                         <div className="input-blocks">
                           <label>
-                            Avatar URL
+                            Đường dẫn ảnh đại diện
                           </label>
 
                           <input
@@ -750,7 +808,7 @@ const EditUser = ({
                             onChange={
                               handleChange
                             }
-                            placeholder="https://example.com/avatar.jpg"
+                            placeholder="Nhập đường dẫn ảnh, ví dụ: https://example.com/avatar.jpg"
                           />
 
                           {errors.avatarUrl && (
@@ -770,7 +828,7 @@ const EditUser = ({
                         disabled={loading}
                         onClick={handleClose}
                       >
-                        Cancel
+                        Hủy
                       </button>
 
                       <button
@@ -779,8 +837,8 @@ const EditUser = ({
                         disabled={loading}
                       >
                         {loading
-                          ? "Saving..."
-                          : "Save Changes"}
+                          ? "Đang lưu..."
+                          : "Lưu thay đổi"}
                       </button>
                     </div>
                   </form>
@@ -829,8 +887,8 @@ const EditInput = ({
           maxLength={maxLength}
           placeholder={
             readOnly
-              ? "Automatically generated"
-              : `Enter ${label.toLowerCase()}`
+              ? "Được tạo tự động từ họ và tên"
+              : `Nhập ${label.toLowerCase()}`
           }
           className={
             error ? "is-invalid" : ""

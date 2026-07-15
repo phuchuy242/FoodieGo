@@ -27,14 +27,14 @@ const RolesPermissions = () => {
     setIsFilterVisible((prevVisibility) => !prevVisibility);
   };
   const oldandlatestvalue = [
-    { value: "date", label: "Sort by Date" },
-    { value: "newest", label: "Newest" },
-    { value: "oldest", label: "Oldest" },
+    { value: "date", label: "Sắp xếp theo ngày" },
+    { value: "newest", label: "Mới nhất" },
+    { value: "oldest", label: "Cũ nhất" },
   ];
   const role = [
-    { value: "Choose Role", label: "ose Role" },
-    { value: "AcStore ", label: "AcStore" },
-    { value: "Admin", label: "Admin" },
+    { value: "all", label: "Tất cả vai trò" },
+    { value: "acstore", label: "Chủ cửa hàng" },
+    { value: "admin", label: "Quản trị viên" },
   ];
   const [selectedDate, setSelectedDate] = useState(new Date());
   const handleDateChange = (date) => {
@@ -42,7 +42,7 @@ const RolesPermissions = () => {
   };
   const renderTooltip = (props) => (
     <Tooltip id="pdf-tooltip" {...props}>
-      Pdf
+      PDF
     </Tooltip>
   );
   const renderExcelTooltip = (props) => (
@@ -52,33 +52,33 @@ const RolesPermissions = () => {
   );
   const renderPrinterTooltip = (props) => (
     <Tooltip id="printer-tooltip" {...props}>
-      Printer
+      In
     </Tooltip>
   );
   const renderRefreshTooltip = (props) => (
     <Tooltip id="refresh-tooltip" {...props}>
-      Refresh
+      Làm mới
     </Tooltip>
   );
   const renderCollapseTooltip = (props) => (
     <Tooltip id="refresh-tooltip" {...props}>
-      Collapse
+      Thu gọn
     </Tooltip>
   );
   const columns = [
     {
-      title: "Role Name",
+      title: "Tên vai trò",
       dataIndex: "rolename",
       sorter: (a, b) => a.rolename.length - b.rolename.length,
     },
     {
-      title: "Created On",
+      title: "Ngày tạo",
       dataIndex: "createdon",
       sorter: (a, b) => a.createdon.length - b.createdon.length,
     },
 
     {
-      title: "Actions",
+      title: "Hành động",
       dataIndex: "actions",
       key: "actions",
       render: () => (
@@ -115,19 +115,25 @@ const RolesPermissions = () => {
 
   const showConfirmationAlert = () => {
     MySwal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      title: "Bạn có chắc không?",
+      text: "Hành động này không thể hoàn tác.",
+      icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#00ff00",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Có, xóa",
       cancelButtonColor: "#ff0000",
-      cancelButtonText: "Cancel",
+      cancelButtonText: "Hủy",
+      customClass: {
+        confirmButton: "btn btn-submit me-2",
+        cancelButton: "btn btn-cancel",
+      },
+      buttonsStyling: false,
     }).then((result) => {
       if (result.isConfirmed) {
         MySwal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          className: "btn btn-success",
+          title: "Đã xóa!",
+          text: "Vai trò đã được xóa.",
+          icon: "success",
           confirmButtonText: "OK",
           customClass: {
             confirmButton: "btn btn-success",
@@ -219,7 +225,7 @@ const RolesPermissions = () => {
                 <div className="search-input">
                   <input
                     type="text"
-                    placeholder="Search"
+                    placeholder="Tìm kiếm"
                     className="form-control form-control-sm formsearch"
                   />
                   <Link to className="btn btn-searchset">
@@ -268,7 +274,7 @@ const RolesPermissions = () => {
                         <Select
                           className="select"
                           options={role}
-                          placeholder="Choose Role"
+                          placeholder="Chọn vai trò"
                         />
                       </div>
                     </div>
@@ -295,7 +301,7 @@ const RolesPermissions = () => {
                             data-feather="search"
                             className="feather-search"
                           />{" "}
-                          Search{" "}
+                          Tìm kiếm{" "}
                         </a>
                       </div>
                     </div>

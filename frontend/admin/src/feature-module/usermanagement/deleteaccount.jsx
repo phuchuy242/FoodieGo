@@ -18,7 +18,7 @@ const DeleteAccount = () => {
     const dataSource = useSelector((state) => state.deleteaccount_data);
     const renderTooltip = (props) => (
         <Tooltip id="pdf-tooltip" {...props}>
-            Pdf
+            PDF
         </Tooltip>
     );
     const renderExcelTooltip = (props) => (
@@ -28,33 +28,33 @@ const DeleteAccount = () => {
     );
     const renderPrinterTooltip = (props) => (
         <Tooltip id="printer-tooltip" {...props}>
-            Printer
+            In
         </Tooltip>
     );
     const renderRefreshTooltip = (props) => (
         <Tooltip id="refresh-tooltip" {...props}>
-            Refresh
+            Làm mới
         </Tooltip>
     );
     const renderCollapseTooltip = (props) => (
         <Tooltip id="refresh-tooltip" {...props}>
-            Collapse
+            Thu gọn
         </Tooltip>
     )
     const oldandlatestvalue = [
-        { value: "date", label: "Sort by Date" },
-        { value: "newest", label: "Newest" },
-        { value: "oldest", label: "Oldest" },
+        { value: "date", label: "Sắp xếp theo ngày" },
+        { value: "newest", label: "Mới nhất" },
+        { value: "oldest", label: "Cũ nhất" },
     ];
 
     const columns = [
         {
-            title: "User Name",
+            title: "Tên người dùng",
             dataIndex: "username",
             render: (text, record) => (
                 <span className="userimgname">
                     <Link to="/profile">
-                        <ImageWithBasePath alt="" src={record.img} className='product-img' />
+                        <ImageWithBasePath alt="ảnh người dùng" src={record.img} className='product-img' />
                     </Link>
                     <Link to="/profile">{text}</Link>
                 </span>
@@ -63,17 +63,17 @@ const DeleteAccount = () => {
         },
        
         {
-            title: "Requisition Date",
+            title: "Ngày yêu cầu",
             dataIndex: "requisitiondate",
             sorter: (a, b) => a.requisitiondate.length - b.requisitiondate.length,
         },
         {
-            title: "Delete Requisition Date",
+            title: "Ngày xóa yêu cầu",
             dataIndex: "deleterequisitiondate",
             sorter: (a, b) => a.deleterequisitiondate.length - b.deleterequisitiondate.length,
         },
         {
-            title: "Actions",
+            title: "Hành động",
             dataIndex: "actions",
             key: "actions",
             render: () => (
@@ -94,24 +94,31 @@ const DeleteAccount = () => {
 
     const showConfirmationAlert = () => {
         MySwal.fire({
-            title: 'Are you sure?',
-            text: 'You won\'t be able to revert this!',
+            title: 'Bạn có chắc không?',
+            text: 'Hành động này không thể hoàn tác.',
+            icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#00ff00',
-            confirmButtonText: 'Yes, delete it!',
+            confirmButtonText: 'Có, xóa',
             cancelButtonColor: '#ff0000',
-            cancelButtonText: 'Cancel',
+            cancelButtonText: 'Hủy',
+            customClass: {
+                confirmButton: 'btn btn-submit me-2',
+                cancelButton: 'btn btn-cancel',
+            },
+            buttonsStyling: false,
         }).then((result) => {
             if (result.isConfirmed) {
 
                 MySwal.fire({
-                    title: 'Deleted!',
-                    text: 'Your file has been deleted.',
-                    className: "btn btn-success",
+                    title: 'Đã xóa!',
+                    text: 'Yêu cầu xóa đã được xử lý.',
+                    icon: 'success',
                     confirmButtonText: 'OK',
                     customClass: {
                         confirmButton: 'btn btn-success',
                     },
+                    buttonsStyling: false,
                 });
             } else {
                 MySwal.close();
@@ -126,7 +133,7 @@ const DeleteAccount = () => {
                     <div className="page-header">
                         <div className="add-item d-flex">
                             <div className="page-title">
-                                <h4>Delete Account Request</h4>
+                                <h4>Yêu cầu xóa tài khoản</h4>
                             </div>
                         </div>
                         <ul className="table-top-head">
@@ -182,7 +189,7 @@ const DeleteAccount = () => {
                                 <div className="search-input">
                                     <input
                                         type="text"
-                                        placeholder="Search"
+                                        placeholder="Tìm kiếm"
                                         className="form-control form-control-sm formsearch"
                                     />
                                     <Link to className="btn btn-searchset">
@@ -195,7 +202,7 @@ const DeleteAccount = () => {
                                         <Select
                                             className="select"
                                             options={oldandlatestvalue}
-                                            placeholder="Newest"
+                                            placeholder="Mới nhất"
                                         />
                                     </div>
                                 </div>
