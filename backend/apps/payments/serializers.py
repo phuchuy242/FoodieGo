@@ -55,6 +55,10 @@ class PaymentSerializer(serializers.ModelSerializer):
             'id': obj.order.id,
             'pay_code': obj.order.pay_code,
             'table_number': obj.order.table.table_number if obj.order.table else None,
+            'subtotal': str(getattr(obj.order, 'subtotal', obj.order.total_amount)),
+            'shipping_fee': str(getattr(obj.order, 'shipping_fee', 0)),
+            'discount_amount': str(getattr(obj.order, 'discount_amount', 0)),
+            'voucher_code': getattr(obj.order, 'voucher_code', None),
             'total_amount': str(obj.order.total_amount),
             'status': obj.order.status
         }
@@ -85,6 +89,10 @@ class CreatePaymentQRSerializer(serializers.Serializer):
         choices=['bank_transfer', 'momo', 'vnpay'],
         default='bank_transfer'
     )
+    shipping_fee = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, allow_null=True)
+    discount_amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, allow_null=True)
+    voucher_code = serializers.CharField(max_length=50, required=False, allow_blank=True, allow_null=True)
+    bank_account_id = serializers.IntegerField(required=False, allow_null=True)
 
     def validate_pay_code(self, value):
         """Validate order exists by pay_code"""

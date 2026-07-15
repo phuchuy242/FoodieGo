@@ -141,10 +141,31 @@ class PaymentViewSet(viewsets.ModelViewSet):
 
         pay_code = serializer.validated_data['pay_code']
         payment_method = serializer.validated_data['payment_method']
-        bank_account_id = request.data.get('bank_account_id')
+        bank_account_id = serializer.validated_data.get('bank_account_id') or request.data.get('bank_account_id')
 
         try:
             order = Order.objects.get(pay_code=pay_code)
+
+            # Update shipping fee and discount/voucher if provided when creating QR
+            shipping_fee_input = serializer.validated_data.get('shipping_fee')
+            if shipping_fee_input is None:
+                shipping_fee_input = request.data.get('shipping_fee')
+            discount_input = serializer.validated_data.get('discount_amount')
+            if discount_input is None:
+                discount_input = request.data.get('discount_amount')
+            voucher_input = serializer.validated_data.get('voucher_code')
+            if voucher_input is None:
+                voucher_input = request.data.get('voucher_code')
+
+            if shipping_fee_input is not None:
+                order.shipping_fee = shipping_fee_input
+            if discount_input is not None:
+                order.discount_amount = discount_input
+            if voucher_input is not None:
+                order.voucher_code = voucher_input
+
+            # Ensure shipping fee added and discount/voucher deducted
+            order.calculate_total()
 
             # Get bank account from database
             if bank_account_id:
