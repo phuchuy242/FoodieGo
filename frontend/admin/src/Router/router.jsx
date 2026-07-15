@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import ThemeSettings from "../InitialPage/themeSettings";
 // import CollapsedSidebar from "../InitialPage/Sidebar/collapsedSidebar";
 import Loader from "../feature-module/loader/loader";
+import PrivateRoute from "./PrivateRoute";
 // import HorizontalSidebar from "../InitialPage/Sidebar/horizontalSidebar";
 //import LoadingSpinner from "../InitialPage/Sidebar/LoadingSpinner";
 
@@ -48,8 +49,6 @@ const AllRoutes = () => {
     </div>
   );
 
-  console.log(publicRoutes, "dashboard");
-
   return (
     <div>
       <Routes>
@@ -58,25 +57,25 @@ const AllRoutes = () => {
             <Route path={route.path} element={route.element} key={id} />
           ))}
         </Route>
-        <Route element={<HeaderLayout />}>
-          {publicRoutes.map((route, id) => (
-            <Route path={route.path} element={route.element} key={id} />
-          ))}
+
+        {/* Protected routes: require token, redirect to /signin if not logged in */}
+        <Route element={<PrivateRoute />}>
+          <Route element={<HeaderLayout />}>
+            {publicRoutes.map((route, id) => (
+              <Route path={route.path} element={route.element} key={id} />
+            ))}
+          </Route>
         </Route>
 
+        {/* Public auth pages: signin, register, forgot-password... */}
         <Route element={<Authpages />}>
           {pagesRoute.map((route, id) => (
             <Route path={route.path} element={route.element} key={id} />
           ))}
         </Route>
-
-        {/* <Route path={"/expenses/"} element={<HeaderLayout />}>
-          {expensesRoutes.map((route, id) => (
-            <Route path={route.path} element={route.element} key={id} />
-          ))}
-        </Route> */}
       </Routes>
     </div>
   );
 };
 export default AllRoutes;
+

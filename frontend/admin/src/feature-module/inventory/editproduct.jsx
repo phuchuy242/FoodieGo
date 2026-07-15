@@ -136,7 +136,7 @@ const EditProduct = () => {
         <div className="page-header">
           <div className="add-item d-flex">
             <div className="page-title">
-              <h4>Edit Product</h4>
+              <h4>Chỉnh sửa sản phẩm</h4>
               <h6>Chỉnh sửa thông tin món ăn / sản phẩm (Đã tối ưu trường nhập)</h6>
             </div>
           </div>
@@ -145,7 +145,7 @@ const EditProduct = () => {
               <div className="page-btn">
                 <Link to={route.productlist} className="btn btn-secondary">
                   <ArrowLeft className="me-2" />
-                  Back to Product
+                  Quay lại danh sách
                 </Link>
               </div>
             </li>
@@ -154,7 +154,7 @@ const EditProduct = () => {
                 <Link
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
-                  title="Collapse"
+                  title="Thu gọn"
                   id="collapse-header"
                   className={data ? "active" : ""}
                   onClick={() => {
