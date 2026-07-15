@@ -104,7 +104,7 @@ export default function Payment({
                     ) || json?.errors?.pay_code?.some?.((m) =>
                         String(m).toLowerCase().includes('already exists')
                     ) || (json.msg && json.msg.toLowerCase().includes('already exists'));
-                    
+
                     if (alreadyExists) {
                         const getRes = await apiFetch(`${API_BASE}/api/v1/payments/by_pay_code/?pay_code=${encodeURIComponent(pay_code)}`);
                         const getData = await getRes.json();
@@ -169,7 +169,7 @@ export default function Payment({
                                 onSubmit('transfer');
                             }}
                         >
-                            Đồng ý / Hoàn tất 🚀
+                            Đồng ý / Hoàn tất
                         </button>
                     </div>
                 ) : qrData ? (

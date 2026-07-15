@@ -524,7 +524,7 @@ Mỗi task gồm 3 phần chính:
 
 ---
 
-## 🚀 SPRINT 3 — MỞ RỘNG & CHẤT LƯỢNG
+##  SPRINT 3 — MỞ RỘNG & CHẤT LƯỢNG
 
 ### FOOD-018 — Role-Based Access Control (RBAC)
 * **Nhánh Git:** `feature/FOOD-018-rbac-roles`
