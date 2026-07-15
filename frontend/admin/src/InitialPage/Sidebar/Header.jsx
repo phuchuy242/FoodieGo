@@ -621,8 +621,8 @@ const Header = () => {
                   </div>
                 </div>
                 <hr className="m-0" />
-                <Link className="dropdown-item" to={route.route}>
-                  <i className="me-2" data-feather="user" /> My Profile
+                <Link className="dropdown-item" to={route.profile}>
+                  <i className="me-2" data-feather="user" /> Hồ sơ cá nhân
                 </Link>
                 <Link className="dropdown-item" to={route.generalsettings}>
                   <i className="me-2" data-feather="settings" />
@@ -653,7 +653,7 @@ const Header = () => {
             <i className="fa fa-ellipsis-v" />
           </Link>
           <div className="dropdown-menu dropdown-menu-right">
-            <Link className="dropdown-item" to="profile">
+            <Link className="dropdown-item" to={route.profile}>
               My Profile
             </Link>
             <Link className="dropdown-item" to="generalsettings">

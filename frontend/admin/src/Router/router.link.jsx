@@ -91,6 +91,7 @@ import EditEmployee from "../feature-module/hrm/editemployee";
 import AddEmployee from "../feature-module/hrm/addemployee";
 import ProductDetail from "../feature-module/inventory/productdetail";
 import Coupons from "../feature-module/coupons/coupons";
+import Profile from "../feature-module/profile/profile";
 import { all_routes } from "./all_routes";
 export const publicRoutes = [
   {
@@ -557,6 +558,13 @@ export const publicRoutes = [
     path: routes.coupons,
     name: "coupons",
     element: <Coupons />,
+    route: Route,
+  },
+  {
+    id: 117,
+    path: routes.profile,
+    name: "profile",
+    element: <Profile />,
     route: Route,
   },
   {
