@@ -1,31 +1,103 @@
 import { DatePicker } from 'antd';
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import { API_BASE } from '../../../environment';
+import dayjs from 'dayjs';
 
 const EditCoupons = () => {
-    const price = [
-        { value: 'choose', label: 'Choose Type' },
-        { value: 'fixed', label: 'Fixed' },
-        { value: 'percentage', label: 'Percentage' },
-      ];
-      const options = [
-        { value: 'nike-jordan', label: 'Nike Jordan' },
-        { value: 'amazon-echo-dot', label: 'Amazon Echo Dot' },
-      ];
-      
-     
-      const [selectedDate, setSelectedDate] = useState(new Date());
-      const handleDateChange = (date) => {
-          setSelectedDate(date);
-      };
-      const [selectedDate1, setSelectedDate1] = useState(new Date());
-      const handleDateChange1 = (date) => {
-          setSelectedDate1(date);
-      };
+    const discountTypes = [
+        { value: 'percentage', label: 'Percentage (%)' },
+        { value: 'fixed', label: 'Fixed Amount (đ)' }
+    ];
+
+    const [voucherId, setVoucherId] = useState(null);
+    const [code, setCode] = useState('');
+    const [description, setDescription] = useState('');
+    const [discountType, setDiscountType] = useState(discountTypes[0]);
+    const [discountValue, setDiscountValue] = useState('');
+    const [maxUsage, setMaxUsage] = useState('');
+    const [minOrderAmount, setMinOrderAmount] = useState('');
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [isActive, setIsActive] = useState(true);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const handleSelectVoucher = (e) => {
+            const voucher = e.detail;
+            if (voucher) {
+                setVoucherId(voucher.id);
+                setCode(voucher.code || '');
+                setDescription(voucher.description || '');
+                
+                const type = discountTypes.find(t => t.value === voucher.discount_type) || discountTypes[0];
+                setDiscountType(type);
+                
+                setDiscountValue(voucher.discount_value || '');
+                setMaxUsage(voucher.max_usage || '');
+                setMinOrderAmount(voucher.min_order_amount || '');
+                setStartDate(voucher.start_date ? new Date(voucher.start_date) : new Date());
+                setEndDate(voucher.end_date ? new Date(voucher.end_date) : new Date());
+                setIsActive(voucher.is_active);
+            }
+        };
+
+        window.addEventListener('selectVoucherForEdit', handleSelectVoucher);
+        return () => window.removeEventListener('selectVoucherForEdit', handleSelectVoucher);
+    }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (!voucherId) return;
+
+        if (!code.trim() || !discountValue) {
+            Swal.fire({ title: 'Cảnh báo', text: 'Vui lòng nhập Mã giảm giá và Giá trị giảm', icon: 'warning' });
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
+            const headers = { 'ngrok-skip-browser-warning': 'true' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const payload = {
+                code: code.trim(),
+                description: description.trim(),
+                discount_type: discountType.value,
+                discount_value: parseFloat(discountValue),
+                max_usage: maxUsage ? parseInt(maxUsage) : null,
+                min_order_amount: minOrderAmount ? parseFloat(minOrderAmount) : 0,
+                start_date: startDate.toISOString(),
+                end_date: endDate.toISOString(),
+                is_active: isActive
+            };
+
+            await axios.put(`${API_BASE}/api/v1/admin/vouchers/${voucherId}/`, payload, { headers });
+
+            Swal.fire({ title: 'Thành công', text: 'Cập nhật mã giảm giá thành công!', icon: 'success' });
+            
+            // Close modal
+            const closeBtn = document.querySelector('#edit-units .close');
+            if (closeBtn) closeBtn.click();
+            
+            // Trigger refresh
+            window.dispatchEvent(new Event('refreshVouchers'));
+            
+        } catch (err) {
+            console.error('Error updating voucher', err);
+            const msg = err.response?.data?.code?.[0] || err.response?.data?.msg || 'Đã có lỗi xảy ra';
+            Swal.fire({ title: 'Lỗi', text: msg, icon: 'error' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div>
-            {/* Edit coupons */}
             <div className="modal fade" id="edit-units">
                 <div className="modal-dialog modal-dialog-centered custom-modal-two">
                     <div className="modal-content">
@@ -33,133 +105,110 @@ const EditCoupons = () => {
                             <div className="content">
                                 <div className="modal-header border-0 custom-modal-header">
                                     <div className="page-title">
-                                        <h4>Edit Coupons</h4>
+                                        <h4>Edit Coupon (Cập nhật mã giảm giá)</h4>
                                     </div>
-                                    <button
-                                        type="button"
-                                        className="close"
-                                        data-bs-dismiss="modal"
-                                        aria-label="Close"
-                                    >
+                                    <button type="button" className="close" data-bs-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">×</span>
                                     </button>
                                 </div>
                                 <div className="modal-body custom-modal-body">
-                                    <form>
+                                    <form onSubmit={handleSubmit}>
                                         <div className="row">
                                             <div className="col-lg-6">
-                                                <div className="input-blocks">
-                                                    <label>Name</label>
-                                                    <input type="text" defaultValue="Coupons 21" />
+                                                <div className="mb-3">
+                                                    <label className="form-label">Mã Code <span className="text-danger">*</span></label>
+                                                    <input type="text" className="form-control" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="VD: TET2024" />
                                                 </div>
                                             </div>
                                             <div className="col-lg-6">
-                                                <div className="input-blocks">
-                                                    <label>Code</label>
-                                                    <input type="text" defaultValue="Christmas" />
+                                                <div className="mb-3">
+                                                    <label className="form-label">Tên / Mô tả</label>
+                                                    <input type="text" className="form-control" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Giảm giá Tết" />
                                                 </div>
                                             </div>
                                             <div className="col-lg-6">
-                                                <div className="input-blocks">
-                                                    <label>Type</label>
+                                                <div className="mb-3">
+                                                    <label className="form-label">Loại giảm giá <span className="text-danger">*</span></label>
                                                     <Select
-                    className="select"
-                    options={price}
-                    placeholder="Choose Type"
-                  />
+                                                        className="select"
+                                                        options={discountTypes}
+                                                        value={discountType}
+                                                        onChange={setDiscountType}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="col-lg-6">
-                                                <div className="input-blocks">
-                                                    <label>Discount</label>
-                                                    <input type="text" defaultValue="$20" />
-                                                </div>
-                                            </div>
-                                            <div className="col-lg-12">
-                                                <div className="input-blocks">
-                                                    <label>Limit</label>
-                                                    <input type="text" defaultValue="04" />
-                                                    <span className="unlimited-text">0 for Unlimited</span>
+                                                <div className="mb-3">
+                                                    <label className="form-label">Giá trị giảm <span className="text-danger">*</span></label>
+                                                    <input type="number" className="form-control" value={discountValue} onChange={(e) => setDiscountValue(e.target.value)} placeholder={discountType.value === 'percentage' ? "VD: 10 (%)" : "VD: 50000 (VND)"} />
                                                 </div>
                                             </div>
                                             <div className="col-lg-6">
+                                                <div className="mb-3">
+                                                    <label className="form-label">Giới hạn số lần dùng</label>
+                                                    <input type="number" className="form-control" value={maxUsage} onChange={(e) => setMaxUsage(e.target.value)} />
+                                                    <span className="unlimited-text text-muted" style={{ fontSize: '12px' }}>Để trống nếu không giới hạn</span>
+                                                </div>
+                                            </div>
+                                            <div className="col-lg-6">
+                                                <div className="mb-3">
+                                                    <label className="form-label">Đơn hàng tối thiểu</label>
+                                                    <input type="number" className="form-control" value={minOrderAmount} onChange={(e) => setMinOrderAmount(e.target.value)} placeholder="VD: 150000" />
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="col-lg-6">
                                                 <div className="input-blocks">
-                                                    <label>Start Date</label>
+                                                    <label>Ngày bắt đầu</label>
                                                     <div className="input-groupicon calender-input">
-                                                    <DatePicker
-                                                    selected={selectedDate}
-                                                    onChange={handleDateChange}
-                                                    type="date"
-                                                    className="filterdatepicker"
-                                                    dateFormat="dd-MM-yyyy"
-                                                    placeholder='20-2-2024'
-                                                />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="col-lg-6">
-                                                <div className="input-blocks">
-                                                    <label>End Date</label>
-                                                    <div className="input-groupicon calender-input">
-                                                    <DatePicker
-                                                    selected={selectedDate1}
-                                                    onChange={handleDateChange1}
-                                                    type="date"
-                                                    className="filterdatepicker"
-                                                    dateFormat="dd-MM-yyyy"
-                                                    placeholder='20-2-2024'
-                                                />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="input-blocks">
-                                                <div className="status-toggle modal-status d-flex justify-content-between align-items-center mb-2">
-                                                    <span className="status-label">All Products</span>
-                                                    <div className="d-flex align-items-center">
-                                                        <input type="checkbox" id="user5" className="check" />
-                                                        <label
-                                                            htmlFor="user5"
-                                                            className="checktoggle mb-0 me-1"
+                                                        <DatePicker
+                                                            onChange={(date) => setStartDate(date ? date.toDate() : new Date())}
+                                                            className="form-control filterdatepicker"
+                                                            format="DD-MM-YYYY HH:mm"
+                                                            showTime
+                                                            value={dayjs(startDate)}
+                                                            allowClear={false}
+                                                            getPopupContainer={(trigger) => trigger.parentNode}
+                                                            popupStyle={{ zIndex: 9999 }}
                                                         />
-                                                        <span className="customer-toggle">
-                                                            Once Per Customer
-                                                        </span>
                                                     </div>
                                                 </div>
-                                               
-                                                <Select className="select"
-      options={options}
-      placeholder="Select an option"
-      isSearchable={true} // Set to false if you don't want a search input
-    />
-
                                             </div>
-                                            <div className="input-blocks m-0">
+                                            <div className="col-lg-6">
+                                                <div className="input-blocks">
+                                                    <label>Ngày kết thúc</label>
+                                                    <div className="input-groupicon calender-input">
+                                                        <DatePicker
+                                                            onChange={(date) => setEndDate(date ? date.toDate() : new Date())}
+                                                            className="form-control filterdatepicker"
+                                                            format="DD-MM-YYYY HH:mm"
+                                                            showTime
+                                                            value={dayjs(endDate)}
+                                                            allowClear={false}
+                                                            getPopupContainer={(trigger) => trigger.parentNode}
+                                                            popupStyle={{ zIndex: 9999 }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="input-blocks m-0 mt-3">
                                                 <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                                                    <span className="status-label">Status</span>
+                                                    <span className="status-label">Trạng thái (Kích hoạt)</span>
                                                     <input
                                                         type="checkbox"
-                                                        id="user6"
+                                                        id="edit_voucher_status"
                                                         className="check"
-                                                        defaultChecked="true"
+                                                        checked={isActive}
+                                                        onChange={(e) => setIsActive(e.target.checked)}
                                                     />
-                                                    <label htmlFor="user6" className="checktoggle">
-                                                        {" "}
-                                                    </label>
+                                                    <label htmlFor="edit_voucher_status" className="checktoggle" />
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="modal-footer-btn">
-                                            <button
-                                                type="button"
-                                                className="btn btn-cancel me-2"
-                                                data-bs-dismiss="modal"
-                                            >
-                                                Cancel
-                                            </button>
-                                            <Link  to="#" className="btn btn-submit">
-                                                Save Changes
-                                            </Link>
+                                        <div className="modal-footer-btn mt-4">
+                                            <button type="button" className="btn btn-cancel me-2" data-bs-dismiss="modal">Hủy</button>
+                                            <button type="submit" className="btn btn-submit" disabled={loading}>{loading ? 'Đang lưu...' : 'Lưu thay đổi'}</button>
                                         </div>
                                     </form>
                                 </div>
@@ -168,9 +217,8 @@ const EditCoupons = () => {
                     </div>
                 </div>
             </div>
-            {/* /Edit Coupons */}
         </div>
-    )
-}
+    );
+};
 
-export default EditCoupons
+export default EditCoupons;
