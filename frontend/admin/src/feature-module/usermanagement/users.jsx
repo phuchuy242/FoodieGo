@@ -1889,9 +1889,16 @@ const Users = () => {
   }
 
   function toggleFilterVisibility() {
-    setIsFilterVisible(
-      (previousValue) => !previousValue
-    );
+    setIsFilterVisible((previousValue) => {
+      const nextValue = !previousValue;
+
+      // If the filter panel is being closed, reset filters to 'All'
+      if (previousValue && !nextValue) {
+        handleResetFilter();
+      }
+
+      return nextValue;
+    });
   }
 
   function renderPdfTooltip(props) {

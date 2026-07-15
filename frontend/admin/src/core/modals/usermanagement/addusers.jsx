@@ -47,9 +47,27 @@ const AddUsers = ({ onCreated }) => {
   function handleChange(event) {
     const { name, value } = event.target;
 
+    let nextValue = value;
+
+    if (name === "phoneNumber") {
+      // allow digits only
+      const digitsOnly = value.replace(/\D/g, "");
+
+      // ensure leading zero and limit to 10 digits
+      let normalized = digitsOnly;
+      if (normalized.length > 0) {
+        normalized =
+          normalized[0] === "0"
+            ? normalized
+            : `0${normalized.slice(0, 9)}`;
+      }
+
+      nextValue = normalized.slice(0, 10);
+    }
+
     setFormData((previousData) => ({
       ...previousData,
-      [name]: value,
+      [name]: nextValue,
     }));
 
     setErrors((previousErrors) => ({
@@ -96,6 +114,9 @@ const AddUsers = ({ onCreated }) => {
     if (!formData.phoneNumber.trim()) {
       validationErrors.phoneNumber =
         "Phone number is required.";
+    } else if (!/^0\d{9}$/.test(formData.phoneNumber.trim())) {
+      validationErrors.phoneNumber =
+        "Phone number must be 10 digits and start with 0.";
     }
 
     if (!formData.password) {
@@ -332,9 +353,9 @@ const AddUsers = ({ onCreated }) => {
                       value={
                         formData.phoneNumber
                       }
-                      onChange={
-                        handleChange
-                      }
+                      onChange={handleChange}
+                      inputMode="numeric"
+                      maxLength={10}
                       error={
                         errors.phoneNumber
                       }
@@ -451,6 +472,8 @@ const InputField = ({
   error,
   placeholder,
   type = "text",
+  inputMode,
+  maxLength,
 }) => {
   return (
     <div className="col-lg-6">
@@ -468,6 +491,8 @@ const InputField = ({
           name={name}
           value={value}
           onChange={onChange}
+          inputMode={inputMode}
+          maxLength={maxLength}
           placeholder={placeholder}
         />
 
