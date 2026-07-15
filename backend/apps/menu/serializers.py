@@ -66,12 +66,19 @@ class ProductListSerializer(serializers.ModelSerializer):
     category_id = serializers.IntegerField(source='category.id', read_only=True)
     image = serializers.CharField(source='image_url', read_only=True)
     is_available = serializers.BooleanField(source='is_active', read_only=True)
+    variants = ProductVariantSerializer(many=True, read_only=True)
+    variants_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = ['id', 'category', 'category_id', 'category_name', 'name', 'description', 'price',
-                  'image_url', 'image', 'is_active', 'is_available', 'created_at', 'updated_at']
+                  'image_url', 'image', 'is_active', 'is_available', 'created_at', 'updated_at',
+                  'variants', 'variants_count']
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_variants_count(self, obj):
+        return obj.variants.filter(is_active=True).count()
+
 
 
 class ToppingSerializer(serializers.ModelSerializer):

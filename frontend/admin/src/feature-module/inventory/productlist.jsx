@@ -51,6 +51,8 @@ const ProductList = () => {
           price: typeof p.price === "number" ? `${p.price.toLocaleString("vi-VN")} đ` : (p.price ? `${Number(p.price).toLocaleString("vi-VN")} đ` : "0 đ"),
           unit: p.unit || "Phần",
           qty: p.stock_quantity !== undefined ? p.stock_quantity : (p.is_available ? "Còn hàng" : "Hết hàng"),
+          variants_count: p.variants_count || (p.variants ? p.variants.filter(v => v.is_active).length : 0),
+          variants: p.variants || [],
           createdby: p.created_by || "Admin",
           img: "assets/img/profiles/avatar-01.jpg",
           raw_record: p
@@ -179,6 +181,18 @@ const ProductList = () => {
       dataIndex: "qty",
       render: (text) => <span className="badge bg-light text-dark font-weight-bold">{text}</span>,
       sorter: (a, b) => (String(a.qty) || "").localeCompare(String(b.qty) || ""),
+    },
+    {
+      title: "Biến thể (Variants)",
+      dataIndex: "variants_count",
+      render: (count, record) => (
+        <Link to={route.variantattributes || "/inventory/variant-attributes"} title={`Xem ${count} biến thể của món này`}>
+          <span className={`badge ${count > 0 ? 'bg-success' : 'bg-secondary'} font-weight-bold`}>
+            {count > 0 ? `${count} Size` : 'Chưa có'}
+          </span>
+        </Link>
+      ),
+      sorter: (a, b) => (a.variants_count || 0) - (b.variants_count || 0),
     },
     {
       title: "Created By",
