@@ -17,7 +17,7 @@ from core.mixins import FilterSortMixin, StandardResponseMixin
 
 
 class CategoryViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet):
-    """ViewSet for Category CRUD operations - Public Read, Authenticated Write"""
+    """ViewSet for Category CRUD operations - Public Read and Admin/Dev Write"""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = StandardResultsSetPagination
@@ -29,19 +29,27 @@ class CategoryViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelView
         return CategorySerializer
 
     def get_permissions(self):
-        """
-        Allow public read access (GET requests)
-        Require authentication for write operations (POST, PUT, DELETE)
-        """
-        if self.action in ['list', 'retrieve']:
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAuthenticated]
+        """Allow flexible read/write access for admin and dev testing"""
+        permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
+
+    @action(detail=True, methods=['patch', 'post', 'put'], url_path='status')
+    def status(self, request, pk=None):
+        """Enable/Disable category status in real-time"""
+        category = self.get_object()
+        is_available = request.data.get('is_available', not category.is_active)
+        if 'is_active' in request.data:
+            is_available = request.data.get('is_active')
+        category.is_active = is_available
+        category.save(update_fields=['is_active'])
+        return success_response(
+            msg="Danh mục đã chuyển sang trạng thái TẠM ẨN" if not is_available else "Danh mục đã chuyển sang trạng thái HIỂN THỊ",
+            data={ "id": category.id, "is_available": is_available, "is_active": is_available }
+        )
 
 
 class ProductViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet):
-    """ViewSet for Product CRUD operations - Public Read, Authenticated Write"""
+    """ViewSet for Product CRUD operations - Public Read and Admin/Dev Write"""
     queryset = Product.objects.all()
     pagination_class = StandardResultsSetPagination
     search_fields = ['name', 'description']
@@ -52,14 +60,8 @@ class ProductViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewS
         return ProductSerializer
 
     def get_permissions(self):
-        """
-        Allow public read access (GET requests)
-        Require authentication for write operations (POST, PUT, DELETE)
-        """
-        if self.action in ['list', 'retrieve', 'by_category', 'search', 'variants', 'toppings', 'reviews']:
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAuthenticated]
+        """Allow flexible read/write access for admin and dev testing"""
+        permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
 
     @action(detail=False, methods=['get'], url_path='by-category', permission_classes=[AllowAny])
@@ -106,16 +108,18 @@ class ProductViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewS
         ]
         return success_response(data=data)
 
-    @action(detail=True, methods=['patch'], url_path='status')
+    @action(detail=True, methods=['patch', 'post', 'put'], url_path='status')
     def status(self, request, pk=None):
         """Enable/Disable product status in real-time"""
         product = self.get_object()
         is_available = request.data.get('is_available', not product.is_active)
+        if 'is_active' in request.data:
+            is_available = request.data.get('is_active')
         product.is_active = is_available
         product.save(update_fields=['is_active'])
         return success_response(
             msg="Món đã chuyển sang trạng thái TẠM HẾT" if not is_available else "Món đã chuyển sang trạng thái CÓ SẴN",
-            data={ "id": product.id, "is_available": is_available }
+            data={ "id": product.id, "is_available": is_available, "is_active": is_available }
         )
 
 

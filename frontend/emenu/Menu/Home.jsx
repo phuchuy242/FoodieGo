@@ -129,7 +129,7 @@ export default function Home() {
                             />
                         ) : (
                             <p className="rm-hf-greet-text" onClick={() => setEditing(true)} style={{ cursor: 'pointer' }}>
-                                Xin chào, <span className="rm-hf-blue">{name}</span> 👋
+                                Xin chào, <span className="rm-hf-blue">{name}</span>
                             </p>
                         )}
                         <button className="rm-hf-edit" onClick={() => setEditing(true)}><IoPencilOutline /></button>

@@ -324,8 +324,7 @@ export default function CartTablet({ setCartCount, setCartTotal }) {
                         </div>
                         <div className="space-y-4 pt-3">
                             <button
-                                className="rm-add-btn justify-content-center"
-                                disabled={submitting || cart.length === 0}
+                                className="w-full bg-[#12b886] dark:bg-[#12b886] border border-[#12b886] text-white font-medium py-3 px-5 rounded-2xl shadow-sm hover:bg-[#0fa678] dark:hover:bg-[#0fa678] transition-all active:scale-[0.98] flex justify-center items-center gap-2" disabled={submitting || cart.length === 0}
                                 onClick={async () => {
                                     if (submitting || cart.length === 0) return;
 
