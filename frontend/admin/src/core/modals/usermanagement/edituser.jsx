@@ -30,50 +30,49 @@ const EditUser = ({
   const [formData, setFormData] = useState(emptyForm);
   const [originalData, setOriginalData] =
     useState(emptyForm);
-
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const roleOptions = [
-    {
-      value: "customer",
-      label: "Customer",
-    },
-    {
-      value: "admin",
-      label: "Admin",
-    },
-    {
-      value: "staff",
-      label: "Staff",
-    },
-    {
-      value: "shipper",
-      label: "Shipper",
-    },
+    { value: "customer", label: "Customer" },
+    { value: "admin", label: "Admin" },
+    { value: "staff", label: "Staff" },
+    { value: "shipper", label: "Shipper" },
   ];
 
   const statusOptions = [
-    {
-      value: true,
-      label: "Active",
-    },
-    {
-      value: false,
-      label: "Inactive",
-    },
+    { value: true, label: "Active" },
+    { value: false, label: "Inactive" },
   ];
+
+  function buildFullName(lastName, firstName) {
+    return [lastName?.trim(), firstName?.trim()]
+      .filter(Boolean)
+      .join(" ");
+  }
 
   useEffect(() => {
     if (!selectedUser) {
       return;
     }
 
+    const firstName = selectedUser.firstName || "";
+    const lastName = selectedUser.lastName || "";
+
+    const generatedFullName =
+      buildFullName(lastName, firstName) ||
+      selectedUser.fullName ||
+      "";
+
     const userData = {
-      username: selectedUser.username || "",
-      firstName: selectedUser.firstName || "",
-      lastName: selectedUser.lastName || "",
-      fullName: selectedUser.fullName || "",
+      username:
+        selectedUser.username === "Not provided"
+          ? ""
+          : selectedUser.username || "",
+
+      firstName,
+      lastName,
+      fullName: generatedFullName,
 
       phone:
         selectedUser.phone === "Not provided"
@@ -97,9 +96,11 @@ const EditUser = ({
         selectedUser.status === "Active",
 
       avatarUrl:
-        selectedUser.img === DEFAULT_AVATAR
+        !selectedUser.img ||
+        selectedUser.img === DEFAULT_AVATAR ||
+        selectedUser.img.includes("default-user.jpg")
           ? ""
-          : selectedUser.img || "",
+          : selectedUser.img,
     };
 
     setFormData(userData);
@@ -109,15 +110,45 @@ const EditUser = ({
 
   function handleChange(event) {
     const { name, value } = event.target;
+    let nextValue = value;
 
-    setFormData((previousData) => ({
-      ...previousData,
-      [name]: value,
-    }));
+    if (name === "phone") {
+      const digitsOnly = value.replace(/\D/g, "");
+      let normalizedValue = digitsOnly;
+
+      if (normalizedValue.length > 0) {
+        normalizedValue =
+          normalizedValue[0] === "0"
+            ? normalizedValue
+            : `0${normalizedValue.slice(0, 9)}`;
+      }
+
+      nextValue = normalizedValue.slice(0, 10);
+    }
+
+    setFormData((previousData) => {
+      const nextData = {
+        ...previousData,
+        [name]: nextValue,
+      };
+
+      if (
+        name === "firstName" ||
+        name === "lastName"
+      ) {
+        nextData.fullName = buildFullName(
+          nextData.lastName,
+          nextData.firstName
+        );
+      }
+
+      return nextData;
+    });
 
     setErrors((previousErrors) => ({
       ...previousErrors,
       [name]: "",
+      fullName: "",
       general: "",
     }));
   }
@@ -153,12 +184,66 @@ const EditUser = ({
     event.currentTarget.src = DEFAULT_AVATAR;
   }
 
+  function validateForm() {
+    const validationErrors = {};
+
+    if (!formData.username.trim()) {
+      validationErrors.username =
+        "User name is required.";
+    }
+
+    if (!formData.firstName.trim()) {
+      validationErrors.firstName =
+        "First name is required.";
+    }
+
+    if (!formData.lastName.trim()) {
+      validationErrors.lastName =
+        "Last name is required.";
+    }
+
+    if (!formData.phone.trim()) {
+      validationErrors.phone =
+        "Phone number is required.";
+    } else if (
+      !/^0\d{9}$/.test(
+        formData.phone.trim()
+      )
+    ) {
+      validationErrors.phone =
+        "Phone number must be 10 digits and start with 0.";
+    }
+
+    if (!formData.email.trim()) {
+      validationErrors.email =
+        "Email is required.";
+    } else if (
+      !/^\S+@\S+\.\S+$/.test(
+        formData.email.trim()
+      )
+    ) {
+      validationErrors.email =
+        "Email address is invalid.";
+    }
+
+    if (
+      formData.avatarUrl.trim() &&
+      !/^https?:\/\/.+/i.test(
+        formData.avatarUrl.trim()
+      )
+    ) {
+      validationErrors.avatarUrl =
+        "Avatar URL must begin with http:// or https://";
+    }
+
+    return validationErrors;
+  }
+
   function createChangedPayload() {
     const fieldMap = {
       username: "username",
       firstName: "first_name",
       lastName: "last_name",
-      fullName: "full_name",
       phone: "phone_number",
       email: "email",
       address: "default_address",
@@ -169,41 +254,24 @@ const EditUser = ({
 
     const payload = {};
 
-    Object.keys(fieldMap).forEach((frontendField) => {
-      if (
-        formData[frontendField] !==
-        originalData[frontendField]
-      ) {
-        payload[fieldMap[frontendField]] =
-          typeof formData[frontendField] === "string"
-            ? formData[frontendField].trim()
-            : formData[frontendField];
+    Object.keys(fieldMap).forEach(
+      (frontendField) => {
+        const currentValue =
+          formData[frontendField];
+
+        const originalValue =
+          originalData[frontendField];
+
+        if (currentValue !== originalValue) {
+          payload[fieldMap[frontendField]] =
+            typeof currentValue === "string"
+              ? currentValue.trim()
+              : currentValue;
+        }
       }
-    });
+    );
 
     return payload;
-  }
-
-  function validateForm() {
-    const validationErrors = {};
-
-    if (
-      formData.email &&
-      !/\S+@\S+\.\S+/.test(formData.email)
-    ) {
-      validationErrors.email =
-        "Email address is invalid.";
-    }
-
-    if (
-      formData.avatarUrl &&
-      !/^https?:\/\/.+/i.test(formData.avatarUrl)
-    ) {
-      validationErrors.avatarUrl =
-        "Avatar URL must begin with http:// or https://";
-    }
-
-    return validationErrors;
   }
 
   async function handleSubmit(event) {
@@ -214,7 +282,6 @@ const EditUser = ({
         general:
           "User information is unavailable.",
       });
-
       return;
     }
 
@@ -239,18 +306,17 @@ const EditUser = ({
         },
         buttonsStyling: false,
       });
-
       return;
     }
 
-    const token = localStorage.getItem("token");
+    const token =
+      localStorage.getItem("token");
 
     if (!token) {
       setErrors({
         general:
           "Access token not found. Please sign in again.",
       });
-
       return;
     }
 
@@ -258,7 +324,7 @@ const EditUser = ({
     setErrors({});
 
     try {
-      await axios.patch(
+      const response = await axios.patch(
         `${API_URL}${selectedUser.id}/`,
         payload,
         {
@@ -273,6 +339,60 @@ const EditUser = ({
         }
       );
 
+      const updatedUser =
+        response.data?.data || response.data;
+
+      const updatedFirstName =
+        updatedUser?.first_name ??
+        formData.firstName;
+
+      const updatedLastName =
+        updatedUser?.last_name ??
+        formData.lastName;
+
+      const nextOriginalData = {
+        ...formData,
+
+        username:
+          updatedUser?.username ??
+          formData.username,
+
+        firstName: updatedFirstName,
+        lastName: updatedLastName,
+
+        fullName: buildFullName(
+          updatedLastName,
+          updatedFirstName
+        ),
+
+        phone:
+          updatedUser?.phone_number ??
+          formData.phone,
+
+        email:
+          updatedUser?.email ??
+          formData.email,
+
+        address:
+          updatedUser?.default_address ??
+          formData.address,
+
+        role:
+          updatedUser?.role ??
+          formData.role,
+
+        isActive:
+          updatedUser?.is_active ??
+          formData.isActive,
+
+        avatarUrl:
+          updatedUser?.avatar_url ??
+          formData.avatarUrl,
+      };
+
+      setFormData(nextOriginalData);
+      setOriginalData(nextOriginalData);
+
       await Swal.fire({
         icon: "success",
         title: "Updated",
@@ -283,18 +403,15 @@ const EditUser = ({
         buttonsStyling: false,
       });
 
-      setOriginalData(formData);
-
       if (typeof onUpdated === "function") {
         await onUpdated();
       }
 
-      const closeButton =
-        document.querySelector(
+      document
+        .querySelector(
           "#edit-units [data-bs-dismiss='modal']"
-        );
-
-      closeButton?.click();
+        )
+        ?.click();
     } catch (requestError) {
       console.error(
         "Update user error:",
@@ -317,11 +434,9 @@ const EditUser = ({
         lastName:
           apiErrors.last_name?.[0] || "",
 
-        fullName:
-          apiErrors.full_name?.[0] || "",
-
         phone:
-          apiErrors.phone_number?.[0] || "",
+          apiErrors.phone_number?.[0] ||
+          "",
 
         email:
           apiErrors.email?.[0] || "",
@@ -353,15 +468,15 @@ const EditUser = ({
   }
 
   function handleClose() {
-    if (selectedUser) {
-      setFormData(originalData);
-    }
-
+    setFormData(originalData);
     setErrors({});
   }
 
   return (
-    <div className="modal fade" id="edit-units">
+    <div
+      className="modal fade"
+      id="edit-units"
+    >
       <div className="modal-dialog modal-dialog-centered custom-modal-two modal-lg">
         <div className="modal-content">
           <div className="page-wrapper-new p-0">
@@ -383,7 +498,9 @@ const EditUser = ({
                   aria-label="Close"
                   onClick={handleClose}
                 >
-                  <span aria-hidden="true">×</span>
+                  <span aria-hidden="true">
+                    ×
+                  </span>
                 </button>
               </div>
 
@@ -408,7 +525,10 @@ const EditUser = ({
                     User information is unavailable.
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit}>
+                  <form
+                    onSubmit={handleSubmit}
+                    noValidate
+                  >
                     {errors.general && (
                       <div className="alert alert-danger">
                         {errors.general}
@@ -418,7 +538,9 @@ const EditUser = ({
                     <div className="row">
                       <div className="col-lg-12">
                         <div className="new-employee-field">
-                          <span>Profile Image</span>
+                          <span>
+                            Profile Image
+                          </span>
 
                           <div className="profile-pic-upload edit-pic">
                             <div className="profile-pic">
@@ -444,17 +566,6 @@ const EditUser = ({
                                 }}
                               />
                             </div>
-
-                            <div className="ms-3">
-                              <p className="mb-1">
-                                Avatar preview
-                              </p>
-
-                              <small className="text-muted">
-                                Paste a direct image URL
-                                below.
-                              </small>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -462,41 +573,74 @@ const EditUser = ({
                       <EditInput
                         label="User Name"
                         name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        error={errors.username}
+                        value={
+                          formData.username
+                        }
+                        onChange={
+                          handleChange
+                        }
+                        error={
+                          errors.username
+                        }
+                        required
                       />
 
                       <EditInput
                         label="Full Name"
                         name="fullName"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                        error={errors.fullName}
+                        value={
+                          formData.fullName
+                        }
+                        onChange={
+                          handleChange
+                        }
+                        error={
+                          errors.fullName
+                        }
+                        readOnly
                       />
 
                       <EditInput
                         label="First Name"
                         name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        error={errors.firstName}
+                        value={
+                          formData.firstName
+                        }
+                        onChange={
+                          handleChange
+                        }
+                        error={
+                          errors.firstName
+                        }
+                        required
                       />
 
                       <EditInput
                         label="Last Name"
                         name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        error={errors.lastName}
+                        value={
+                          formData.lastName
+                        }
+                        onChange={
+                          handleChange
+                        }
+                        error={
+                          errors.lastName
+                        }
+                        required
                       />
 
                       <EditInput
                         label="Phone Number"
                         name="phone"
                         value={formData.phone}
-                        onChange={handleChange}
+                        onChange={
+                          handleChange
+                        }
                         error={errors.phone}
+                        required
+                        inputMode="numeric"
+                        maxLength={10}
                       />
 
                       <EditInput
@@ -504,8 +648,11 @@ const EditUser = ({
                         name="email"
                         type="email"
                         value={formData.email}
-                        onChange={handleChange}
+                        onChange={
+                          handleChange
+                        }
                         error={errors.email}
+                        required
                       />
 
                       <div className="col-lg-6">
@@ -522,12 +669,13 @@ const EditUser = ({
                                   formData.role
                               ) || null
                             }
-                            onChange={handleRoleChange}
-                            placeholder="Choose Role"
+                            onChange={
+                              handleRoleChange
+                            }
                           />
 
                           {errors.role && (
-                            <small className="text-danger">
+                            <small className="text-danger d-block mt-1">
                               {errors.role}
                             </small>
                           )}
@@ -551,11 +699,10 @@ const EditUser = ({
                             onChange={
                               handleStatusChange
                             }
-                            placeholder="Choose Status"
                           />
 
                           {errors.isActive && (
-                            <small className="text-danger">
+                            <small className="text-danger d-block mt-1">
                               {errors.isActive}
                             </small>
                           )}
@@ -564,18 +711,24 @@ const EditUser = ({
 
                       <div className="col-lg-12">
                         <div className="input-blocks">
-                          <label>Default Address</label>
+                          <label>
+                            Default Address
+                          </label>
 
                           <input
                             type="text"
                             name="address"
-                            value={formData.address}
-                            onChange={handleChange}
+                            value={
+                              formData.address
+                            }
+                            onChange={
+                              handleChange
+                            }
                             placeholder="Enter default address"
                           />
 
                           {errors.address && (
-                            <small className="text-danger">
+                            <small className="text-danger d-block mt-1">
                               {errors.address}
                             </small>
                           )}
@@ -594,18 +747,14 @@ const EditUser = ({
                             value={
                               formData.avatarUrl
                             }
-                            onChange={handleChange}
+                            onChange={
+                              handleChange
+                            }
                             placeholder="https://example.com/avatar.jpg"
                           />
 
-                          <small className="text-muted d-block mt-1">
-                            Paste a public image URL
-                            beginning with http:// or
-                            https://
-                          </small>
-
                           {errors.avatarUrl && (
-                            <small className="text-danger d-block">
+                            <small className="text-danger d-block mt-1">
                               {errors.avatarUrl}
                             </small>
                           )}
@@ -652,22 +801,44 @@ const EditInput = ({
   onChange,
   error,
   type = "text",
+  required = false,
+  readOnly = false,
+  inputMode,
+  maxLength,
 }) => {
   return (
     <div className="col-lg-6">
       <div className="input-blocks">
-        <label>{label}</label>
+        <label>
+          {label}
+
+          {required && (
+            <span className="text-danger ms-1">
+              *
+            </span>
+          )}
+        </label>
 
         <input
           type={type}
           name={name}
           value={value}
           onChange={onChange}
-          placeholder={`Enter ${label.toLowerCase()}`}
+          readOnly={readOnly}
+          inputMode={inputMode}
+          maxLength={maxLength}
+          placeholder={
+            readOnly
+              ? "Automatically generated"
+              : `Enter ${label.toLowerCase()}`
+          }
+          className={
+            error ? "is-invalid" : ""
+          }
         />
 
         {error && (
-          <small className="text-danger">
+          <small className="text-danger d-block mt-1">
             {error}
           </small>
         )}
