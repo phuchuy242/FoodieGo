@@ -212,8 +212,22 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# OAuth state and one-time handoff codes must use a shared cache when the
+# backend runs with multiple workers. Local development can use LocMemCache.
+REDIS_URL = os.getenv('REDIS_URL', '')
+if REDIS_URL:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': REDIS_URL,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            },
+        }
+    }
+
 # CORS Configuration
-CORS_ALLOW_ALL_ORIGINS = _bool_env(os.getenv('CORS_ALLOW_ALL_ORIGINS'), DEBUG)
+CORS_ALLOW_ALL_ORIGINS = _bool_env(os.getenv('CORS_ALLOW_ALL_ORIGINS'), False)
 CORS_ALLOWED_ORIGINS = _list_env(
     os.getenv('CORS_ALLOWED_ORIGINS'),
     ['http://localhost:3000', 'http://127.0.0.1:3000']
@@ -264,19 +278,34 @@ REST_FRAMEWORK = {
 # JWT Settings
 JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', SECRET_KEY)
 JWT_ALGORITHM = 'HS256'
-JWT_ACCESS_EXP_MINUTES = int(os.getenv('JWT_ACCESS_EXP_MINUTES', '120003'))  # 15 minutes
+JWT_ACCESS_EXP_MINUTES = int(os.getenv('JWT_ACCESS_EXP_MINUTES', '15'))
 JWT_REFRESH_EXP_DAYS = int(os.getenv('JWT_REFRESH_EXP_DAYS', '7'))  # 7 days
 
 # Login security settings
 LOGIN_MAX_ATTEMPTS = int(os.getenv('LOGIN_MAX_ATTEMPTS', '5'))
 LOGIN_LOCKOUT_SECONDS = int(os.getenv('LOGIN_LOCKOUT_SECONDS', '300'))  # 5 minutes
 
+# Social OAuth. Provider callback URLs are server endpoints and must exactly
+# match the URLs registered with each provider.
+OAUTH_FRONTEND_CALLBACK_URL = os.getenv('OAUTH_FRONTEND_CALLBACK_URL', '')
+OAUTH_STATE_TTL_SECONDS = int(os.getenv('OAUTH_STATE_TTL_SECONDS', '600'))
+OAUTH_HANDOFF_TTL_SECONDS = int(os.getenv('OAUTH_HANDOFF_TTL_SECONDS', '60'))
+OAUTH_HTTP_TIMEOUT_SECONDS = int(os.getenv('OAUTH_HTTP_TIMEOUT_SECONDS', '10'))
+
+GOOGLE_OAUTH_CLIENT_ID = os.getenv('GOOGLE_OAUTH_CLIENT_ID', '')
+GOOGLE_OAUTH_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET', '')
+GOOGLE_OAUTH_CALLBACK_URL = os.getenv('GOOGLE_OAUTH_CALLBACK_URL', '')
+
+FACEBOOK_OAUTH_APP_ID = os.getenv('FACEBOOK_OAUTH_APP_ID', '')
+FACEBOOK_OAUTH_APP_SECRET = os.getenv('FACEBOOK_OAUTH_APP_SECRET', '')
+FACEBOOK_OAUTH_CALLBACK_URL = os.getenv('FACEBOOK_OAUTH_CALLBACK_URL', '')
+
 # Simple JWT Configuration
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=int(os.getenv('JWT_ACCESS_EXP_MINUTES', '150000'))),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=int(os.getenv('JWT_REFRESH_EXP_DAYS', '7'))),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=JWT_ACCESS_EXP_MINUTES),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=JWT_REFRESH_EXP_DAYS),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': True,
@@ -313,11 +342,6 @@ VIETQR_BANK_CONFIG = {
     'BANK_CODE': os.getenv('VIETQR_BANK_CODE', 'MB'),  # MB, VCB, TCB, VTB, etc.
 }
 
-ALLOWED_HOSTS = ['*']
-
-
 # Sepay Webhook Configuration
 SEPAY_WEBHOOK_SECRET = os.getenv('SEPAY_WEBHOOK_SECRET', '')
 SEPAY_VERIFY_SIGNATURE = _bool_env(os.getenv('SEPAY_VERIFY_SIGNATURE'), False)
-
-CORS_ALLOW_ALL_ORIGINS = True

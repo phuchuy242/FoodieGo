@@ -2,7 +2,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from django.urls import reverse
 from .models import User, RefreshToken
-from .jwt_utils import decode_jwt
+from .utils.jwt import decode_jwt
 
 
 class UsersAuthTests(TestCase):

@@ -3,6 +3,8 @@ djangorestframework
 djangorestframework-simplejwt
 python-dotenv
 PyJWT
+cryptography
+Pillow
 # MySQL drivers: choose one
 # mysqlclient is native C extension (recommended for production)
 mysqlclient
@@ -13,6 +15,7 @@ mysqlclient
 dj-database-url
 
 django-cors-headers
+django-redis
 
 # Production server
 gunicorn

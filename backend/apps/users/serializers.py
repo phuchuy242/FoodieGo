@@ -239,7 +239,17 @@ class LoginSerializer(serializers.Serializer):
 
 # REFRESH TOKEN SERIALIZER
 class RefreshTokenSerializer(serializers.Serializer):
-    refresh_token = serializers.CharField(required=True)
+    refresh_token = serializers.CharField(required=False, write_only=True)
+    refresh = serializers.CharField(required=False, write_only=True)
+
+    def validate(self, attrs):
+        token = attrs.get('refresh_token') or attrs.get('refresh')
+        if not token:
+            raise serializers.ValidationError({
+                'refresh_token': 'A refresh token is required.'
+            })
+        attrs['refresh_token'] = token
+        return attrs
 
 
 

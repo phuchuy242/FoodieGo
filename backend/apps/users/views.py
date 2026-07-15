@@ -1,7 +1,11 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.conf import settings
+from django.db import transaction
+from django.http import HttpResponseRedirect
 from django.utils import timezone
+from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken as SimpleJWTRefreshToken
 from core.responses import success_response, error_response
 from .serializers import (
@@ -12,8 +16,19 @@ from .serializers import (
     RefreshTokenSerializer,
 )
 from .models import User, RefreshToken
-import jwt
+from .services.auth_tokens import issue_token_pair, token_environment_signature
+from .services.oauth import (
+    OAuthError,
+    consume_handoff_code,
+    consume_state,
+    create_authorization_url,
+    create_handoff_code,
+    exchange_provider_code,
+    resolve_social_user,
+)
 import hashlib
+import hmac
+from urllib.parse import urlencode
 
 
 class UserViewSet(viewsets.GenericViewSet):
@@ -28,7 +43,16 @@ class UserViewSet(viewsets.GenericViewSet):
         """
         Instantiates and returns the list of permissions that this view requires.
         """
-        if self.action in ['register', 'login', 'refresh_token', 'forgot_password', 'verify_otp']:
+        if self.action in [
+            'register',
+            'login',
+            'refresh_token',
+            'forgot_password',
+            'verify_otp',
+            'oauth_login',
+            'oauth_callback',
+            'oauth_exchange',
+        ]:
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated]
@@ -45,6 +69,83 @@ class UserViewSet(viewsets.GenericViewSet):
             return PasswordChangeSerializer
         return UserSerializer
 
+    def _oauth_frontend_redirect(self, **params):
+        if not settings.OAUTH_FRONTEND_CALLBACK_URL:
+            return error_response(
+                msg='OAuth frontend callback is not configured',
+                code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        separator = '&' if '?' in settings.OAUTH_FRONTEND_CALLBACK_URL else '?'
+        return HttpResponseRedirect(
+            f"{settings.OAUTH_FRONTEND_CALLBACK_URL}{separator}{urlencode(params)}"
+        )
+
+    @action(
+        detail=False,
+        methods=['get'],
+        url_path=r'oauth/(?P<provider>google|facebook)/login',
+        permission_classes=[AllowAny],
+    )
+    def oauth_login(self, request, provider=None):
+        try:
+            return HttpResponseRedirect(create_authorization_url(provider))
+        except OAuthError as exc:
+            return self._oauth_frontend_redirect(error=exc.public_message)
+
+    @action(
+        detail=False,
+        methods=['get', 'post'],
+        url_path=r'oauth/(?P<provider>google|facebook)/callback',
+        permission_classes=[AllowAny],
+    )
+    def oauth_callback(self, request, provider=None):
+        params = request.data if request.method == 'POST' else request.query_params
+        try:
+            state_context = consume_state(provider, params.get('state'))
+            if params.get('error'):
+                if params.get('error') == 'access_denied':
+                    raise OAuthError('Bạn đã hủy yêu cầu đăng nhập.')
+                raise OAuthError('Nhà cung cấp đăng nhập đã từ chối yêu cầu.')
+
+            identity = exchange_provider_code(
+                provider,
+                params.get('code'),
+                state_context,
+            )
+            user = resolve_social_user(identity)
+            handoff_code = create_handoff_code(user)
+            return self._oauth_frontend_redirect(code=handoff_code)
+        except OAuthError as exc:
+            return self._oauth_frontend_redirect(error=exc.public_message)
+
+    @action(
+        detail=False,
+        methods=['post'],
+        url_path='oauth/exchange',
+        permission_classes=[AllowAny],
+    )
+    def oauth_exchange(self, request):
+        try:
+            user = consume_handoff_code(request.data.get('code'))
+            access_token, refresh_token = issue_token_pair(user)
+        except OAuthError as exc:
+            return error_response(
+                msg=exc.public_message,
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return success_response(
+            data={
+                'user': UserSerializer(user).data,
+                'access': access_token,
+                'refresh': refresh_token,
+                'access_token': access_token,
+                'refresh_token': refresh_token,
+            },
+            msg='Đăng nhập thành công',
+            code=status.HTTP_200_OK,
+        )
+
     @action(detail=False, methods=['post'])
     def register(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -58,16 +159,7 @@ class UserViewSet(viewsets.GenericViewSet):
         try:
             user = serializer.save()
 
-            refresh = SimpleJWTRefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
-            refresh_token_str = str(refresh)
-
-            RefreshToken.objects.create(
-                jti=str(refresh['jti']),
-                user=user,
-                token_hash=hashlib.sha256(refresh_token_str.encode()).hexdigest(),
-                expires_at=timezone.now() + timezone.timedelta(days=7)
-            )
+            access_token, refresh_token_str = issue_token_pair(user)
 
             user_data = UserSerializer(user).data
 
@@ -88,9 +180,9 @@ class UserViewSet(viewsets.GenericViewSet):
                 code=status.HTTP_201_CREATED
             )
 
-        except Exception as e:
+        except Exception:
             return error_response(
-                msg=f'Registration failed: {str(e)}',
+                msg='Registration failed',
                 code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -107,18 +199,7 @@ class UserViewSet(viewsets.GenericViewSet):
         try:
             user = serializer.validated_data['user']
 
-            # Generate tokens using SimpleJWT
-            refresh = SimpleJWTRefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
-            refresh_token_str = str(refresh)
-
-            # Store refresh token in database
-            RefreshToken.objects.create(
-                jti=str(refresh['jti']),
-                user=user,
-                token_hash=hashlib.sha256(refresh_token_str.encode()).hexdigest(),
-                expires_at=timezone.now() + timezone.timedelta(days=7)
-            )
+            access_token, refresh_token_str = issue_token_pair(user)
 
             # Serialize user data
             user_data = UserSerializer(user).data
@@ -138,9 +219,9 @@ class UserViewSet(viewsets.GenericViewSet):
                 code=status.HTTP_200_OK
             )
 
-        except Exception as e:
+        except Exception:
             return error_response(
-                msg=f'Login failed: {str(e)}',
+                msg='Login failed',
                 code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -162,50 +243,60 @@ class UserViewSet(viewsets.GenericViewSet):
             jti = str(refresh.get('jti'))
 
             token_hash = hashlib.sha256(refresh_token_str.encode()).hexdigest()
-            refresh_token_obj = RefreshToken.objects.filter(
-                jti=jti,
-                token_hash=token_hash,
-                user_id=user_id,
-                revoked=False,
-                expires_at__gt=timezone.now()
-            ).first()
+            with transaction.atomic():
+                refresh_token_obj = RefreshToken.objects.select_for_update().filter(
+                    jti=jti,
+                    token_hash=token_hash,
+                    user_id=user_id,
+                    revoked=False,
+                    expires_at__gt=timezone.now()
+                ).first()
 
-            if not refresh_token_obj:
-                return error_response(
-                    msg="Refresh token is invalid or has expired",
-                    code=status.HTTP_401_UNAUTHORIZED
-                )
+                if not refresh_token_obj:
+                    return error_response(
+                        msg="Refresh token is invalid or has expired",
+                        code=status.HTTP_401_UNAUTHORIZED
+                    )
 
-            user = refresh_token_obj.user
-            if not user.is_active:
-                return error_response(
-                    msg="Account has been disabled",
-                    code=status.HTTP_401_UNAUTHORIZED
-                )
+                user = refresh_token_obj.user
+                if not user.is_active:
+                    return error_response(
+                        msg="Account has been disabled",
+                        code=status.HTTP_401_UNAUTHORIZED
+                    )
 
-            refresh_token_obj.mark_used()
-            access_token = str(refresh.access_token)
+                expected_signature = token_environment_signature(user)
+                supplied_signature = str(refresh.get('env_sig', ''))
+                if not hmac.compare_digest(supplied_signature, expected_signature):
+                    refresh_token_obj.revoke()
+                    return error_response(
+                        msg="Token environment mismatch",
+                        code=status.HTTP_401_UNAUTHORIZED
+                    )
 
-            # Match exactly 1.4 spec + legacy:
+                refresh_token_obj.last_used_at = timezone.now()
+                refresh_token_obj.revoked = True
+                refresh_token_obj.save(update_fields=['last_used_at', 'revoked'])
+                access_token, new_refresh_token = issue_token_pair(user)
+
             return success_response(
-                access=access_token,
-                access_token=access_token,
+                data={
+                    'access': access_token,
+                    'refresh': new_refresh_token,
+                    'access_token': access_token,
+                    'refresh_token': new_refresh_token,
+                },
                 code=status.HTTP_200_OK
             )
 
-        except jwt.ExpiredSignatureError:
+        except TokenError:
             return error_response(
-                msg="Refresh token has expired",
+                msg="Refresh token is invalid or has expired",
                 code=status.HTTP_401_UNAUTHORIZED
             )
-        except jwt.InvalidTokenError as e:
+        except Exception:
             return error_response(
-                msg=f"Invalid refresh token: {str(e)}",
-                code=status.HTTP_401_UNAUTHORIZED
-            )
-        except Exception as e:
-            return error_response(
-                msg=f"Token refresh failed: {str(e)}",
+                msg="Token refresh failed",
                 code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 

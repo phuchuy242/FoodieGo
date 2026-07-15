@@ -87,6 +87,35 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.first_name} {self.last_name}".strip()
 
 
+class SocialAccount(models.Model):
+    class Provider(models.TextChoices):
+        GOOGLE = "google", "Google"
+        FACEBOOK = "facebook", "Facebook"
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="social_accounts",
+    )
+    provider = models.CharField(max_length=20, choices=Provider.choices)
+    provider_user_id = models.CharField(max_length=255)
+    email = models.EmailField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "user_social_accounts"
+        constraints = [
+            models.UniqueConstraint(
+                fields=("provider", "provider_user_id"),
+                name="unique_social_provider_account",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.provider}:{self.provider_user_id}"
+
+
 
 
 # New model: RefreshToken for stateful refresh token handling
