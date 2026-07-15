@@ -311,6 +311,15 @@ body {
     }
 }
 
+.rm-status-cancelled {
+    background: #fef2f2;
+    color: #dc2626;
+
+    .rm-dot {
+        background: #dc2626;
+    }
+}
+
 .rm-list-card {
     margin-bottom: 20px
 }

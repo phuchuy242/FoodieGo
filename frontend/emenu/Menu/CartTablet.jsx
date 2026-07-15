@@ -175,10 +175,10 @@ export default function CartTablet({ setCartCount, setCartTotal }) {
                     <div className="rm-ct-giohang-sub">{t('cartTablet.subtitle') || 'Kiểm tra món ăn và chọn ưu đãi'}</div>
                 </div>
 
-                {/* 📍 Khối Thông Tin Giao Hàng */}
+                {/*  Khối Thông Tin Giao Hàng */}
                 <div style={{ background: '#fffaf5', border: '1px solid #ff7a18', borderRadius: '12px', padding: '12px', margin: '0 8px 16px', fontSize: '13px', position: 'relative' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                        <span style={{ fontWeight: 800, color: '#ff5200' }}>📍 Giao hàng tận nơi</span>
+                        <span style={{ fontWeight: 800, color: '#ff5200' }}> Giao hàng tận nơi</span>
                         <button
                             type="button"
                             onClick={() => setShowAddressModal(true)}
@@ -277,10 +277,10 @@ export default function CartTablet({ setCartCount, setCartTotal }) {
                     <div className="rm-ct-summary">
                         <h2>{t('cart.summary') || 'Tổng đơn hàng'}</h2>
 
-                        {/* 🎟️ Khối Mã Giảm Giá */}
+                        {/*  Khối Mã Giảm Giá */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fef3c7', padding: '10px 12px', borderRadius: '10px', marginBottom: '12px', border: '1px dashed #f59e0b' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#92400e', fontWeight: 700 }}>
-                                <span>🎟️</span>
+                                <span></span>
                                 <span>{selectedVoucher ? selectedVoucher.code : 'Mã giảm giá / Freeship'}</span>
                             </div>
                             <button
@@ -364,9 +364,12 @@ export default function CartTablet({ setCartCount, setCartTotal }) {
 
                                     try {
                                         setSubmitting(true);
+                                        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                                        const headers = { 'Content-Type': 'application/json' };
+                                        if (token) headers['Authorization'] = `Bearer ${token}`;
                                         const res = await apiFetch(`${API_BASE}/api/v1/orders/`, {
                                             method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' },
+                                            headers,
                                             body: JSON.stringify(payload),
                                         });
                                         const json = await res.json();
@@ -390,6 +393,13 @@ export default function CartTablet({ setCartCount, setCartTotal }) {
                                         };
                                         localStorage.setItem('lastOrder', JSON.stringify(order));
                                         if (paycode) localStorage.setItem('paycode', String(paycode));
+                                        try {
+                                            let hist = [];
+                                            const h = localStorage.getItem('orderHistoryList');
+                                            if (h) hist = JSON.parse(h);
+                                            hist = [order, ...hist.filter(o => (o.paycode || o.pay_code || o.id) !== (order.paycode || order.pay_code || order.id))];
+                                            localStorage.setItem('orderHistoryList', JSON.stringify(hist));
+                                        } catch (e) { }
                                         localStorage.removeItem('cart');
                                         localStorage.removeItem('selectedVoucher');
                                         try { window.dispatchEvent(new Event('cart-updated')); } catch (e) { }
@@ -409,7 +419,7 @@ export default function CartTablet({ setCartCount, setCartTotal }) {
                                     }
                                 }}
                             >
-                                <span>{submitting ? 'Đang đặt hàng…' : (t('cart.confirm') || 'Xác nhận đặt hàng Online 🚀')}</span>
+                                <span>{submitting ? 'Đang đặt hàng…' : (t('cart.confirm') || 'Xác nhận đặt hàng Online ')}</span>
                             </button>
 
 

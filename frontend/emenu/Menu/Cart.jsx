@@ -59,7 +59,7 @@ export default function Cart({ setCartCount, setCartTotal }) {
             try {
                 const info = JSON.parse(localStorage.getItem('deliveryInfo') || 'null');
                 if (info) setDeliveryInfo(info);
-            } catch (e) {}
+            } catch (e) { }
         };
         window.addEventListener('delivery-updated', syncDelivery);
         window.addEventListener('storage', syncDelivery);
@@ -97,7 +97,7 @@ export default function Cart({ setCartCount, setCartTotal }) {
         const next = [...cart];
         const [removed] = next.splice(i, 1);
         setCart(next);
-        try { localStorage.setItem("cart", JSON.stringify(next)); } catch (e) {}
+        try { localStorage.setItem("cart", JSON.stringify(next)); } catch (e) { }
 
         if (removed) {
             const removedQty = Number(removed.quantity) || 0;
@@ -118,13 +118,13 @@ export default function Cart({ setCartCount, setCartTotal }) {
 
         next[i] = { ...item, quantity: newQty, subtotal: newSub };
         setCart(next);
-        try { localStorage.setItem('cart', JSON.stringify(next)); } catch (e) {}
+        try { localStorage.setItem('cart', JSON.stringify(next)); } catch (e) { }
 
         const qtyDiff = newQty - prevQty;
         const subDiff = newSub - prevSub;
         if (typeof setCartCount === 'function') setCartCount((p) => Math.max(0, (Number(p) || 0) + qtyDiff));
         if (typeof setCartTotal === 'function') setCartTotal((p) => Math.max(0, (Number(p) || 0) + subDiff));
-        try { window.dispatchEvent(new Event('cart-updated')); } catch (e) {}
+        try { window.dispatchEvent(new Event('cart-updated')); } catch (e) { }
     };
 
     const handleSelectVoucher = (v) => {
@@ -171,9 +171,12 @@ export default function Cart({ setCartCount, setCartTotal }) {
 
         try {
             setSubmitting(true);
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
             const res = await apiFetch(`${API_BASE}/api/v1/orders/`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify(payload),
             });
             const json = await res.json();
@@ -196,6 +199,13 @@ export default function Cart({ setCartCount, setCartTotal }) {
             };
             localStorage.setItem('lastOrder', JSON.stringify(order));
             if (paycode) localStorage.setItem('paycode', String(paycode));
+            try {
+                let hist = [];
+                const h = localStorage.getItem('orderHistoryList');
+                if (h) hist = JSON.parse(h);
+                hist = [order, ...hist.filter(o => (o.paycode || o.pay_code || o.id) !== (order.paycode || order.pay_code || order.id))];
+                localStorage.setItem('orderHistoryList', JSON.stringify(hist));
+            } catch (e) { }
             localStorage.removeItem('cart');
             localStorage.removeItem('selectedVoucher');
             setCart([]);
@@ -222,7 +232,7 @@ export default function Cart({ setCartCount, setCartTotal }) {
                         <ArrowLeft size={18} />
                     </button>
                     <div className="rm-address-block">
-                        <span className="rm-muted-label">Giao đến 📍</span>
+                        <span className="rm-muted-label">Giao đến </span>
                         <button className="rm-address-btn" onClick={() => setShowAddressModal(true)}>
                             {deliveryInfo.address ? `${deliveryInfo.address.substring(0, 22)}...` : 'Chọn địa chỉ'} <ChevronDown size={14} />
                         </button>
@@ -243,7 +253,7 @@ export default function Cart({ setCartCount, setCartTotal }) {
                 }}>
                     <div>
                         <div style={{ fontSize: '13px', fontWeight: 800, color: '#ff5200', textTransform: 'uppercase', marginBottom: '4px' }}>
-                            📍 Thông tin giao hàng tận nơi
+                            Thông tin giao hàng tận nơi
                         </div>
                         <div style={{ fontSize: '15px', fontWeight: 700, color: '#111827' }}>
                             {deliveryInfo.name || 'Chưa có tên'} • {deliveryInfo.phone || 'Chưa có SĐT'}
@@ -338,7 +348,7 @@ export default function Cart({ setCartCount, setCartTotal }) {
                         }}>
                             <div>
                                 <div style={{ fontWeight: 700, fontSize: '14px', color: '#111827' }}>
-                                    🎟️ Mã giảm giá: {selectedVoucher ? <span style={{ color: '#ff5200' }}>{selectedVoucher.code}</span> : 'Chưa áp dụng'}
+                                    Mã giảm giá: {selectedVoucher ? <span style={{ color: '#ff5200' }}>{selectedVoucher.code}</span> : 'Chưa áp dụng'}
                                 </div>
                                 {selectedVoucher && <div style={{ fontSize: '12px', color: '#10b981' }}>{selectedVoucher.title}</div>}
                             </div>
@@ -391,7 +401,7 @@ export default function Cart({ setCartCount, setCartTotal }) {
                                 disabled={submitting || cart.length === 0}
                                 onClick={handleCheckout}
                             >
-                                <span>{submitting ? 'Đang gửi đơn hàng…' : 'Xác Nhận Đặt Hàng Online 🚀'}</span>
+                                <span>{submitting ? 'Đang gửi đơn hàng…' : 'Xác Nhận Đặt Hàng Online '}</span>
                             </button>
 
                             <button onClick={() => navigate(-1)} className="w-full border border-slate-300 dark:border-slate-700 font-medium py-3 px-5 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex justify-center items-center gap-2">

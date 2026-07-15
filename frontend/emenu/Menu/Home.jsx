@@ -45,7 +45,7 @@ export default function Home() {
             try {
                 const saved = JSON.parse(localStorage.getItem('deliveryInfo') || 'null');
                 if (saved?.address) setDeliveryAddress(saved.address);
-            } catch (e) {}
+            } catch (e) { }
         };
 
         window.addEventListener('auth-updated', syncAuth);
@@ -71,7 +71,7 @@ export default function Home() {
     const saveName = () => {
         const v = (tempName || '').trim() || 'Khách hàng';
         setName(v);
-        try { localStorage.setItem('customerName', v); } catch (e) {}
+        try { localStorage.setItem('customerName', v); } catch (e) { }
         setEditing(false);
     };
 
@@ -144,7 +144,7 @@ export default function Home() {
                             title="Bấm để đổi địa chỉ giao hàng"
                             style={{ background: '#fff7ed', color: '#ff7a18', borderColor: '#ff7a18' }}
                         >
-                            📍 {deliveryAddress.length > 25 ? `${deliveryAddress.substring(0, 25)}...` : deliveryAddress}
+                            {deliveryAddress.length > 25 ? `${deliveryAddress.substring(0, 25)}...` : deliveryAddress}
                             <IoPencilOutline style={{ marginLeft: 6, fontSize: 13 }} />
                         </span>
                     </div>
@@ -165,18 +165,12 @@ export default function Home() {
                         Mã Giảm Giá
                         <div className="rm-hf-feature-ico"><TagIcon /></div>
                     </div>
-                    <div className="rm-hf-feature" role="button" tabIndex={0} onClick={() => setShowPayment(true)}>
-                        {t('payment.title') || 'Thanh toán'}
-                        <div className="rm-hf-feature-ico"><CardIcon /></div>
-                    </div>
+
                     <div className="rm-hf-feature" role="button" tabIndex={0} onClick={() => navigate('/history')}>
                         {t('history.title') || 'Đơn hàng'}
                         <div className="rm-hf-stars"><CartIcon /></div>
                     </div>
-                    <div className="rm-hf-feature" role="button" tabIndex={0} onClick={() => navigate('/history')}>
-                        Đánh giá món
-                        <div className="rm-hf-stars flex"><StarIcon /><StarIcon /><StarIcon /></div>
-                    </div>
+
                 </div>
 
                 <div className="rm-hf-cta">

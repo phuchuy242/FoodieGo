@@ -88,7 +88,7 @@ Tài liệu này quy định rõ vai trò và phân chia công việc (Tasks) ch
 
 ---
 
-### 🚀 SPRINT 3 — MỞ RỘNG & CHẤT LƯỢNG (Tuần 3 - SP: 36)
+###  SPRINT 3 — MỞ RỘNG & CHẤT LƯỢNG (Tuần 3 - SP: 36)
 
 #### ⚡ 1. Trần Ngọc Phúc Huy (Backend)
 - `FOOD-018`: Phân quyền RBAC 4 vai trò (Admin, Manager, Staff, Customer).

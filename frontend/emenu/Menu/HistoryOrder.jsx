@@ -28,6 +28,21 @@ const STATUS_COLOR = {
     serving: 'rm-status-served',
     completed: 'rm-status-served',
     delivered: 'rm-status-served',
+    cancelled: 'rm-status-cancelled',
+};
+
+const STATUS_DISPLAY_VI = {
+    pending: 'Chờ duyệt',
+    awaiting_payment: 'Chờ thanh toán',
+    confirmed: 'Đã xác nhận',
+    preparing: 'Đang chuẩn bị',
+    cooking: 'Đang nấu',
+    ready: 'Chờ lấy món',
+    delivering: 'Đang giao hàng',
+    serving: 'Đang phục vụ',
+    completed: 'Hoàn thành',
+    delivered: 'Đã giao hàng',
+    cancelled: 'Đã hủy',
 };
 
 export default function HistoryOrder() {
@@ -43,41 +58,111 @@ export default function HistoryOrder() {
     const [comment, setComment] = useState('');
     const [paymentInfo, setPaymentInfo] = useState(null);
 
+    const [ordersList, setOrdersList] = useState([]);
+
     const fetchOrder = async () => {
-        const paycode = localStorage.getItem('paycode');
-        const lastOrderRaw = localStorage.getItem('lastOrder');
-        if (!paycode && !lastOrderRaw) {
-            setError('Bạn chưa có đơn hàng nào đang xử lý.');
-            return;
-        }
         setLoading(true);
         setError('');
         try {
-            if (paycode) {
-                const [orderRes, productsRes, paymentRes] = await Promise.all([
-                    apiFetch(`${API_BASE}/api/v1/orders/by-paycode/?pay_code=${encodeURIComponent(paycode)}`),
-                    apiFetch(`${API_BASE}/api/v1/menu/products/?page=1&per_page=200`),
-                    apiFetch(`${API_BASE}/api/v1/payments/by_pay_code/?pay_code=${encodeURIComponent(paycode)}`).catch(() => ({ ok: false }))
-                ]);
-                const orderJson = await orderRes.json();
-                if (!orderRes.ok || orderJson.status === 'error') {
-                    // Fallback to local storage if API fails
-                    if (lastOrderRaw) {
-                        setOrder(JSON.parse(lastOrderRaw));
-                    } else {
-                        throw new Error(orderJson?.msg || 'Không thể tra cứu đơn hàng.');
-                    }
-                } else {
-                    const apiOrder = orderJson.data;
-                    const localOrder = lastOrderRaw ? JSON.parse(lastOrderRaw) : {};
-                    if (localOrder.paycode === apiOrder.pay_code || localOrder.id === apiOrder.id) {
-                        setOrder({ ...localOrder, ...apiOrder });
-                    } else {
-                        setOrder(apiOrder);
+            // 1. Load from localStorage history
+            let localList = [];
+            try {
+                const historyRaw = localStorage.getItem('orderHistoryList');
+                if (historyRaw) localList = JSON.parse(historyRaw);
+                const lastRaw = localStorage.getItem('lastOrder');
+                if (lastRaw) {
+                    const lo = JSON.parse(lastRaw);
+                    if (lo && !localList.some(o => (o.paycode || o.pay_code || o.id) === (lo.paycode || lo.pay_code || lo.id))) {
+                        localList.unshift(lo);
                     }
                 }
+            } catch (e) { }
 
-                if (productsRes.ok) {
+            // 2. Fetch API lists
+            let apiList = [];
+            try {
+                const headers = {};
+                const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+
+                const [resHistory, resActive, resByUser] = await Promise.all([
+                    apiFetch(`${API_BASE}/api/v1/orders/history/`, { headers }).catch(() => ({ ok: false })),
+                    apiFetch(`${API_BASE}/api/v1/orders/active/`, { headers }).catch(() => ({ ok: false })),
+                    token ? apiFetch(`${API_BASE}/api/v1/orders/by-user/`, { headers }).catch(() => ({ ok: false })) : Promise.resolve({ ok: false })
+                ]);
+
+                const mergedMap = {};
+                for (const res of [resByUser, resActive, resHistory]) {
+                    if (res && res.ok) {
+                        const j = await res.json();
+                        const items = j?.data?.results || j?.results || j?.data || (Array.isArray(j) ? j : []);
+                        if (Array.isArray(items)) {
+                            items.forEach(it => { if (it && (it.id || it.pay_code || it.paycode)) { mergedMap[it.pay_code || it.paycode || it.id] = it; } });
+                        }
+                    }
+                }
+                apiList = Object.values(mergedMap);
+            } catch (e) { }
+
+            // Merge local and API lists
+            const allMap = {};
+            [...localList, ...apiList].forEach(it => {
+                const key = it.pay_code || it.paycode || it.id;
+                if (key) {
+                    if (allMap[key]) {
+                        allMap[key] = { ...allMap[key], ...it };
+                    } else {
+                        allMap[key] = it;
+                    }
+                }
+            });
+            const finalOrders = Object.values(allMap).sort((a, b) => {
+                const timeA = new Date(a.created_at || a.createdAt || 0).getTime();
+                const timeB = new Date(b.created_at || b.createdAt || 0).getTime();
+                return timeB - timeA;
+            });
+            setOrdersList(finalOrders);
+
+            let currentPaycode = new URLSearchParams(window.location.search).get('paycode');
+            if (!currentPaycode && order) {
+                currentPaycode = order.pay_code || order.paycode || order.id;
+            }
+            if (!currentPaycode && finalOrders.length > 0) {
+                const latest = finalOrders[0];
+                currentPaycode = latest?.pay_code || latest?.paycode || latest?.id;
+            }
+            if (!currentPaycode) {
+                currentPaycode = localStorage.getItem('paycode');
+            }
+
+            if (currentPaycode) {
+                const initialLocalOrder = finalOrders.find(o => String(o.paycode || o.pay_code || o.id) === String(currentPaycode)) || finalOrders[0];
+                if (initialLocalOrder) setOrder(initialLocalOrder);
+
+                const [orderRes, productsRes, paymentRes] = await Promise.all([
+                    apiFetch(`${API_BASE}/api/v1/orders/by-paycode/?pay_code=${encodeURIComponent(currentPaycode)}`).catch(() => ({ ok: false })),
+                    apiFetch(`${API_BASE}/api/v1/menu/products/?page=1&per_page=200`).catch(() => ({ ok: false })),
+                    apiFetch(`${API_BASE}/api/v1/payments/by_pay_code/?pay_code=${encodeURIComponent(currentPaycode)}`).catch(() => ({ ok: false }))
+                ]);
+
+                if (orderRes && orderRes.ok) {
+                    const orderJson = await orderRes.json();
+                    if (orderJson && orderJson.status !== 'error' && orderJson.data) {
+                        const apiOrder = orderJson.data;
+                        const localOrder = finalOrders.find(o => String(o.paycode || o.pay_code || o.id) === String(currentPaycode)) || {};
+                        const merged = { ...localOrder, ...apiOrder };
+                        setOrder(merged);
+                        syncOrderStatus(merged);
+                    } else {
+                        const fallback = finalOrders.find(o => String(o.paycode || o.pay_code || o.id) === String(currentPaycode));
+                        if (fallback) setOrder(fallback);
+                    }
+                } else {
+                    const fallback = finalOrders.find(o => String(o.paycode || o.pay_code || o.id) === String(currentPaycode));
+                    if (fallback) setOrder(fallback);
+                }
+
+                if (productsRes && productsRes.ok) {
                     const productsJson = await productsRes.json();
                     if (productsJson.status === 'success' || productsJson.status === true) {
                         const products = productsJson?.data?.results || productsJson?.results || productsJson?.data || [];
@@ -91,23 +176,93 @@ export default function HistoryOrder() {
                     const payJson = await paymentRes.json();
                     if (payJson.status === 'success' || payJson.status === true) {
                         setPaymentInfo(payJson.data || payJson);
+                    } else {
+                        setPaymentInfo(null);
                     }
                 }
-            } else if (lastOrderRaw) {
-                setOrder(JSON.parse(lastOrderRaw));
+            } else {
+                setOrder(null);
+                if (finalOrders.length === 0) {
+                    setError('Bạn chưa có đơn hàng nào trong lịch sử.');
+                }
             }
         } catch (e) {
-            if (lastOrderRaw) {
-                setOrder(JSON.parse(lastOrderRaw));
-            } else {
-                setError(e.message || 'Không thể tải lịch sử đơn hàng.');
-            }
+            setError('Không thể tải danh sách đơn hàng.');
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => { fetchOrder(); }, []);
+
+    const syncOrderStatus = (updatedOrder) => {
+        if (!updatedOrder) return;
+        const key = updatedOrder.paycode || updatedOrder.pay_code || updatedOrder.id;
+        if (!key) return;
+
+        setOrdersList(prev => prev.map(o => {
+            const oKey = o.paycode || o.pay_code || o.id;
+            if (String(oKey) === String(key)) {
+                return { ...o, ...updatedOrder, status: updatedOrder.status || o.status, status_display: updatedOrder.status_display || o.status_display };
+            }
+            return o;
+        }));
+
+        try {
+            const lo = JSON.parse(localStorage.getItem('lastOrder') || '{}');
+            if (lo && String(lo.paycode || lo.pay_code || lo.id) === String(key)) {
+                const newLo = { ...lo, ...updatedOrder };
+                localStorage.setItem('lastOrder', JSON.stringify(newLo));
+            }
+            const hist = JSON.parse(localStorage.getItem('orderHistoryList') || '[]');
+            if (Array.isArray(hist)) {
+                const updatedHist = hist.map(item => {
+                    const iKey = item.paycode || item.pay_code || item.id;
+                    if (item && String(iKey) === String(key)) {
+                        return { ...item, ...updatedOrder };
+                    }
+                    return item;
+                });
+                localStorage.setItem('orderHistoryList', JSON.stringify(updatedHist));
+            }
+        } catch (e) { }
+    };
+
+    const handleSelectOrder = async (itemOrder) => {
+        const pcode = itemOrder.paycode || itemOrder.pay_code || itemOrder.id;
+        if (pcode) localStorage.setItem('paycode', String(pcode));
+        setOrder(itemOrder);
+
+        if (pcode) {
+            try {
+                const [orderRes, payRes] = await Promise.all([
+                    apiFetch(`${API_BASE}/api/v1/orders/by-paycode/?pay_code=${encodeURIComponent(pcode)}`).catch(() => ({ ok: false })),
+                    apiFetch(`${API_BASE}/api/v1/payments/by_pay_code/?pay_code=${encodeURIComponent(pcode)}`).catch(() => ({ ok: false }))
+                ]);
+
+                if (orderRes && orderRes.ok) {
+                    const oJson = await orderRes.json();
+                    if (oJson && oJson.data) {
+                        setOrder(prev => ({ ...prev, ...oJson.data }));
+                        syncOrderStatus(oJson.data);
+                    }
+                }
+
+                if (payRes && payRes.ok) {
+                    const pJson = await payRes.json();
+                    if (pJson && (pJson.status === 'success' || pJson.status === true)) {
+                        setPaymentInfo(pJson.data || pJson);
+                    } else {
+                        setPaymentInfo(null);
+                    }
+                } else {
+                    setPaymentInfo(null);
+                }
+            } catch (e) {
+                console.error('Failed to load details for order', pcode, e);
+            }
+        }
+    };
 
     const items = React.useMemo(() => {
         const raw = order?.items || order?.cart || [];
@@ -128,15 +283,16 @@ export default function HistoryOrder() {
     }, [order]);
 
     const totalAmount = order?.total !== undefined ? Number(order.total) : (order ? Number(order.total_amount || 0) : 0);
-    const currentStatus = order?.status || 'delivering'; // Mock default delivering for demo
+    const currentStatus = order?.status || 'pending';
 
     const getStepIndex = (st) => {
+        if (st === 'cancelled') return -1;
         if (st === 'pending' || st === 'awaiting_payment') return 0;
         if (st === 'confirmed') return 1;
-        if (st === 'preparing') return 2;
-        if (st === 'delivering' || st === 'serving') return 3;
+        if (st === 'preparing' || st === 'cooking' || st === 'ready') return 2;
+        if (st === 'delivering' || st === 'serving' || st === 'served') return 3;
         if (st === 'completed' || st === 'delivered') return 4;
-        return 2; // default preparing
+        return 0;
     };
     const stepIdx = getStepIndex(currentStatus);
 
@@ -149,12 +305,15 @@ export default function HistoryOrder() {
     const handleCancelOrder = async () => {
         if (!order || !order.id) return;
         if (!window.confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) return;
-        
+
         try {
             const res = await apiFetch(`${API_BASE}/api/v1/orders/${order.id}/cancel/`, { method: 'POST' });
             const json = await res.json();
             if (!res.ok || json.status === 'error') throw new Error(json.msg || 'Không thể hủy đơn hàng.');
-            
+
+            const cancelledOrder = { ...order, status: 'cancelled', status_display: 'Đã hủy' };
+            setOrder(cancelledOrder);
+            syncOrderStatus(cancelledOrder);
             alert('Hủy đơn hàng thành công.');
             fetchOrder();
         } catch (e) {
@@ -170,7 +329,7 @@ export default function HistoryOrder() {
                         <ArrowLeft size={18} />
                     </button>
                     <div className="rm-address-block">
-                        <span className="rm-muted-label">Theo dõi Đơn hàng Online 🚀</span>
+                        <span className="rm-muted-label">Theo dõi Đơn hàng Online </span>
                     </div>
                     <button className="rm-icon-btn" onClick={fetchOrder} aria-label="Refresh" title="Làm mới">
                         <RefreshCw size={17} />
@@ -179,53 +338,130 @@ export default function HistoryOrder() {
             </header>
 
             <main className="rm-history-main container">
-                {/* Order Tracking Stepper (F-08) */}
-                <div className="rm-stepper-container">
-                    <div style={{ textAlign: 'center', marginBottom: '14px', fontWeight: 800, fontSize: '15px', color: '#111827' }}>
-                        🛸 Tiến độ giao hàng trực tuyến
-                    </div>
-                    <div className="rm-stepper">
-                        <div className={`rm-step ${stepIdx === 0 ? 'active' : ''} ${stepIdx > 0 ? 'completed' : ''}`}>
-                            <div className="rm-step-circle">{stepIdx > 0 ? '✓' : '1'}</div>
-                            <div className="rm-step-label">Chờ duyệt</div>
-                        </div>
-                        <div className={`rm-step ${stepIdx === 1 ? 'active' : ''} ${stepIdx > 1 ? 'completed' : ''}`}>
-                            <div className="rm-step-circle">{stepIdx > 1 ? '✓' : '2'}</div>
-                            <div className="rm-step-label">Xác nhận</div>
-                        </div>
-                        <div className={`rm-step ${stepIdx === 2 ? 'active' : ''} ${stepIdx > 2 ? 'completed' : ''}`}>
-                            <div className="rm-step-circle">{stepIdx > 2 ? '✓' : '3'}</div>
-                            <div className="rm-step-label">Đang làm</div>
-                        </div>
-                        <div className={`rm-step ${stepIdx === 3 ? 'active' : ''} ${stepIdx > 3 ? 'completed' : ''}`}>
-                            <div className="rm-step-circle">{stepIdx > 3 ? '✓' : '4'}</div>
-                            <div className="rm-step-label">Đang giao</div>
-                        </div>
-                        <div className={`rm-step ${stepIdx === 4 ? 'active' : ''} ${stepIdx > 4 ? 'completed' : ''}`}>
-                            <div className="rm-step-circle">{stepIdx > 4 ? '✓' : '5'}</div>
-                            <div className="rm-step-label">Đã giao</div>
-                        </div>
-                    </div>
-
-                    {/* Shipper Info Card when delivering */}
-                    {(stepIdx >= 3) && (
-                        <div className="rm-shipper-card">
-                            <div className="rm-shipper-info">
-                                <div className="rm-shipper-avatar">🛵</div>
-                                <div>
-                                    <div className="rm-shipper-name">Tài xế: Nguyễn Hữu Tài</div>
-                                    <div className="rm-shipper-status">• Đang trên đường giao đến bạn</div>
-                                </div>
-                            </div>
-                            <a href="tel:0912345678" className="rm-shipper-call">
-                                <PhoneCall size={14} /> Gọi Tài Xế
-                            </a>
+                {/* Orders List Section */}
+                <section className="rm-history-card" style={{ marginBottom: '20px', padding: '18px', borderRadius: '18px', border: '1px solid #f3f4f6', background: '#ffffff', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
+                    <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        Danh Sách Lịch Sử Đơn Hàng ({ordersList.length})
+                    </h2>
+                    {loading && <div className="rm-empty" style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>Đang tải lịch sử đơn hàng...</div>}
+                    {!loading && ordersList.length === 0 && (
+                        <div className="rm-empty" style={{ padding: '32px 16px', textAlign: 'center', color: '#6b7280' }}>
+                            <p style={{ fontSize: '15px', marginBottom: '12px' }}>Bạn chưa có đơn hàng nào trong lịch sử.</p>
+                            <button className="rm-btn-primary" style={{ padding: '10px 24px', borderRadius: '12px', background: '#ff7a18', color: '#fff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => navigate('/menu')}>
+                                Đặt Món Ngay
+                            </button>
                         </div>
                     )}
-                </div>
+                    {!loading && ordersList.length > 0 && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '380px', overflowY: 'auto' }}>
+                            {ordersList.map((itemOrder, idx) => {
+                                const st = itemOrder.status || 'pending';
+                                const isSelected = order && (String(order.paycode || order.pay_code || order.id) === String(itemOrder.paycode || itemOrder.pay_code || itemOrder.id));
+                                const totalAmt = itemOrder.total_amount || itemOrder.total || itemOrder.subtotal || 0;
+                                const timeStr = itemOrder.created_at || itemOrder.createdAt ? new Date(itemOrder.created_at || itemOrder.createdAt).toLocaleString('vi-VN') : 'Vừa xong';
+                                return (
+                                    <div
+                                        key={idx}
+                                        style={{
+                                            padding: '14px 16px',
+                                            borderRadius: '14px',
+                                            border: isSelected ? '2px solid #ff7a18' : '1px solid #e5e7eb',
+                                            background: isSelected ? '#fffaf5' : '#ffffff',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s',
+                                            boxShadow: isSelected ? '0 4px 12px rgba(255,122,24,0.12)' : 'none'
+                                        }}
+                                        onClick={() => handleSelectOrder(itemOrder)}
+                                    >
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                                                <strong style={{ fontSize: '15px', color: '#111827' }}>
+                                                    #{itemOrder.pay_code || itemOrder.paycode || itemOrder.id}
+                                                </strong>
+                                                <span className={`rm-status-badge1 ${STATUS_COLOR[st] || 'rm-status-pending'}`} style={{ fontSize: '12px', padding: '3px 10px', borderRadius: '20px', fontWeight: 600 }}>
+                                                    {STATUS_DISPLAY_VI[st] || itemOrder.status_display || st}
+                                                </span>
+                                            </div>
+                                            <div style={{ fontSize: '13px', color: '#6b7280' }}>
+                                                Bàn: <strong style={{ color: '#374151' }}>{itemOrder.table_number || itemOrder?.table_details?.table_number || itemOrder?.table?.table_number || '---'}</strong> &nbsp;•&nbsp; {timeStr}
+                                            </div>
+                                        </div>
+                                        <div style={{ textAlign: 'right', marginLeft: '12px' }}>
+                                            <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#ff5200', marginBottom: '4px' }}>
+                                                {formatPrice(totalAmt)}
+                                            </div>
+                                            <span style={{ fontSize: '12px', color: isSelected ? '#ff7a18' : '#3b82f6', fontWeight: 600 }}>
+                                                {isSelected ? '✓ Đang xem' : 'Xem chi tiết →'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </section>
+
+                {/* Order Tracking Stepper (F-08) */}
+                {order && (
+                    <div className="rm-stepper-container">
+                        <div style={{ textAlign: 'center', marginBottom: '14px', fontWeight: 800, fontSize: '15px', color: '#111827' }}>
+                            Tiến độ đơn hàng trực tuyến - #{order.paycode || order.pay_code || order.id}
+                        </div>
+                        {(currentStatus === 'cancelled' || stepIdx === -1) ? (
+                            <div style={{ background: '#fef2f2', border: '1px solid #f87171', borderRadius: '14px', padding: '18px', textAlign: 'center', margin: '12px 0', color: '#991b1b' }}>
+                                <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '6px' }}>❌ Đơn hàng #{order.paycode || order.pay_code || order.id} đã bị hủy</div>
+                                <div style={{ fontSize: '13px', color: '#b91c1c' }}>Đơn hàng này đã kết thúc và không tiếp tục thực hiện. Vui lòng chọn món mới nếu bạn có nhu cầu.</div>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="rm-stepper">
+                                    <div className={`rm-step ${stepIdx === 0 ? 'active' : ''} ${stepIdx > 0 ? 'completed' : ''}`}>
+                                        <div className="rm-step-circle">{stepIdx > 0 ? '✓' : '1'}</div>
+                                        <div className="rm-step-label">Chờ duyệt</div>
+                                    </div>
+                                    <div className={`rm-step ${stepIdx === 1 ? 'active' : ''} ${stepIdx > 1 ? 'completed' : ''}`}>
+                                        <div className="rm-step-circle">{stepIdx > 1 ? '✓' : '2'}</div>
+                                        <div className="rm-step-label">Xác nhận</div>
+                                    </div>
+                                    <div className={`rm-step ${stepIdx === 2 ? 'active' : ''} ${stepIdx > 2 ? 'completed' : ''}`}>
+                                        <div className="rm-step-circle">{stepIdx > 2 ? '✓' : '3'}</div>
+                                        <div className="rm-step-label">Đang làm</div>
+                                    </div>
+                                    <div className={`rm-step ${stepIdx === 3 ? 'active' : ''} ${stepIdx > 3 ? 'completed' : ''}`}>
+                                        <div className="rm-step-circle">{stepIdx > 3 ? '✓' : '4'}</div>
+                                        <div className="rm-step-label">Đang giao</div>
+                                    </div>
+                                    <div className={`rm-step ${stepIdx === 4 ? 'active' : ''} ${stepIdx > 4 ? 'completed' : ''}`}>
+                                        <div className="rm-step-circle">{stepIdx > 4 ? '✓' : '5'}</div>
+                                        <div className="rm-step-label">Hoàn thành</div>
+                                    </div>
+                                </div>
+
+                                {/* Shipper Info Card when delivering */}
+                                {(stepIdx === 3) && (
+                                    <div className="rm-shipper-card">
+                                        <div className="rm-shipper-info">
+                                            <div className="rm-shipper-avatar">🛵</div>
+                                            <div>
+                                                <div className="rm-shipper-name">Tài xế: Nguyễn Hữu Tài</div>
+                                                <div className="rm-shipper-status">• Đang trên đường giao đến bạn</div>
+                                            </div>
+                                        </div>
+                                        <a href="tel:0912345678" className="rm-shipper-call">
+                                            <PhoneCall size={14} /> Gọi Tài Xế
+                                        </a>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
+                )}
 
                 {/* Rating Banner (F-09) */}
-                {(stepIdx >= 3) && (
+                {order && (stepIdx === 4 || currentStatus === 'completed' || currentStatus === 'delivered') && (
                     <div
                         onClick={() => setShowReviewModal(true)}
                         style={{
@@ -268,7 +504,7 @@ export default function HistoryOrder() {
                         <div className="rm-order-meta-row">
                             <span className="rm-order-meta-label">Trạng thái:</span>
                             <span className={`rm-status-badge1 ${STATUS_COLOR[currentStatus] || 'rm-status-pending'}`}>
-                                <span className="rm-dot" />{currentStatus === 'delivering' ? 'Đang giao hàng' : (order.status_display || 'Đang xử lý')}
+                                <span className="rm-dot" />{STATUS_DISPLAY_VI[currentStatus] || order.status_display || 'Đang xử lý'}
                             </span>
                         </div>
                     </div>
@@ -325,12 +561,12 @@ export default function HistoryOrder() {
                         let subtotal = order?.subtotal;
                         let shippingFee = order?.shippingFee;
                         let voucherDiscount = order?.voucherDiscount;
-                        
+
                         if (!hasBreakdown && items.length > 0) {
                             subtotal = items.reduce((acc, it) => acc + (it.total_price || (it.price * it.quantity)), 0);
                             shippingFee = Math.max(0, (totalAmount || order?.total || 0) - subtotal);
                         }
-                        
+
                         if (subtotal !== undefined) {
                             return (
                                 <>
@@ -391,8 +627,8 @@ export default function HistoryOrder() {
                     {(currentStatus === 'pending' || currentStatus === 'awaiting_payment') && (
                         <div className="rm-actions11" style={{ marginBottom: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                             {((order?.payment_method === 'transfer' || order?.paymentMethod === 'transfer') && (!paymentInfo || paymentInfo.payment_status !== 'completed')) && (
-                                <button className="rm-btn-outline rm-btnnnn" style={{ background: '#ff7a18', color: 'white', borderColor: '#ff7a18', flex: 1 }} onClick={() => setShowPaymentModal(true)}>
-                                    💳 Mở QR Thanh Toán Ngay
+                                <button className="rm-btn-outline rm-btn-outline-orange rm-btnnnn" style={{ background: '#ff7a18', color: 'white', borderColor: '#ff7a18', flex: 1 }} onClick={() => setShowPaymentModal(true)}>
+                                    Thanh Toán Ngay
                                 </button>
                             )}
                             <button className="rm-btn-outline rm-btn-outline-orange rm-btnnnn" style={{ color: '#ef4444', borderColor: '#ef4444', flex: 1 }} onClick={handleCancelOrder}>
@@ -400,7 +636,7 @@ export default function HistoryOrder() {
                             </button>
                         </div>
                     )}
-                    
+
                     <div className="rm-info-note"><Info size={14} /> Vui lòng theo dõi trạng thái đơn hàng hoặc liên hệ quán nếu cần.</div>
                 </section>
             </main>
@@ -461,7 +697,7 @@ export default function HistoryOrder() {
                             </div>
 
                             <button type="submit" className="rm-auth-btn-primary">
-                                Gửi Đánh Giá (+100 Điểm) 🚀
+                                Gửi Đánh Giá (+100 Điểm)
                             </button>
                         </form>
                     </div>
