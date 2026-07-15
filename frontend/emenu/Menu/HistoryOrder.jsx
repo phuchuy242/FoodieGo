@@ -13,6 +13,7 @@ import {
     Star,
     PhoneCall
 } from 'react-feather';
+import Payment from './Payment';
 
 function formatPrice(n) {
     return Number(n || 0).toLocaleString('vi-VN') + 'đ';
@@ -37,6 +38,7 @@ export default function HistoryOrder() {
     const [error, setError] = useState('');
     const [imageMap, setImageMap] = useState({});
     const [showReviewModal, setShowReviewModal] = useState(false);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
     const [paymentInfo, setPaymentInfo] = useState(null);
@@ -387,8 +389,13 @@ export default function HistoryOrder() {
                     <div className="rm-divider" />
 
                     {(currentStatus === 'pending' || currentStatus === 'awaiting_payment') && (
-                        <div className="rm-actions11" style={{ marginBottom: '12px' }}>
-                            <button className="rm-btn-outline rm-btn-outline-orange rm-btnnnn" style={{ color: '#ef4444', borderColor: '#ef4444' }} onClick={handleCancelOrder}>
+                        <div className="rm-actions11" style={{ marginBottom: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            {((order?.payment_method === 'transfer' || order?.paymentMethod === 'transfer') && (!paymentInfo || paymentInfo.payment_status !== 'completed')) && (
+                                <button className="rm-btn-outline rm-btnnnn" style={{ background: '#ff7a18', color: 'white', borderColor: '#ff7a18', flex: 1 }} onClick={() => setShowPaymentModal(true)}>
+                                    💳 Mở QR Thanh Toán Ngay
+                                </button>
+                            )}
+                            <button className="rm-btn-outline rm-btn-outline-orange rm-btnnnn" style={{ color: '#ef4444', borderColor: '#ef4444', flex: 1 }} onClick={handleCancelOrder}>
                                 Hủy Đơn Hàng
                             </button>
                         </div>
@@ -397,6 +404,21 @@ export default function HistoryOrder() {
                     <div className="rm-info-note"><Info size={14} /> Vui lòng theo dõi trạng thái đơn hàng hoặc liên hệ quán nếu cần.</div>
                 </section>
             </main>
+
+            {showPaymentModal && (
+                <Payment
+                    open={showPaymentModal}
+                    autoStartQR={true}
+                    onClose={() => {
+                        setShowPaymentModal(false);
+                        fetchOrder();
+                    }}
+                    onSubmit={() => {
+                        setShowPaymentModal(false);
+                        fetchOrder();
+                    }}
+                />
+            )}
 
             {/* Modal Review (F-09) */}
             {showReviewModal && (
