@@ -40,7 +40,7 @@ class UserViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet)
         """
         Instantiates and returns the list of permissions that this view requires.
         """
-        if self.action in ['register', 'login', 'refresh_token', 'forgot_password', 'verify_otp']:
+        if self.action in ['register', 'login', 'refresh_token', 'forgot_password', 'verify_otp', 'reset_password']:
             permission_classes = [AllowAny]
         elif self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
             permission_classes = [IsAuthenticated, IsAdminUser]
@@ -360,19 +360,68 @@ class UserViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet)
 
     @action(detail=False, methods=['post'], url_path='forgot-password', permission_classes=[AllowAny])
     def forgot_password(self, request):
-        phone_number = request.data.get('phone_number', '')
+        identifier = request.data.get('phone_number') or request.data.get('email') or request.data.get('identifier') or ''
+        if not identifier:
+            return error_response(
+                msg="Vui lòng nhập số điện thoại hoặc email",
+                code=status.HTTP_400_BAD_REQUEST
+            )
+        user = User.objects.filter(
+            Q(phone_number=identifier) | Q(email=identifier) | Q(user_name=identifier)
+        ).first()
+        if not user:
+            return error_response(
+                msg="Không tìm thấy tài khoản trong hệ thống",
+                code=status.HTTP_404_NOT_FOUND
+            )
         return success_response(
-            msg=f'Mã OTP đã được gửi đến số điện thoại {phone_number}',
+            msg=f'Mã OTP đã được gửi đến {identifier}',
             code=status.HTTP_200_OK,
             otp_id='OTP8899'
         )
 
     @action(detail=False, methods=['post'], url_path='verify-otp', permission_classes=[AllowAny])
     def verify_otp(self, request):
+        otp = request.data.get('otp', '')
+        if not otp:
+            return error_response(
+                msg="Vui lòng nhập mã OTP",
+                code=status.HTTP_400_BAD_REQUEST
+            )
         return success_response(
             msg='Xác thực OTP thành công',
             code=status.HTTP_200_OK,
             reset_token='TKN_RESET_99'
+        )
+
+    @action(detail=False, methods=['post'], url_path='reset-password', permission_classes=[AllowAny])
+    def reset_password(self, request):
+        identifier = request.data.get('phone_number') or request.data.get('email') or request.data.get('identifier')
+        new_password = request.data.get('new_password') or request.data.get('password')
+
+        if not identifier or not new_password:
+            return error_response(
+                msg="Vui lòng cung cấp số điện thoại/email và mật khẩu mới",
+                code=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = User.objects.filter(
+            Q(phone_number=identifier) | Q(email=identifier) | Q(user_name=identifier)
+        ).first()
+        if not user:
+            return error_response(
+                msg="Không tìm thấy tài khoản với thông tin đã nhập",
+                code=status.HTTP_404_NOT_FOUND
+            )
+
+        user.set_password(new_password)
+        user.save(update_fields=['password'])
+
+        RefreshToken.objects.filter(user=user, revoked=False).update(revoked=True)
+
+        return success_response(
+            msg="Đặt lại mật khẩu mới thành công. Vui lòng đăng nhập lại.",
+            code=status.HTTP_200_OK
         )
 
     @action(detail=False, methods=['get'], url_path='loyalty-history')

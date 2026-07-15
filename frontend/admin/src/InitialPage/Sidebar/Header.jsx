@@ -5,11 +5,32 @@ import FeatherIcon from "feather-icons-react";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { Search, XCircle } from "react-feather";
 import { all_routes } from "../../Router/all_routes";
+import axios from "axios";
+import { API_BASE } from "../../environment";
 
 const Header = () => {
   const route = all_routes;
   const [toggle, SetToggle] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token") || localStorage.getItem("adminToken") || localStorage.getItem("access_token");
+        if (token) {
+          const res = await axios.get(`${API_BASE}/api/v1/users/profile/`, {
+            headers: { Authorization: `Bearer ${token}`, "ngrok-skip-browser-warning": "true" }
+          });
+          const user = res.data?.data || res.data;
+          setUserProfile(user);
+        }
+      } catch (err) {
+        console.error("Failed to fetch user profile in Header:", err);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const isElementVisible = (element) => {
     return element.offsetWidth > 0 || element.offsetHeight > 0;
@@ -154,6 +175,22 @@ const Header = () => {
         document.webkitExitFullscreen();
       }
     }
+  };
+
+  const getAvatar = () => {
+    return userProfile?.avatar_url || userProfile?.avatar || "assets/img/profiles/avator1.jpg";
+  };
+  
+  const getDisplayName = () => {
+    if (userProfile?.full_name) return userProfile.full_name;
+    const first = userProfile?.first_name || "";
+    const last = userProfile?.last_name || "";
+    if (first || last) return `${first} ${last}`.trim();
+    return userProfile?.user_name || "Admin";
+  };
+  
+  const getRole = () => {
+    return userProfile?.is_staff ? "Quản trị viên" : "Khách hàng";
   };
 
   return (
@@ -594,14 +631,15 @@ const Header = () => {
               <span className="user-info">
                 <span className="user-letter">
                   <ImageWithBasePath
-                    src="assets/img/profiles/avator1.jpg"
+                    src={getAvatar()}
                     alt="img"
                     className="img-fluid"
+                    style={{ width: 40, height: 40, objectFit: "cover", borderRadius: "50%" }}
                   />
                 </span>
                 <span className="user-detail">
-                  <span className="user-name">John Smilga</span>
-                  <span className="user-role">Super Admin</span>
+                  <span className="user-name">{getDisplayName()}</span>
+                  <span className="user-role">{getRole()}</span>
                 </span>
               </span>
             </Link>
@@ -609,20 +647,21 @@ const Header = () => {
               <div className="profilename">
                 <div className="profileset">
                   <span className="user-img">
-                    <ImageWithBasePath
-                      src="assets/img/profiles/avator1.jpg"
+                    <img
+                      src={getAvatar()}
                       alt="img"
+                      style={{ width: 42, height: 42, objectFit: "cover", borderRadius: "50%" }}
                     />
                     <span className="status online" />
                   </span>
                   <div className="profilesets">
-                    <h6>John Smilga</h6>
-                    <h5>Super Admin</h5>
+                    <h6>{getDisplayName()}</h6>
+                    <h5>{getRole()}</h5>
                   </div>
                 </div>
                 <hr className="m-0" />
-                <Link className="dropdown-item" to={route.route}>
-                  <i className="me-2" data-feather="user" /> My Profile
+                <Link className="dropdown-item" to={route.profile}>
+                  <i className="me-2" data-feather="user" /> Hồ sơ cá nhân
                 </Link>
                 <Link className="dropdown-item" to={route.generalsettings}>
                   <i className="me-2" data-feather="settings" />
@@ -653,7 +692,7 @@ const Header = () => {
             <i className="fa fa-ellipsis-v" />
           </Link>
           <div className="dropdown-menu dropdown-menu-right">
-            <Link className="dropdown-item" to="profile">
+            <Link className="dropdown-item" to={route.profile}>
               My Profile
             </Link>
             <Link className="dropdown-item" to="generalsettings">

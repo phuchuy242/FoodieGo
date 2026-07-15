@@ -86,6 +86,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     def full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
 
+    def save(self, *args, **kwargs):
+        if self.user_name is not None and not str(self.user_name).strip():
+            self.user_name = None
+        if self.email is not None and not str(self.email).strip():
+            self.email = None
+        if self.phone_number is not None and not str(self.phone_number).strip():
+            self.phone_number = None
+        super().save(*args, **kwargs)
+
 
 
 

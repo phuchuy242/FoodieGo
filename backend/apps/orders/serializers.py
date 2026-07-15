@@ -52,9 +52,9 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'table', 'table_details', 'table_number', 'user', 'user_name',
-                  'status', 'status_display', 'pay_code', 'notes', 'total_amount', 'items', 'items_count',
+                  'status', 'status_display', 'pay_code', 'notes', 'subtotal', 'shipping_fee', 'discount_amount', 'voucher_code', 'total_amount', 'items', 'items_count',
                   'created_at', 'updated_at', 'confirmed_at', 'served_at', 'completed_at']
-        read_only_fields = ['id', 'user', 'pay_code', 'total_amount', 'created_at', 'updated_at',
+        read_only_fields = ['id', 'user', 'pay_code', 'subtotal', 'total_amount', 'created_at', 'updated_at',
                            'confirmed_at', 'served_at', 'completed_at']
 
     def get_items_count(self, obj):
@@ -71,9 +71,9 @@ class OrderListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'table', 'table_number', 'user', 'user_name',
-                  'status', 'status_display', 'pay_code', 'total_amount', 'items_count',
+                  'status', 'status_display', 'pay_code', 'subtotal', 'shipping_fee', 'discount_amount', 'voucher_code', 'total_amount', 'items_count',
                   'created_at', 'updated_at']
-        read_only_fields = ['id', 'user', 'pay_code', 'total_amount', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'user', 'pay_code', 'subtotal', 'total_amount', 'created_at', 'updated_at']
 
     def get_items_count(self, obj):
         return obj.items.count()
@@ -95,10 +95,10 @@ class OrderHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'table', 'table_number', 'user', 'user_name',
-                  'status', 'status_display', 'pay_code', 'notes', 'total_amount',
+                  'status', 'status_display', 'pay_code', 'notes', 'subtotal', 'shipping_fee', 'discount_amount', 'voucher_code', 'total_amount',
                   'items', 'items_count',
                   'created_at', 'updated_at', 'confirmed_at', 'served_at', 'completed_at']
-        read_only_fields = ['id', 'user', 'pay_code', 'total_amount', 'created_at', 'updated_at',
+        read_only_fields = ['id', 'user', 'pay_code', 'subtotal', 'total_amount', 'created_at', 'updated_at',
                            'confirmed_at', 'served_at', 'completed_at']
 
     def get_items_count(self, obj):
@@ -120,10 +120,13 @@ class OrderCreateSerializer(serializers.ModelSerializer):
     restaurant_id = serializers.IntegerField(required=False, allow_null=True)
     address_id = serializers.IntegerField(required=False, allow_null=True)
     payment_method = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    shipping_fee = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, default=0)
+    discount_amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, default=0)
+    voucher_code = serializers.CharField(max_length=50, required=False, allow_blank=True, allow_null=True)
 
     class Meta:
         model = Order
-        fields = ['table', 'restaurant_id', 'address_id', 'payment_method', 'items', 'notes']
+        fields = ['table', 'restaurant_id', 'address_id', 'payment_method', 'shipping_fee', 'discount_amount', 'voucher_code', 'items', 'notes']
 
     def create(self, validated_data):
         items_data = validated_data.pop('items', [])
@@ -131,10 +134,10 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         validated_data.pop('restaurant_id', None)
         validated_data.pop('address_id', None)
         validated_data.pop('payment_method', None)
+        shipping_fee = validated_data.pop('shipping_fee', 0)
+        discount_amount = validated_data.pop('discount_amount', 0)
+        voucher_code = validated_data.pop('voucher_code', None)
 
-        # 1. Check if there's an active order for this table
-        # Active statuses: pending, confirmed, preparing, served
-        # Exclude awaiting_payment (user needs to cancel payment first)
         active_order = None
         if table:
             active_order = Order.objects.filter(
@@ -143,15 +146,23 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             ).first()
 
         if active_order:
-            # Use existing active order
             order = active_order
-            # Update notes if provided
             if validated_data.get('notes'):
                 order.notes = (order.notes or '') + '\n' + validated_data['notes']
-                order.save()
+            if shipping_fee:
+                order.shipping_fee = shipping_fee
+            if discount_amount:
+                order.discount_amount = discount_amount
+            if voucher_code:
+                order.voucher_code = voucher_code
+            order.save()
         else:
-            # Create new order
-            order = Order.objects.create(**validated_data)
+            order = Order.objects.create(
+                shipping_fee=shipping_fee,
+                discount_amount=discount_amount,
+                voucher_code=voucher_code,
+                **validated_data
+            )
 
         # 2. Create OrderItems
         for item_data in items_data:
@@ -169,4 +180,15 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
         # 3. Calculate total
         order.calculate_total()
+        
+        # 4. Update Voucher usage
+        if voucher_code:
+            from apps.vouchers.models import Voucher
+            try:
+                voucher = Voucher.objects.get(code=voucher_code)
+                voucher.current_usage += 1
+                voucher.save(update_fields=['current_usage'])
+            except Voucher.DoesNotExist:
+                pass
+                
         return order

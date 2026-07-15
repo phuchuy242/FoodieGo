@@ -103,6 +103,13 @@ export default function Giohang() {
                                             createdAt: Date.now(),
                                         };
                                         localStorage.setItem('lastOrder', JSON.stringify(order));
+                                        try {
+                                            let hist = [];
+                                            const h = localStorage.getItem('orderHistoryList');
+                                            if (h) hist = JSON.parse(h);
+                                            hist = [order, ...hist.filter(o => (o.paycode||o.pay_code||o.id) !== (order.paycode||order.pay_code||order.id))];
+                                            localStorage.setItem('orderHistoryList', JSON.stringify(hist));
+                                        } catch(e) {}
                                     } catch (e) {
                                         console.error('save order failed', e);
                                     }

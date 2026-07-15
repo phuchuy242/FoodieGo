@@ -248,7 +248,6 @@ class PasswordChangeSerializer(serializers.Serializer):
     """Serializer for changing password."""
     old_password = serializers.CharField(required=True, write_only=True)
     new_password = serializers.CharField(required=True, write_only=True, min_length=8)
-    new_password_confirm = serializers.CharField(required=True, write_only=True)
 
     def validate_old_password(self, value):
         """Validate old password is correct."""
@@ -258,11 +257,6 @@ class PasswordChangeSerializer(serializers.Serializer):
         return value
 
     def validate(self, attrs):
-        """Validate new password confirmation."""
-        if attrs['new_password'] != attrs['new_password_confirm']:
-            raise serializers.ValidationError({
-                "new_password_confirm": "Password confirmation does not match."
-            })
         return attrs
 
     def save(self):

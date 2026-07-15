@@ -1,7 +1,10 @@
-# urls.py for apps.reports
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import ReportViewSet
+
+router = DefaultRouter()
+router.register(r'', ReportViewSet, basename='reports')
 
 urlpatterns = [
-    # Add app-specific URL patterns here when you create views
+    path('', include(router.urls)),
 ]
-

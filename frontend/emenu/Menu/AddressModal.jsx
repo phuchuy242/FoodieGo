@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/modals-extra.scss';
 
-export default function AddressModal({ isOpen = true, onClose = () => {} }) {
+export default function AddressModal({ isOpen = true, onClose = () => { } }) {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
@@ -71,7 +71,7 @@ export default function AddressModal({ isOpen = true, onClose = () => {} }) {
                 {error && <div className="rm-auth-error">{error}</div>}
 
                 <div className="rm-preset-tags">
-                    <span className="rm-preset-tag" onClick={() => applyPreset('120 Hoàng Minh Thảo, Hòa Khánh, Đà Nẵng')}>📍 Quán Mì KEY KÉP</span>
+                    <span className="rm-preset-tag" onClick={() => applyPreset('120 Hoàng Minh Thảo, Hòa Khánh, Đà Nẵng')}> Quán Mì KEY KÉP</span>
                     <span className="rm-preset-tag" onClick={() => applyPreset('KTX Đại học Bách Khoa Đà Nẵng')}>🏫 KTX Bách Khoa</span>
                     <span className="rm-preset-tag" onClick={() => applyPreset('54 Nguyễn Lương Bằng, Hòa Khánh Bắc, Đà Nẵng')}>🏢 54 Nguyễn Lương Bằng</span>
                 </div>
@@ -79,7 +79,7 @@ export default function AddressModal({ isOpen = true, onClose = () => {} }) {
                 <form onSubmit={handleSave}>
                     <div className="rm-auth-input-group">
                         <label className="rm-auth-label" style={{ fontWeight: 800, color: '#ff5200', fontSize: '15px' }}>
-                            📞 Số điện thoại đặt món (Bắt buộc) <span style={{color: 'red'}}>*</span>
+                            📞 Số điện thoại đặt món (Bắt buộc) <span style={{ color: 'red' }}>*</span>
                         </label>
                         <input
                             type="tel"
@@ -92,7 +92,7 @@ export default function AddressModal({ isOpen = true, onClose = () => {} }) {
                     </div>
 
                     <div className="rm-auth-input-group">
-                        <label className="rm-auth-label">Họ và tên người nhận <span style={{color: 'red'}}>*</span></label>
+                        <label className="rm-auth-label">Họ và tên người nhận <span style={{ color: 'red' }}>*</span></label>
                         <input
                             type="text"
                             className="rm-auth-input"
@@ -104,7 +104,7 @@ export default function AddressModal({ isOpen = true, onClose = () => {} }) {
                     </div>
 
                     <div className="rm-auth-input-group">
-                        <label className="rm-auth-label">Địa chỉ giao hàng chi tiết <span style={{color: 'red'}}>*</span></label>
+                        <label className="rm-auth-label">Địa chỉ giao hàng chi tiết <span style={{ color: 'red' }}>*</span></label>
                         <input
                             type="text"
                             className="rm-auth-input"

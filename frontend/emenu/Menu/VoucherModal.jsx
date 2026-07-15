@@ -1,35 +1,69 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/modals-extra.scss';
+import { API_BASE, apiFetch } from '../config';
 
 export default function VoucherModal({ isOpen = true, onClose = () => {}, onSelect = (voucher) => {}, subtotal = 0 }) {
     const [customCode, setCustomCode] = useState('');
     const [error, setError] = useState('');
+    const [availableVouchers, setAvailableVouchers] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const availableVouchers = [
-        {
-            code: 'FREESHIP15',
-            title: 'Miễn phí vận chuyển 15.000đ',
-            minSpend: 100000,
-            discount: 15000,
-            desc: 'Áp dụng cho đơn từ 100.000đ'
-        },
-        {
-            code: 'GIAM20K',
-            title: 'Giảm ngay 20.000đ cho đơn',
-            minSpend: 150000,
-            discount: 20000,
-            desc: 'Áp dụng cho đơn từ 150.000đ'
-        },
-        {
-            code: 'CR7SUPER',
-            title: 'Khuyến mãi đặc biệt giảm 50.000đ',
-            minSpend: 300000,
-            discount: 50000,
-            desc: 'Áp dụng cho đơn từ 300.000đ'
+    useEffect(() => {
+        if (isOpen) {
+            fetchVouchers();
         }
-    ];
+    }, [isOpen]);
+
+    const fetchVouchers = async () => {
+        try {
+            setLoading(true);
+            const res = await apiFetch(`${API_BASE}/api/v1/vouchers/`);
+            const json = await res.json();
+            const results = json.data?.results || json.results || json.data || [];
+            
+            if (Array.isArray(results)) {
+                // Filter only valid ones and map to UI format
+                const active = results.filter(v => v.is_active && v.is_valid !== false).map(v => {
+                    const minSpend = Number(v.min_order_amount || 0);
+                    let discountAmt = 0;
+                    // Our mock logic uses 'discount' field for the max discount text/amount
+                    if (v.discount_type === 'percentage') {
+                        // store percentage info
+                        discountAmt = `${parseFloat(v.discount_value)}%`;
+                    } else {
+                        discountAmt = Number(v.discount_value);
+                    }
+                    
+                    return {
+                        original: v,
+                        code: v.code,
+                        title: v.description || `Mã ưu đãi ${v.code}`,
+                        minSpend: minSpend,
+                        discount: discountAmt,
+                        desc: v.description || (v.discount_type === 'percentage' 
+                                ? `Giảm ${parseFloat(v.discount_value)}% cho đơn từ ${minSpend.toLocaleString('vi-VN')}đ`
+                                : `Giảm ${Number(v.discount_value).toLocaleString('vi-VN')}đ cho đơn từ ${minSpend.toLocaleString('vi-VN')}đ`),
+                        discount_type: v.discount_type,
+                        discount_value: Number(v.discount_value)
+                    };
+                });
+                setAvailableVouchers(active);
+            }
+        } catch (err) {
+            console.error('Failed to fetch vouchers', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     if (!isOpen) return null;
+
+    const calculateDiscountValue = (voucherData, currentSubtotal) => {
+        if (voucherData.discount_type === 'percentage') {
+            return (currentSubtotal * voucherData.discount_value) / 100;
+        }
+        return voucherData.discount_value;
+    };
 
     const handleApply = (v) => {
         if (subtotal < v.minSpend) {
@@ -37,31 +71,71 @@ export default function VoucherModal({ isOpen = true, onClose = () => {}, onSele
             return;
         }
         setError('');
-        onSelect(v);
+        
+        // Compute the actual numeric discount based on subtotal for percentages
+        const actualDiscount = calculateDiscountValue(v, subtotal);
+        
+        onSelect({
+            code: v.code,
+            title: v.title,
+            minSpend: v.minSpend,
+            discount: actualDiscount, // pass actual calculated amount
+            desc: v.desc,
+            original: v.original
+        });
         onClose();
     };
 
-    const handleCustomSubmit = (e) => {
+    const handleCustomSubmit = async (e) => {
         e.preventDefault();
         if (!customCode.trim()) return;
         const code = customCode.trim().toUpperCase();
+        
+        // Check if already in the list
         const found = availableVouchers.find(v => v.code === code);
         if (found) {
             handleApply(found);
-        } else {
-            // Mock apply custom code
-            if (subtotal < 50000) {
-                setError('Mã giảm giá này yêu cầu đơn hàng từ 50.000đ.');
+            return;
+        }
+        
+        // Otherwise try to validate via API
+        try {
+            const res = await apiFetch(`${API_BASE}/api/v1/vouchers/validate/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+            const json = await res.json();
+            if (!res.ok || json.status === 'error' || json.status === false) {
+                throw new Error(json.msg || 'Mã giảm giá không tồn tại hoặc đã hết hạn.');
+            }
+            
+            const data = json.data || json;
+            const minSpend = Number(data.min_order_amount || 0);
+            if (subtotal < minSpend) {
+                setError(`Đơn hàng hiện tại (${subtotal.toLocaleString('vi-VN')}đ) chưa đạt tối thiểu ${minSpend.toLocaleString('vi-VN')}đ.`);
                 return;
             }
+            
+            let actualDiscount = 0;
+            if (data.discount_type === 'percentage') {
+                actualDiscount = (subtotal * Number(data.discount_value)) / 100;
+            } else {
+                actualDiscount = Number(data.discount_value);
+            }
+            
             onSelect({
-                code: code,
-                title: `Mã ưu đãi ${code}`,
-                minSpend: 50000,
-                discount: 15000,
-                desc: 'Giảm 15.000đ'
+                code: data.code,
+                title: data.description || `Mã ưu đãi ${data.code}`,
+                minSpend: minSpend,
+                discount: actualDiscount,
+                desc: data.description || `Giảm ${actualDiscount.toLocaleString('vi-VN')}đ`,
+                original: data
             });
+            setError('');
             onClose();
+        } catch (err) {
+            setError(err.message || 'Lỗi kiểm tra mã.');
         }
     };
 
@@ -81,7 +155,7 @@ export default function VoucherModal({ isOpen = true, onClose = () => {}, onSele
                     <input
                         type="text"
                         className="rm-auth-input"
-                        placeholder="Nhập mã voucher (vd: FREESHIP15)"
+                        placeholder="Nhập mã voucher (vd: TET2024)"
                         value={customCode}
                         onChange={(e) => setCustomCode(e.target.value)}
                         style={{ textTransform: 'uppercase' }}
@@ -92,26 +166,32 @@ export default function VoucherModal({ isOpen = true, onClose = () => {}, onSele
                 </form>
 
                 <div className="rm-voucher-list">
-                    {availableVouchers.map((v) => {
-                        const eligible = subtotal >= v.minSpend;
-                        return (
-                            <div key={v.code} className={`rm-voucher-item ${!eligible ? 'disabled' : ''}`}>
-                                <div className="rm-voucher-left">
-                                    <span className="rm-voucher-code">{v.code}</span>
-                                    <span className="rm-voucher-desc">{v.title}</span>
-                                    <span className="rm-voucher-min">{v.desc}</span>
+                    {loading ? (
+                        <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>Đang tải mã giảm giá...</div>
+                    ) : availableVouchers.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>Chưa có mã giảm giá nào.</div>
+                    ) : (
+                        availableVouchers.map((v) => {
+                            const eligible = subtotal >= v.minSpend;
+                            return (
+                                <div key={v.code} className={`rm-voucher-item ${!eligible ? 'disabled' : ''}`}>
+                                    <div className="rm-voucher-left">
+                                        <span className="rm-voucher-code">{v.code}</span>
+                                        <span className="rm-voucher-desc">{v.title}</span>
+                                        <span className="rm-voucher-min">{v.desc}</span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="rm-voucher-apply-btn"
+                                        onClick={() => handleApply(v)}
+                                        disabled={!eligible}
+                                    >
+                                        {eligible ? 'Dùng Ngay' : 'Chưa Đạt'}
+                                    </button>
                                 </div>
-                                <button
-                                    type="button"
-                                    className="rm-voucher-apply-btn"
-                                    onClick={() => handleApply(v)}
-                                    disabled={!eligible}
-                                >
-                                    {eligible ? 'Dùng Ngay' : 'Chưa Đạt'}
-                                </button>
-                            </div>
-                        );
-                    })}
+                            );
+                        })
+                    )}
                 </div>
             </div>
         </div>

@@ -95,17 +95,7 @@ const Breadcrumbs = (props) => {
             {props.addButton}
           </Link>
         </div>
-        <div className="page-btn import">
-          <Link
-            to="#"
-            className="btn btn-added color"
-            data-bs-toggle="modal"
-            data-bs-target="#view-notes"
-          >
-            <Download className="me-2" />
-            {props.importbutton}
-          </Link>
-        </div>
+
       </div>
     );
   } else if (

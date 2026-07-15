@@ -1,7 +1,10 @@
-# urls.py for apps.tables
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from apps.inventory.views import IngredientViewSet
+
+router = DefaultRouter()
+router.register(r'', IngredientViewSet, basename='ingredient')
 
 urlpatterns = [
-    # Add app-specific URL patterns here when you create views
+    path('', include(router.urls)),
 ]
-

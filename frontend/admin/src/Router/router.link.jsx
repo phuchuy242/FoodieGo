@@ -27,9 +27,7 @@ import FlagIcons from "../feature-module/uiinterface/icons/flagicons";
 
 const routes = all_routes;
 
-import DepartmentGrid from "../feature-module/hrm/departmentgrid";
 import DepartmentList from "../feature-module/hrm/departmentlist";
-import Designation from "../feature-module/hrm/designation";
 import ClipBoard from "../feature-module/uiinterface/advancedui/clipboard";
 import TablesBasic from "../feature-module/uiinterface/table/tables-basic";
 import DataTables from "../feature-module/uiinterface/table/data-tables";
@@ -58,39 +56,34 @@ import SocialAuthentication from "../feature-module/settings/websitesettings/soc
 
 
 import BankSetting from "../feature-module/settings/financialsettings/banksetting";
-
-import Managestock from "../feature-module/stock/managestock";
-import StockAdjustment from "../feature-module/stock/stockAdjustment";
-import StockTransfer from "../feature-module/stock/stockTransfer";
+import Order from "../feature-module/order/orderList.jsx";
 import Signin from "../feature-module/pages/login/signin";
-import SigninTwo from "../feature-module/pages/login/signinTwo";
-import SigninThree from "../feature-module/pages/login/signinThree";
-import RegisterTwo from "../feature-module/pages/register/registerTwo";
+// import SigninTwo from "../feature-module/pages/login/signinTwo";
+// import SigninThree from "../feature-module/pages/login/signinThree";
+// import RegisterTwo from "../feature-module/pages/register/registerTwo";
 import Register from "../feature-module/pages/register/register";
-import RegisterThree from "../feature-module/pages/register/registerThree";
+// import RegisterThree from "../feature-module/pages/register/registerThree";
 import Forgotpassword from "../feature-module/pages/forgotpassword/forgotpassword";
-import ForgotpasswordTwo from "../feature-module/pages/forgotpassword/forgotpasswordTwo";
-import ForgotpasswordThree from "../feature-module/pages/forgotpassword/forgotpasswordThree";
+// import ForgotpasswordTwo from "../feature-module/pages/forgotpassword/forgotpasswordTwo";
+// import ForgotpasswordThree from "../feature-module/pages/forgotpassword/forgotpasswordThree";
 import Resetpassword from "../feature-module/pages/resetpassword/resetpassword";
-import ResetpasswordTwo from "../feature-module/pages/resetpassword/resetpasswordTwo";
-import ResetpasswordThree from "../feature-module/pages/resetpassword/resetpasswordThree";
+// import ResetpasswordTwo from "../feature-module/pages/resetpassword/resetpasswordTwo";
+// import ResetpasswordThree from "../feature-module/pages/resetpassword/resetpasswordThree";
 import EmailVerification from "../feature-module/pages/emailverification/emailverification";
-import EmailverificationTwo from "../feature-module/pages/emailverification/emailverificationTwo";
-import EmailverificationThree from "../feature-module/pages/emailverification/emailverificationThree";
+// import EmailverificationTwo from "../feature-module/pages/emailverification/emailverificationTwo";
+// import EmailverificationThree from "../feature-module/pages/emailverification/emailverificationThree";
 import Twostepverification from "../feature-module/pages/twostepverification/twostepverification";
-import TwostepverificationTwo from "../feature-module/pages/twostepverification/twostepverificationTwo";
-import TwostepverificationThree from "../feature-module/pages/twostepverification/twostepverificationThree";
+// import TwostepverificationTwo from "../feature-module/pages/twostepverification/twostepverificationTwo";
+// import TwostepverificationThree from "../feature-module/pages/twostepverification/twostepverificationThree";
 import Lockscreen from "../feature-module/pages/lockscreen";
 import Blankpage from "../feature-module/pages/blankpage";
 import Users from "../feature-module/usermanagement/users";
-import RolesPermissions from "../feature-module/usermanagement/rolespermissions";
 import Permissions from "../feature-module/usermanagement/permissions";
-import DeleteAccount from "../feature-module/usermanagement/deleteaccount";
-import EmployeesGrid from "../feature-module/hrm/employeesgrid";
 import EditEmployee from "../feature-module/hrm/editemployee";
 import AddEmployee from "../feature-module/hrm/addemployee";
 import ProductDetail from "../feature-module/inventory/productdetail";
 import Coupons from "../feature-module/coupons/coupons";
+import Profile from "../feature-module/profile/profile";
 import { all_routes } from "./all_routes";
 export const publicRoutes = [
   {
@@ -151,14 +144,6 @@ export const publicRoutes = [
     route: Route,
   },
   {
-    id: 38,
-    path: routes.departmentgrid,
-    name: "departmentgrid",
-    element: <DepartmentGrid />,
-    route: Route,
-  },
-
-  {
     id: 39,
     path: routes.departmentlist,
     name: "departmentlist",
@@ -170,14 +155,6 @@ export const publicRoutes = [
     path: routes.rating,
     name: "rating",
     element: <Rating />,
-  },
-
-  {
-    id: 40,
-    path: routes.designation,
-    name: "designation",
-    element: <Designation />,
-    route: Route,
   },
   {
     id: 41,
@@ -467,26 +444,11 @@ export const publicRoutes = [
     element: <BankSetting />,
     route: Route,
   },
-
   {
-    id: 87,
-    path: routes.managestock,
-    name: "managestock",
-    element: <Managestock />,
-    route: Route,
-  },
-  {
-    id: 88,
-    path: routes.stockadjustment,
-    name: "stockadjustment",
-    element: <StockAdjustment />,
-    route: Route,
-  },
-  {
-    id: 89,
-    path: routes.stocktransfer,
-    name: "stocktransfer",
-    element: <StockTransfer />,
+    id: 84,
+    path: routes.orders,
+    name: "orders",
+    element: <Order />,
     route: Route,
   },
   {
@@ -504,31 +466,10 @@ export const publicRoutes = [
     route: Route,
   },
   {
-    id: 105,
-    path: routes.rolespermission,
-    name: "rolespermission",
-    element: <RolesPermissions />,
-    route: Route,
-  },
-  {
     id: 106,
     path: routes.permissions,
     name: "permissions",
     element: <Permissions />,
-    route: Route,
-  },
-  {
-    id: 107,
-    path: routes.deleteaccount,
-    name: "deleteaccount",
-    element: <DeleteAccount />,
-    route: Route,
-  },
-  {
-    id: 108,
-    path: routes.employeegrid,
-    name: "employeegrid",
-    element: <EmployeesGrid />,
     route: Route,
   },
   {
@@ -560,6 +501,13 @@ export const publicRoutes = [
     route: Route,
   },
   {
+    id: 117,
+    path: routes.profile,
+    name: "profile",
+    element: <Profile />,
+    route: Route,
+  },
+  {
     id: 115,
     path: "/",
     name: "Root",
@@ -585,20 +533,20 @@ export const pagesRoute = [
     element: <Signin />,
     route: Route,
   },
-  {
-    id: 2,
-    path: routes.signintwo,
-    name: "signintwo",
-    element: <SigninTwo />,
-    route: Route,
-  },
-  {
-    id: 3,
-    path: routes.signinthree,
-    name: "signinthree",
-    element: <SigninThree />,
-    route: Route,
-  },
+  // {
+  //   id: 2,
+  //   path: routes.signintwo,
+  //   name: "signintwo",
+  //   element: <SigninTwo />,
+  //   route: Route,
+  // },
+  // {
+  //   id: 3,
+  //   path: routes.signinthree,
+  //   name: "signinthree",
+  //   element: <SigninThree />,
+  //   route: Route,
+  // },
   {
     id: 4,
     path: routes.register,
@@ -606,20 +554,20 @@ export const pagesRoute = [
     element: <Register />,
     route: Route,
   },
-  {
-    id: 5,
-    path: routes.registerTwo,
-    name: "registerTwo",
-    element: <RegisterTwo />,
-    route: Route,
-  },
-  {
-    id: 6,
-    path: routes.registerThree,
-    name: "registerThree",
-    element: <RegisterThree />,
-    route: Route,
-  },
+  // {
+  //   id: 5,
+  //   path: routes.registerTwo,
+  //   name: "registerTwo",
+  //   element: <RegisterTwo />,
+  //   route: Route,
+  // },
+  // {
+  //   id: 6,
+  //   path: routes.registerThree,
+  //   name: "registerThree",
+  //   element: <RegisterThree />,
+  //   route: Route,
+  // },
   {
     id: 7,
     path: routes.forgotPassword,
@@ -627,20 +575,20 @@ export const pagesRoute = [
     element: <Forgotpassword />,
     route: Route,
   },
-  {
-    id: 7,
-    path: routes.forgotPasswordTwo,
-    name: "forgotPasswordTwo",
-    element: <ForgotpasswordTwo />,
-    route: Route,
-  },
-  {
-    id: 8,
-    path: routes.forgotPasswordThree,
-    name: "forgotPasswordThree",
-    element: <ForgotpasswordThree />,
-    route: Route,
-  },
+  // {
+  //   id: 7,
+  //   path: routes.forgotPasswordTwo,
+  //   name: "forgotPasswordTwo",
+  //   element: <ForgotpasswordTwo />,
+  //   route: Route,
+  // },
+  // {
+  //   id: 8,
+  //   path: routes.forgotPasswordThree,
+  //   name: "forgotPasswordThree",
+  //   element: <ForgotpasswordThree />,
+  //   route: Route,
+  // },
   {
     id: 9,
     path: routes.resetpassword,
@@ -648,20 +596,20 @@ export const pagesRoute = [
     element: <Resetpassword />,
     route: Route,
   },
-  {
-    id: 10,
-    path: routes.resetpasswordTwo,
-    name: "resetpasswordTwo",
-    element: <ResetpasswordTwo />,
-    route: Route,
-  },
-  {
-    id: 11,
-    path: routes.resetpasswordThree,
-    name: "resetpasswordThree",
-    element: <ResetpasswordThree />,
-    route: Route,
-  },
+  // {
+  //   id: 10,
+  //   path: routes.resetpasswordTwo,
+  //   name: "resetpasswordTwo",
+  //   element: <ResetpasswordTwo />,
+  //   route: Route,
+  // },
+  // {
+  //   id: 11,
+  //   path: routes.resetpasswordThree,
+  //   name: "resetpasswordThree",
+  //   element: <ResetpasswordThree />,
+  //   route: Route,
+  // },
   {
     id: 12,
     path: routes.emailverification,
@@ -669,20 +617,20 @@ export const pagesRoute = [
     element: <EmailVerification />,
     route: Route,
   },
-  {
-    id: 12,
-    path: routes.emailverificationTwo,
-    name: "emailverificationTwo",
-    element: <EmailverificationTwo />,
-    route: Route,
-  },
-  {
-    id: 13,
-    path: routes.emailverificationThree,
-    name: "emailverificationThree",
-    element: <EmailverificationThree />,
-    route: Route,
-  },
+  // {
+  //   id: 12,
+  //   path: routes.emailverificationTwo,
+  //   name: "emailverificationTwo",
+  //   element: <EmailverificationTwo />,
+  //   route: Route,
+  // },
+  // {
+  //   id: 13,
+  //   path: routes.emailverificationThree,
+  //   name: "emailverificationThree",
+  //   element: <EmailverificationThree />,
+  //   route: Route,
+  // },
   {
     id: 14,
     path: routes.twostepverification,
@@ -690,20 +638,20 @@ export const pagesRoute = [
     element: <Twostepverification />,
     route: Route,
   },
-  {
-    id: 15,
-    path: routes.twostepverificationTwo,
-    name: "twostepverificationTwo",
-    element: <TwostepverificationTwo />,
-    route: Route,
-  },
-  {
-    id: 16,
-    path: routes.twostepverificationThree,
-    name: "twostepverificationThree",
-    element: <TwostepverificationThree />,
-    route: Route,
-  },
+  // {
+  //   id: 15,
+  //   path: routes.twostepverificationTwo,
+  //   name: "twostepverificationTwo",
+  //   element: <TwostepverificationTwo />,
+  //   route: Route,
+  // },
+  // {
+  //   id: 16,
+  //   path: routes.twostepverificationThree,
+  //   name: "twostepverificationThree",
+  //   element: <TwostepverificationThree />,
+  //   route: Route,
+  // },
   {
     id: 17,
     path: routes.lockscreen,
