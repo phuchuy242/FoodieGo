@@ -363,7 +363,7 @@ export default function CartTablet({ setCartCount, setCartTotal }) {
 
                                     try {
                                         setSubmitting(true);
-                                        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                                        const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
                                         const headers = { 'Content-Type': 'application/json' };
                                         if (token) headers['Authorization'] = `Bearer ${token}`;
                                         const res = await apiFetch(`${API_BASE}/api/v1/orders/`, {

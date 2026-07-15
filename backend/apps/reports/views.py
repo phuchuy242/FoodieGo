@@ -156,7 +156,9 @@ class ReportViewSet(StandardResponseMixin, viewsets.ViewSet):
         ).values(
             'variant__product__id',
             'variant__product__name',
-            'variant__product__category__name'
+            'variant__product__category__name',
+            'variant__product__image_url',
+            'variant__product__price'
         ).annotate(
             total_quantity=Coalesce(Sum('quantity'), 0),
             total_revenue=Coalesce(Sum(F('quantity') * F('price')), 0, output_field=models.DecimalField())
@@ -168,6 +170,8 @@ class ReportViewSet(StandardResponseMixin, viewsets.ViewSet):
                 "product_id": item['variant__product__id'],
                 "product_name": item['variant__product__name'],
                 "category_name": item['variant__product__category__name'] or "Khác",
+                "image_url": item['variant__product__image_url'],
+                "base_price": item['variant__product__price'],
                 "total_quantity": item['total_quantity'],
                 "total_revenue": item['total_revenue']
             })
@@ -180,14 +184,17 @@ class ReportViewSet(StandardResponseMixin, viewsets.ViewSet):
         """
         Get breakdown of orders grouped by status for pie/donut charts.
         """
-        total_orders = Order.objects.count()
-        status_counts = Order.objects.values('status').annotate(count=Count('id'))
+        target_statuses = ['confirmed', 'cooking', 'ready', 'delivering', 'completed']
+        
+        total_orders = Order.objects.filter(status__in=target_statuses).count()
+        status_counts = Order.objects.filter(status__in=target_statuses).values('status').annotate(count=Count('id'))
         
         counts_dict = {item['status']: item['count'] for item in status_counts}
         status_labels = dict(Order.STATUS_CHOICES)
 
         result_list = []
-        for status_code, status_label in status_labels.items():
+        for status_code in target_statuses:
+            status_label = status_labels.get(status_code, status_code)
             count = counts_dict.get(status_code, 0)
             percentage = round((count / total_orders * 100) if total_orders > 0 else 0.0, 1)
             result_list.append({
@@ -216,11 +223,15 @@ class ReportViewSet(StandardResponseMixin, viewsets.ViewSet):
         
         result_list = []
         for order in recent_qs:
+            customer_name = "Khách vãng lai"
+            if order.user:
+                customer_name = order.user.full_name or order.user.user_name or order.user.email or order.user.phone_number or "Khách (Có tài khoản)"
+                
             result_list.append({
                 "id": order.id,
                 "pay_code": order.pay_code,
                 "table_number": order.table.table_number if order.table else None,
-                "customer_name": f"{order.user.first_name} {order.user.last_name}".strip() if order.user and (order.user.first_name or order.user.last_name) else (order.user.user_name if order.user else "Khách vãng lai"),
+                "customer_name": customer_name,
                 "total_amount": str(order.total_amount),
                 "status": order.status,
                 "status_display": order.get_status_display(),

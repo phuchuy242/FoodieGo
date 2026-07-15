@@ -82,7 +82,7 @@ export default function HistoryOrder() {
             let apiList = [];
             try {
                 const headers = {};
-                const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
                 if (token) headers['Authorization'] = `Bearer ${token}`;
 
                 const [resHistory, resActive, resByUser] = await Promise.all([

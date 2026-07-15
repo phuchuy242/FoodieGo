@@ -24,9 +24,10 @@ class TopDishItemSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
     product_name = serializers.CharField()
     category_name = serializers.CharField(allow_null=True, required=False)
+    image_url = serializers.CharField(allow_null=True, required=False)
+    base_price = serializers.DecimalField(max_digits=15, decimal_places=2, required=False)
     total_quantity = serializers.IntegerField()
     total_revenue = serializers.DecimalField(max_digits=15, decimal_places=2)
-
 
 class OrderStatusStatsSerializer(serializers.Serializer):
     status = serializers.CharField()
