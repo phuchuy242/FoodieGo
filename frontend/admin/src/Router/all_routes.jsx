@@ -111,6 +111,7 @@ export const all_routes = {
   stocktransfer: "/stock-transfer",
   profile: "/profile",
   signin: "/signin",
+  oauthCallback: "/oauth/callback",
   signintwo: "/signin-2",
   signinthree: "/signin-3",
   register: "/register",

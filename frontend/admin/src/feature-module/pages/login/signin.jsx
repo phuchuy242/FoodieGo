@@ -1,28 +1,70 @@
-import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import ImageWithBasePath from "../../../core/img/imagewithbasebath";
-import { all_routes } from "../../../Router/all_routes";
+import React, { useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+
+import { all_routes } from "../../../Router/all_routes";
+import ImageWithBasePath from "../../../core/img/imagewithbasebath";
+import { API_URL, startOAuthRedirect } from "../../../api/auth/oauthClient";
 
 const Signin = () => {
   const route = all_routes;
-
   const [email, setEmail] = useState(
     localStorage.getItem("adminEmail") || ""
   );
-
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
   const [remember, setRemember] = useState(
     !!localStorage.getItem("adminEmail")
   );
-
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState("");
+  const socialRedirectStarted = useRef(false);
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  function getRequestedPath() {
+    const from = location.state?.from;
+    if (typeof from === "string") {
+      return from;
+    }
+    return from?.pathname ? `${from.pathname}${from.search || ""}` : "/";
+  }
+
+  async function startSocialSignIn(provider) {
+    if (loading || socialRedirectStarted.current) {
+      return;
+    }
+
+    socialRedirectStarted.current = true;
+    setSocialLoading(provider);
+    setErrors((current) => ({ ...current, login: undefined }));
+
+    try {
+      await axios.get(`${API_URL}/health/`, {
+        timeout: 3000,
+        validateStatus: () => true,
+      });
+      startOAuthRedirect(provider, getRequestedPath());
+    } catch {
+      socialRedirectStarted.current = false;
+      setSocialLoading("");
+      setErrors((current) => ({
+        ...current,
+        login:
+          "Cannot connect to the server. Please start the backend and try again.",
+      }));
+    }
+  }
+
+  function handleGoogleSignIn() {
+    startSocialSignIn("google");
+  }
+
+  function handleFacebookSignIn() {
+    startSocialSignIn("facebook");
+  }
 
   function validate() {
     const newErrors = {};
@@ -39,52 +81,54 @@ const Signin = () => {
     return newErrors;
   }
 
-  async function handleSignIn(e) {
-  e.preventDefault();
+  async function handleSignIn(event) {
+    event.preventDefault();
 
-  const validationErrors = validate();
-  setErrors(validationErrors);
-
-  if (Object.keys(validationErrors).length > 0) {
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const res = await axios.post(
-      "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/users/login/",
-      {
-        email,
-        password,
-      }
-    );
-
-    const { access_token, refresh_token } = res.data.data;
-
-    localStorage.setItem("token", access_token);
-    localStorage.setItem("refresh_token", refresh_token);
-
-    if (remember) {
-      localStorage.setItem("adminEmail", email);
-    } else {
-      localStorage.removeItem("adminEmail");
+    const validationErrors = validate();
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) {
+      return;
     }
 
-    navigate("/");
-  } catch (error) {
-    setErrors({
-      login:
-        error.response?.data?.message ||
-        error.response?.data?.detail ||
-        "An error occurred during sign in. Please try again.",
-    });
-  } finally {
-    setLoading(false);
+    setLoading(true);
+    try {
+      const response = await axios.post(`${API_URL}/api/v1/users/login/`, {
+        email,
+        password,
+      });
+      const { access_token: accessToken, refresh_token: refreshToken } =
+        response.data.data;
+
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("refresh_token", refreshToken);
+
+      if (remember) {
+        localStorage.setItem("adminEmail", email);
+      } else {
+        localStorage.removeItem("adminEmail");
+      }
+
+      navigate("/");
+    } catch (error) {
+      setErrors({
+        login:
+          error.response?.data?.msg ||
+          error.response?.data?.message ||
+          error.response?.data?.detail ||
+          "An error occurred during sign in. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
-
+  const socialDisabled = loading || !!socialLoading;
+  const socialIcon = (provider, src) =>
+    socialLoading === provider ? (
+      <span className="spinner-border spinner-border-sm" aria-hidden="true" />
+    ) : (
+      <ImageWithBasePath src={src} alt="" />
+    );
 
   return (
     <div className="main-wrapper">
@@ -97,7 +141,7 @@ const Signin = () => {
                   <ImageWithBasePath src="assets/img/logo.png" alt="img" />
                 </div>
                 <Link to={route.dashboard} className="login-logo logo-white">
-                  <ImageWithBasePath src="assets/img/logo-white.png" alt />
+                  <ImageWithBasePath src="assets/img/logo-white.png" alt="" />
                 </Link>
                 <div className="login-userheading">
                   <h3>Sign In</h3>
@@ -112,7 +156,7 @@ const Signin = () => {
                       type="text"
                       className="form-control"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(event) => setEmail(event.target.value)}
                     />
                     <ImageWithBasePath
                       src="assets/img/icons/mail.svg"
@@ -131,11 +175,12 @@ const Signin = () => {
                       type={showPassword ? "text" : "password"}
                       className="pass-input form-control"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(event) => setPassword(event.target.value)}
                     />
-
                     <span
-                      className={`fas toggle-password ${showPassword ? "fa-eye" : "fa-eye-slash"}`}
+                      className={`fas toggle-password ${
+                        showPassword ? "fa-eye" : "fa-eye-slash"
+                      }`}
                       onClick={() => setShowPassword(!showPassword)}
                       style={{ cursor: "pointer" }}
                     />
@@ -153,7 +198,9 @@ const Signin = () => {
                             type="checkbox"
                             className="form-control"
                             checked={remember}
-                            onChange={(e) => setRemember(e.target.checked)}
+                            onChange={(event) =>
+                              setRemember(event.target.checked)
+                            }
                           />
                           <span className="checkmarks" />
                           Remember me
@@ -168,12 +215,14 @@ const Signin = () => {
                   </div>
                 </div>
                 {errors.login && (
-                  <div className="alert alert-danger py-2">
-                    {errors.login}
-                  </div>
+                  <div className="alert alert-danger py-2">{errors.login}</div>
                 )}
                 <div className="form-login">
-                  <button type="submit" className="btn btn-login" disabled={loading}>
+                  <button
+                    type="submit"
+                    className="btn btn-login"
+                    disabled={loading || !!socialLoading}
+                  >
                     {loading ? "Signing In..." : "Sign In"}
                   </button>
                 </div>
@@ -192,32 +241,48 @@ const Signin = () => {
                 <div className="form-sociallink">
                   <ul className="d-flex">
                     <li>
-                      <Link to="#" className="facebook-logo">
-                        <ImageWithBasePath
-                          src="assets/img/icons/facebook-logo.svg"
-                          alt="Facebook"
-                        />
-                      </Link>
+                      <button
+                        type="button"
+                        className="facebook-logo"
+                        onClick={handleFacebookSignIn}
+                        disabled={socialDisabled}
+                        aria-label="Sign in with Facebook"
+                        aria-busy={socialLoading === "facebook"}
+                      >
+                        {socialIcon(
+                          "facebook",
+                          "assets/img/icons/facebook-logo.svg"
+                        )}
+                      </button>
                     </li>
                     <li>
-                      <Link to="#">
-                        <ImageWithBasePath
-                          src="assets/img/icons/google.png"
-                          alt="Google"
-                        />
-                      </Link>
+                      <button
+                        type="button"
+                        onClick={handleGoogleSignIn}
+                        disabled={socialDisabled}
+                        aria-label="Sign in with Google"
+                        aria-busy={socialLoading === "google"}
+                      >
+                        {socialIcon("google", "assets/img/icons/google.png")}
+                      </button>
                     </li>
                     <li>
-                      <Link to="#" className="apple-logo">
+                      <button
+                        type="button"
+                        className="apple-logo"
+                        disabled
+                        aria-label="Sign in with Apple (not available yet)"
+                        title="Apple sign-in is not available yet"
+                      >
                         <ImageWithBasePath
                           src="assets/img/icons/apple-logo.svg"
                           alt="Apple"
                         />
-                      </Link>
+                      </button>
                     </li>
                   </ul>
                   <div className="my-4 d-flex justify-content-center align-items-center copyright-text">
-                    <p>Copyright © 2023 DreamsPOS. All rights reserved</p>
+                    <p>Copyright © 2026 DreamsPOS. All rights reserved</p>
                   </div>
                 </div>
               </div>
