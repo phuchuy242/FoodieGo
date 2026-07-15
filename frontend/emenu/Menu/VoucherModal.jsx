@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/modals-extra.scss';
+import { API_BASE, apiFetch } from '../config';
 
 export default function VoucherModal({ isOpen = true, onClose = () => {}, onSelect = (voucher) => {}, subtotal = 0 }) {
     const [customCode, setCustomCode] = useState('');
@@ -41,7 +42,7 @@ export default function VoucherModal({ isOpen = true, onClose = () => {}, onSele
         onClose();
     };
 
-    const handleCustomSubmit = (e) => {
+    const handleCustomSubmit = async (e) => {
         e.preventDefault();
         if (!customCode.trim()) return;
         const code = customCode.trim().toUpperCase();
@@ -49,19 +50,43 @@ export default function VoucherModal({ isOpen = true, onClose = () => {}, onSele
         if (found) {
             handleApply(found);
         } else {
-            // Mock apply custom code
-            if (subtotal < 50000) {
-                setError('Mã giảm giá này yêu cầu đơn hàng từ 50.000đ.');
-                return;
+            try {
+                const res = await apiFetch(`${API_BASE}/api/v1/vouchers/validate/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+                const json = await res.json();
+                if (!res.ok || json.status === 'error') {
+                    throw new Error(json.msg || 'Mã giảm giá không tồn tại hoặc đã hết hạn.');
+                }
+                
+                const data = json.data || json;
+                const minSpend = Number(data.min_order_amount || 0);
+                if (subtotal < minSpend) {
+                    setError(`Đơn hàng hiện tại (${subtotal.toLocaleString('vi-VN')}đ) chưa đạt tối thiểu ${minSpend.toLocaleString('vi-VN')}đ.`);
+                    return;
+                }
+                
+                let discountAmt = 0;
+                if (data.discount_type === 'percent') {
+                    discountAmt = (subtotal * Number(data.discount_value)) / 100;
+                } else {
+                    discountAmt = Number(data.discount_value);
+                }
+                
+                onSelect({
+                    code: data.code,
+                    title: data.description || `Mã ưu đãi ${data.code}`,
+                    minSpend: minSpend,
+                    discount: discountAmt,
+                    desc: data.description || `Giảm ${discountAmt.toLocaleString('vi-VN')}đ`
+                });
+                setError('');
+                onClose();
+            } catch (err) {
+                setError(err.message || 'Lỗi kiểm tra mã.');
             }
-            onSelect({
-                code: code,
-                title: `Mã ưu đãi ${code}`,
-                minSpend: 50000,
-                discount: 15000,
-                desc: 'Giảm 15.000đ'
-            });
-            onClose();
         }
     };
 

@@ -130,7 +130,7 @@ export default function Payment({
 
     const handleCancelQr = async () => {
         const pay_code = localStorage.getItem('paycode') || '';
-        if (!pay_code) { setQrData(null); return; }
+        if (!pay_code) { setQrData(null); onClose(); return; }
         setCancelling(true);
         try {
             await apiFetch(`${API_BASE}/api/v1/payments/cancel-by-paycode/`, {
@@ -142,6 +142,7 @@ export default function Payment({
             setCancelling(false);
             setQrData(null);
             setQrError('');
+            onClose();
         }
     };
 

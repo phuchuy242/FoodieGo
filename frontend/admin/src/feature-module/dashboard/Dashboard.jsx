@@ -95,7 +95,7 @@ const Dashboard = () => {
       options: {
         chart: { type: 'donut', height: 320 },
         labels: labels,
-        colors: ['#28C76F', '#FF9F43', '#EA5455', '#00CFE8', '#A8AAAE'],
+        colors: ['#28C76F', '#FF9F43', '#EA5455', '#00CFE8', '#A8AAAE', '#FF3F3F'],
         plotOptions: { donut: { size: '65%' } },
         dataLabels: { enabled: true },
         legend: { position: 'bottom' },

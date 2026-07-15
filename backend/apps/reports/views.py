@@ -184,7 +184,7 @@ class ReportViewSet(StandardResponseMixin, viewsets.ViewSet):
         """
         Get breakdown of orders grouped by status for pie/donut charts.
         """
-        target_statuses = ['confirmed', 'cooking', 'ready', 'delivering', 'completed']
+        target_statuses = ['confirmed', 'cooking', 'ready', 'delivering', 'completed', 'cancelled']
         
         total_orders = Order.objects.filter(status__in=target_statuses).count()
         status_counts = Order.objects.filter(status__in=target_statuses).values('status').annotate(count=Count('id'))

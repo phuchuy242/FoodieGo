@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { API_BASE, apiFetch } from '../config';
 import '../styles/login-phone.scss';
 
-export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
+export default function LoginOtp({ isOpen = true, onClose = () => { } }) {
     const { t } = useTranslation();
     const [mode, setMode] = useState('login'); // 'login' | 'register' | 'profile'
     const [isLoading, setIsLoading] = useState(false);
@@ -112,6 +112,24 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
             setError('Vui lòng điền các trường bắt buộc (Email, Username, SĐT, Mật khẩu).');
             return;
         }
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email.trim())) {
+            setError('Địa chỉ email không hợp lệ.');
+            return;
+        }
+
+        const phonePattern = /^(0|\+84)[3|5|7|8|9][0-9]{8}$/;
+        if (!phonePattern.test(phoneNumber.trim().replace(/\s+/g, ''))) {
+            setError('Số điện thoại không hợp lệ (Phải là số điện thoại Việt Nam hợp lệ).');
+            return;
+        }
+
+        if (regPassword.length < 6) {
+            setError('Mật khẩu phải có ít nhất 8 ký tự.');
+            return;
+        }
+
         if (regPassword !== regPasswordConfirm) {
             setError('Mật khẩu xác nhận không khớp.');
             return;
@@ -190,7 +208,7 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
                         'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({ refresh_token: refresh }),
-                }).catch(() => {});
+                }).catch(() => { });
             }
         } finally {
             localStorage.removeItem('accessToken');
@@ -316,7 +334,7 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
                         ) : (
                             <form onSubmit={handleRegister}>
                                 <div className="rm-auth-input-group">
-                                    <label className="rm-auth-label">Email <span style={{color: 'red'}}>*</span></label>
+                                    <label className="rm-auth-label">Email <span style={{ color: 'red' }}>*</span></label>
                                     <input
                                         type="email"
                                         className="rm-auth-input"
@@ -329,7 +347,7 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
 
                                 <div className="rm-auth-row">
                                     <div className="rm-auth-input-group">
-                                        <label className="rm-auth-label">Username <span style={{color: 'red'}}>*</span></label>
+                                        <label className="rm-auth-label">Username <span style={{ color: 'red' }}>*</span></label>
                                         <input
                                             type="text"
                                             className="rm-auth-input"
@@ -340,7 +358,7 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
                                         />
                                     </div>
                                     <div className="rm-auth-input-group">
-                                        <label className="rm-auth-label">Số điện thoại <span style={{color: 'red'}}>*</span></label>
+                                        <label className="rm-auth-label">Số điện thoại <span style={{ color: 'red' }}>*</span></label>
                                         <input
                                             type="tel"
                                             className="rm-auth-input"
@@ -377,7 +395,7 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
 
                                 <div className="rm-auth-row">
                                     <div className="rm-auth-input-group">
-                                        <label className="rm-auth-label">Mật khẩu <span style={{color: 'red'}}>*</span></label>
+                                        <label className="rm-auth-label">Mật khẩu <span style={{ color: 'red' }}>*</span></label>
                                         <input
                                             type="password"
                                             className="rm-auth-input"
@@ -388,7 +406,7 @@ export default function LoginOtp({ isOpen = true, onClose = () => {} }) {
                                         />
                                     </div>
                                     <div className="rm-auth-input-group">
-                                        <label className="rm-auth-label">Xác nhận <span style={{color: 'red'}}>*</span></label>
+                                        <label className="rm-auth-label">Xác nhận <span style={{ color: 'red' }}>*</span></label>
                                         <input
                                             type="password"
                                             className="rm-auth-input"
