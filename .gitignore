@@ -55,3 +55,7 @@ dist/
 .pytest_cache/
 .coverage
 htmlcov/
+# Coverage
+.coverage
+htmlcov/
+coverage_output.txt

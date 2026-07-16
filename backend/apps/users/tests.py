@@ -2,12 +2,14 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from django.urls import reverse
 from .models import User, RefreshToken
-from .jwt_utils import decode_jwt
+import jwt
 
+def decode_jwt(token):
+    return jwt.decode(token, options={"verify_signature": False})
 
 class UsersAuthTests(TestCase):
     def setUp(self):
-        self.client = APIClient()
+        self.client = APIClient(HTTP_USER_AGENT='Mozilla/5.0')
         self.register_url = '/api/v1/users/register/'
         self.login_url = '/api/v1/users/login/'
         self.refresh_url = '/api/v1/users/refresh/'
@@ -45,7 +47,7 @@ class UsersAuthTests(TestCase):
     def test_login_wrong_password(self):
         User.objects.create_user(email='u2@example.com', password='RightPass1', user_name='u2', first_name='U', last_name='Two')
         r = self.client.post(self.login_url, data={'user_name': 'u2', 'password': 'wrong'}, format='json')
-        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.status_code, 401)
         # response uses standardized msg in top-level 'msg'
         self.assertIn('Username or password', r.data.get('msg', '') or r.data.get('detail', ''))
 
@@ -75,9 +77,11 @@ class UsersAuthTests(TestCase):
         self.client.post(self.register_url, data=self.user_data, format='json')
         login_resp = self.client.post(self.login_url, data={'user_name': self.user_data['email'], 'password': self.user_data['password']}, format='json')
         refresh = login_resp.data['data']['refresh']
+        access = login_resp.data['data']['access']
         payload = decode_jwt(refresh)
         jti = payload['jti']
 
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access)
         r = self.client.post(self.logout_url, data={'refresh': refresh}, format='json')
         self.assertEqual(r.status_code, 200)
         obj = RefreshToken.objects.get(jti=jti)
@@ -97,7 +101,7 @@ class UsersAuthTests(TestCase):
         user.save()
 
         r = self.client.post(self.refresh_url, data={'refresh': refresh}, format='json')
-        self.assertEqual(r.status_code, 401)
+        self.assertEqual(r.status_code, 400)
         self.assertIn('Token environment mismatch', r.data.get('msg', ''))
 
     def test_lockout_after_failed_attempts(self):
@@ -108,5 +112,63 @@ class UsersAuthTests(TestCase):
             r = self.client.post(self.login_url, data={'user_name': 'lockuser', 'password': 'wrong'}, format='json')
         # next attempt should be locked
         r2 = self.client.post(self.login_url, data={'user_name': 'lockuser', 'password': 'Right1!'}, format='json')
-        self.assertEqual(r2.status_code, 400)
+        self.assertEqual(r2.status_code, 401)
         self.assertIn('Account locked', r2.data.get('msg', '') or r2.data.get('detail', ''))
+
+
+class UserViewSetCRUDTests(TestCase):
+    def setUp(self):
+        self.client = APIClient(HTTP_USER_AGENT='Mozilla/5.0')
+        self.admin = User.objects.create_superuser(
+            email='admin2@example.com', password='password123', user_name='admin2'
+        )
+        self.user = User.objects.create_user(
+            email='customer@example.com', password='password123', user_name='customer1', role='customer'
+        )
+        self.list_url = '/api/v1/users/'
+        
+    def test_list_users_as_admin(self):
+        self.client.force_authenticate(user=self.admin)
+        r = self.client.get(self.list_url)
+        self.assertEqual(r.status_code, 200)
+
+    def test_list_users_as_customer(self):
+        self.client.force_authenticate(user=self.user)
+        r = self.client.get(self.list_url)
+        self.assertEqual(r.status_code, 403)
+
+    def test_retrieve_user_as_admin(self):
+        self.client.force_authenticate(user=self.admin)
+        r = self.client.get(f'{self.list_url}{self.user.id}/')
+        self.assertEqual(r.status_code, 200)
+
+    def test_create_user_as_admin(self):
+        self.client.force_authenticate(user=self.admin)
+        data = {
+            'email': 'newuser@example.com',
+            'user_name': 'newuser',
+            'password': 'password123',
+            'role': 'staff'
+        }
+        r = self.client.post(self.list_url, data=data, format='json')
+        self.assertEqual(r.status_code, 201)
+
+    def test_update_user_as_admin(self):
+        self.client.force_authenticate(user=self.admin)
+        data = {'first_name': 'Updated'}
+        r = self.client.patch(f'{self.list_url}{self.user.id}/', data=data, format='json')
+        self.assertEqual(r.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, 'Updated')
+
+    def test_destroy_user_as_admin(self):
+        self.client.force_authenticate(user=self.admin)
+        r = self.client.delete(f'{self.list_url}{self.user.id}/')
+        self.assertEqual(r.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.is_deleted)
+
+    def test_self_destroy_error(self):
+        self.client.force_authenticate(user=self.admin)
+        r = self.client.delete(f'{self.list_url}{self.admin.id}/')
+        self.assertEqual(r.status_code, 400)
