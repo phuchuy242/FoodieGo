@@ -8,6 +8,13 @@ Do Frontend được cấu hình gọi API thông qua một public URL, hệ th�
 
 ---
 
+## ✨ Chức năng nổi bật
+- **Admin Dashboard:** Quản lý Người dùng, Đơn hàng, Thực đơn, Khuyến mãi (Vouchers), Kho (Inventory), và Báo cáo Doanh thu theo thời gian thực.
+- **Khách hàng E-Menu:** Xem thực đơn trực quan, đặt món tại bàn, theo dõi trạng thái đơn hàng và gọi nhân viên phục vụ.
+- **Bảo mật & Hiệu suất:** Hệ thống phân quyền chặt chẽ (Role-Based Access Control) với JWT Token, hỗ trợ lọc và phân trang dữ liệu chuẩn RESTful.
+
+---
+
 ## 🛠 Yêu cầu hệ thống (Prerequisites)
 1. **Python 3.10+**
 2. **Node.js (v16+)** & **npm** hoặc **yarn**
@@ -39,7 +46,7 @@ python manage.py runserver 8000
 *Lưu ý: Không tắt Terminal này.*
 
 ### Bước 2: Khởi chạy Ngrok (Terminal 2) - BẮT BUỘC
-Frontend của dự án được cấu hình (hard-code base URL) gọi API qua domain của ngrok. Do đó, phải dùng ngrok để forward cổng 8000 của backend lên public URL.
+Để Frontend có thể kết nối với Backend thông qua môi trường mạng mở rộng, dự án sử dụng ngrok để forward cổng 8000 của backend lên public URL.
 
 Mở cửa sổ Terminal thứ 2:
 ```bash
