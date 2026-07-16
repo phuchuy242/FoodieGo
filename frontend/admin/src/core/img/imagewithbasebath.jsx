@@ -3,17 +3,31 @@ import PropTypes from "prop-types";
 import { base_path, API_BASE } from "../../environment";
 
 const ImageWithBasePath = (props) => {
-  const prefix = process.env.PUBLIC_URL ? process.env.PUBLIC_URL + "/" : base_path;
+  // Get base prefix from environment
+  let prefix = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) 
+    ? import.meta.env.BASE_URL 
+    : (process.env.PUBLIC_URL ? process.env.PUBLIC_URL + "/" : base_path);
+  
+  // Fix for GitHub pages when accessed without trailing slash (e.g. /FoodieGo instead of /FoodieGo/)
+  // which causes "./assets" to resolve to the root domain.
+  if ((prefix === "./" || prefix === "/") && window.location.pathname.toLowerCase().startsWith("/foodiego")) {
+    prefix = "/FoodieGo/";
+  }
+
   let fullSrc = props.src || "";
 
   if (fullSrc.startsWith("http://") || fullSrc.startsWith("https://") || fullSrc.startsWith("data:")) {
     // Keep external or data URL exactly as is
   } else if (fullSrc.startsWith("/media/")) {
     fullSrc = `${API_BASE}${fullSrc}`;
-  } else if (fullSrc.startsWith("/")) {
-    fullSrc = `${process.env.PUBLIC_URL || ""}${fullSrc}`;
   } else {
-    fullSrc = `${prefix}${fullSrc}`;
+    // Strip leading slash if present to safely append to prefix
+    if (fullSrc.startsWith("/")) {
+      fullSrc = fullSrc.substring(1);
+    }
+    // Ensure prefix ends with slash
+    const safePrefix = prefix.endsWith('/') ? prefix : prefix + '/';
+    fullSrc = `${safePrefix}${fullSrc}`;
   }
 
   return (
@@ -26,7 +40,8 @@ const ImageWithBasePath = (props) => {
       id={props.id}
       onError={(e) => {
         e.target.onerror = null;
-        e.target.src = `${prefix}assets/img/products/product1.jpg`;
+        const safePrefix = prefix.endsWith('/') ? prefix : prefix + '/';
+        e.target.src = `${safePrefix}assets/img/products/product1.jpg`;
       }}
     />
   );
