@@ -166,10 +166,10 @@ class Payment(models.Model):
 
         self.save()
 
-        # Update order status to completed
-        if self.order.status != 'completed':
-            self.order.status = 'completed'
-            self.order.completed_at = timezone.now()
+        # Update order status to confirmed if it is pending or awaiting_payment
+        if self.order.status in ['pending', 'awaiting_payment']:
+            self.order.status = 'confirmed'
+            self.order.confirmed_at = timezone.now()
             self.order.save()
 
     def mark_as_failed(self, reason=None):

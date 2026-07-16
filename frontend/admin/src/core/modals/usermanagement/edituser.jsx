@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Swal from "sweetalert2";
+import { API_BASE } from '../../../environment';
 
 const API_URL =
-  "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/users/";
+  `${API_BASE}/api/v1/users/`;
 
 const DEFAULT_AVATAR =
   "/assets/img/users/default-user.jpg";

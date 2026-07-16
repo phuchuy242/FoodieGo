@@ -2,47 +2,65 @@ import React, { useState } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Swal from "sweetalert2";
+import { API_BASE } from '../../../environment';
 
-const API_URL =
-  "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/users/";
+const API_URL = `${API_BASE}/api/v1/users/`;
 
 const initialFormData = {
   username: "",
+  firstName: "",
+  lastName: "",
+  fullName: "",
   email: "",
   phoneNumber: "",
   password: "",
   confirmPassword: "",
   role: "customer",
+  isActive: true,
+  address: "",
+  avatarUrl: "",
 };
 
 const AddUsers = ({ onCreated }) => {
-  const [formData, setFormData] =
-    useState(initialFormData);
+  const [formData, setFormData] = useState(initialFormData);
 
-  const [errors, setErrors] =
-    useState({});
+  const [errors, setErrors] = useState({});
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   const roleOptions = [
     {
       value: "customer",
-      label: "Customer",
+      label: "Khách hàng",
     },
     {
       value: "admin",
-      label: "Admin",
+      label: "Quản trị viên",
     },
     {
       value: "staff",
-      label: "Staff",
+      label: "Nhân viên",
     },
     {
       value: "shipper",
-      label: "Shipper",
+      label: "Người giao hàng",
     },
   ];
+
+  const statusOptions = [
+    {
+      value: true,
+      label: "Hoạt động",
+    },
+    {
+      value: false,
+      label: "Không hoạt động",
+    },
+  ];
+
+  function buildFullName(lastName, firstName) {
+    return [lastName?.trim(), firstName?.trim()].filter(Boolean).join(" ");
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -57,18 +75,27 @@ const AddUsers = ({ onCreated }) => {
       let normalized = digitsOnly;
       if (normalized.length > 0) {
         normalized =
-          normalized[0] === "0"
-            ? normalized
-            : `0${normalized.slice(0, 9)}`;
+          normalized[0] === "0" ? normalized : `0${normalized.slice(0, 9)}`;
       }
 
       nextValue = normalized.slice(0, 10);
     }
 
-    setFormData((previousData) => ({
-      ...previousData,
-      [name]: nextValue,
-    }));
+    setFormData((previousData) => {
+      const nextData = {
+        ...previousData,
+        [name]: nextValue,
+      };
+
+      if (name === "firstName" || name === "lastName") {
+        nextData.fullName = buildFullName(
+          name === "lastName" ? nextValue : previousData.lastName,
+          name === "firstName" ? nextValue : previousData.firstName
+        );
+      }
+
+      return nextData;
+    });
 
     setErrors((previousErrors) => ({
       ...previousErrors,
@@ -80,8 +107,7 @@ const AddUsers = ({ onCreated }) => {
   function handleRoleChange(option) {
     setFormData((previousData) => ({
       ...previousData,
-      role:
-        option?.value || "customer",
+      role: option?.value || "customer",
     }));
 
     setErrors((previousErrors) => ({
@@ -91,53 +117,71 @@ const AddUsers = ({ onCreated }) => {
     }));
   }
 
+  function handleStatusChange(option) {
+    setFormData((previousData) => ({
+      ...previousData,
+      isActive: option?.value ?? true,
+    }));
+
+    setErrors((previousErrors) => ({
+      ...previousErrors,
+      isActive: "",
+      general: "",
+    }));
+  }
+
   function validate() {
     const validationErrors = {};
 
     if (!formData.username.trim()) {
-      validationErrors.username =
-        "Tên người dùng là bắt buộc.";
+      validationErrors.username = "Tên người dùng là bắt buộc.";
     }
 
     if (!formData.email.trim()) {
-      validationErrors.email =
-        "Email là bắt buộc.";
-    } else if (
-      !/\S+@\S+\.\S+/.test(
-        formData.email
-      )
-    ) {
-      validationErrors.email =
-        "Địa chỉ email không hợp lệ.";
+      validationErrors.email = "Email là bắt buộc.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      validationErrors.email = "Địa chỉ email không hợp lệ.";
+    }
+
+    if (!formData.firstName.trim()) {
+      validationErrors.firstName = "Tên là bắt buộc.";
+    }
+
+    if (!formData.lastName.trim()) {
+      validationErrors.lastName = "Họ là bắt buộc.";
     }
 
     if (!formData.phoneNumber.trim()) {
-      validationErrors.phoneNumber =
-        "Số điện thoại là bắt buộc.";
+      validationErrors.phoneNumber = "Số điện thoại là bắt buộc.";
     } else if (!/^0\d{9}$/.test(formData.phoneNumber.trim())) {
       validationErrors.phoneNumber =
         "Số điện thoại phải có 10 chữ số và bắt đầu bằng 0.";
     }
 
+    if (!formData.email.trim()) {
+      validationErrors.email = "Email là bắt buộc.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      validationErrors.email = "Địa chỉ email không hợp lệ.";
+    }
+
     if (!formData.password) {
-      validationErrors.password =
-        "Mật khẩu là bắt buộc.";
-    } else if (
-      formData.password.length < 8
-    ) {
-      validationErrors.password =
-        "Mật khẩu phải có ít nhất 8 ký tự.";
+      validationErrors.password = "Mật khẩu là bắt buộc.";
+    } else if (formData.password.length < 8) {
+      validationErrors.password = "Mật khẩu phải có ít nhất 8 ký tự.";
     }
 
     if (!formData.confirmPassword) {
-      validationErrors.confirmPassword =
-        "Xác nhận mật khẩu là bắt buộc.";
-    } else if (
-      formData.password !==
-      formData.confirmPassword
+      validationErrors.confirmPassword = "Xác nhận mật khẩu là bắt buộc.";
+    } else if (formData.password !== formData.confirmPassword) {
+      validationErrors.confirmPassword = "Mật khẩu không khớp.";
+    }
+
+    if (
+      formData.avatarUrl.trim() &&
+      !/^https?:\/\/.+/i.test(formData.avatarUrl.trim())
     ) {
-      validationErrors.confirmPassword =
-        "Mật khẩu không khớp.";
+      validationErrors.avatarUrl =
+        "Đường dẫn ảnh phải bắt đầu bằng http:// hoặc https://";
     }
 
     return validationErrors;
@@ -146,25 +190,19 @@ const AddUsers = ({ onCreated }) => {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const validationErrors =
-      validate();
+    const validationErrors = validate();
 
     setErrors(validationErrors);
 
-    if (
-      Object.keys(validationErrors)
-        .length > 0
-    ) {
+    if (Object.keys(validationErrors).length > 0) {
       return;
     }
 
-    const token =
-      localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     if (!token) {
       setErrors({
-        general:
-          "Không tìm thấy token truy cập. Vui lòng đăng nhập lại.",
+        general: "Không tìm thấy token truy cập. Vui lòng đăng nhập lại.",
       });
 
       return;
@@ -176,27 +214,32 @@ const AddUsers = ({ onCreated }) => {
       await axios.post(
         API_URL,
         {
-          username:
-            formData.username.trim(),
+          username: formData.username.trim(),
 
-          email:
-            formData.email.trim(),
+          first_name: formData.firstName.trim(),
 
-          phone_number:
-            formData.phoneNumber.trim(),
+          last_name: formData.lastName.trim(),
+
+          email: formData.email.trim(),
+
+          phone_number: formData.phoneNumber.trim(),
 
           password: formData.password,
 
           role: formData.role,
+
+          is_active: formData.isActive,
+
+          default_address: formData.address.trim(),
+
+          avatar_url: formData.avatarUrl.trim(),
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
             Accept: "application/json",
-            "ngrok-skip-browser-warning":
-              "true",
+            "ngrok-skip-browser-warning": "true",
           },
         }
       );
@@ -206,8 +249,7 @@ const AddUsers = ({ onCreated }) => {
         title: "Đã tạo",
         text: "Tạo người dùng thành công.",
         customClass: {
-          confirmButton:
-            "btn btn-submit",
+          confirmButton: "btn btn-submit",
         },
         buttonsStyling: false,
       });
@@ -215,49 +257,32 @@ const AddUsers = ({ onCreated }) => {
       setFormData(initialFormData);
       setErrors({});
 
-      if (
-        typeof onCreated ===
-        "function"
-      ) {
+      if (typeof onCreated === "function") {
         await onCreated();
       }
 
-      const closeButton =
-        document.querySelector(
-          "#add-units [data-bs-dismiss='modal']"
-        );
+      const closeButton = document.querySelector(
+        "#add-units [data-bs-dismiss='modal']"
+      );
 
       closeButton?.click();
     } catch (requestError) {
-      console.error(
-        "Create user error:",
-        requestError
-      );
+      console.error("Create user error:", requestError);
 
-      const responseData =
-        requestError.response?.data;
+      const responseData = requestError.response?.data;
 
-      const apiErrors =
-        responseData?.errors || {};
+      const apiErrors = responseData?.errors || {};
 
       setErrors({
-        username:
-          apiErrors.username?.[0] ||
-          "",
+        username: apiErrors.username?.[0] || "",
 
-        email:
-          apiErrors.email?.[0] || "",
+        email: apiErrors.email?.[0] || "",
 
-        phoneNumber:
-          apiErrors.phone_number?.[0] ||
-          "",
+        phoneNumber: apiErrors.phone_number?.[0] || "",
 
-        password:
-          apiErrors.password?.[0] ||
-          "",
+        password: apiErrors.password?.[0] || "",
 
-        role:
-          apiErrors.role?.[0] || "",
+        role: apiErrors.role?.[0] || "",
 
         general:
           responseData?.msg ||
@@ -276,10 +301,7 @@ const AddUsers = ({ onCreated }) => {
   }
 
   return (
-    <div
-      className="modal fade"
-      id="add-units"
-    >
+    <div className="modal fade" id="add-units">
       <div className="modal-dialog modal-dialog-centered custom-modal-two modal-lg">
         <div className="modal-content">
           <div className="page-wrapper-new p-0">
@@ -300,133 +322,171 @@ const AddUsers = ({ onCreated }) => {
                   aria-label="Close"
                   onClick={handleClose}
                 >
-                  <span aria-hidden="true">
-                    ×
-                  </span>
+                  <span aria-hidden="true">×</span>
                 </button>
               </div>
 
               <div className="modal-body custom-modal-body">
-                <form
-                  onSubmit={handleSubmit}
-                >
+                <form onSubmit={handleSubmit}>
                   {errors.general && (
-                    <div className="alert alert-danger">
-                      {errors.general}
-                    </div>
+                    <div className="alert alert-danger">{errors.general}</div>
                   )}
 
                   <div className="row">
                     <InputField
-                      label="Tên người dùng"
+                      label="Tên đăng nhập"
                       name="username"
-                      value={
-                        formData.username
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      error={
-                        errors.username
-                      }
-                      placeholder="Nhập tên người dùng"
+                      value={formData.username}
+                      onChange={handleChange}
+                      error={errors.username}
+                      placeholder="Nhập tên đăng nhập"
+                      required
+                    />
+
+                    <InputField
+                      label="Họ và tên"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      error={errors.fullName}
+                      placeholder="Họ và tên"
+                      readOnly
+                    />
+
+                    <InputField
+                      label="Tên"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      error={errors.firstName}
+                      placeholder="Nhập tên"
+                      required
+                    />
+
+                    <InputField
+                      label="Họ"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      error={errors.lastName}
+                      placeholder="Nhập họ"
+                      required
+                    />
+
+                    <InputField
+                      label="Số điện thoại"
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleChange}
+                      inputMode="numeric"
+                      maxLength={10}
+                      error={errors.phoneNumber}
+                      placeholder="Nhập số điện thoại"
+                      required
                     />
 
                     <InputField
                       label="Email"
                       name="email"
                       type="email"
-                      value={
-                        formData.email
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      error={errors.email}
-                      placeholder="Nhập địa chỉ email"
-                    />
-
-                    <InputField
-                      label="Số điện thoại"
-                      name="phoneNumber"
-                      value={
-                        formData.phoneNumber
-                      }
+                      value={formData.email}
                       onChange={handleChange}
-                      inputMode="numeric"
-                      maxLength={10}
-                      error={
-                        errors.phoneNumber
-                      }
-                      placeholder="Nhập số điện thoại"
+                      error={errors.email}
+                      placeholder="Nhập email"
+                      required
                     />
 
                     <div className="col-lg-6">
                       <div className="input-blocks">
                         <label>
-                          Role
-                          <span className="text-danger">
-                            {" "}
-                            *
-                          </span>
+                          Vai trò
+                          <span className="text-danger ms-1">*</span>
                         </label>
 
                         <Select
                           className="select"
-                          options={
-                            roleOptions
-                          }
+                          options={roleOptions}
                           value={
                             roleOptions.find(
-                              (option) =>
-                                option.value ===
-                                formData.role
-                            ) ||
-                            roleOptions[0]
+                              (option) => option.value === formData.role
+                            ) || null
                           }
-                          onChange={
-                            handleRoleChange
-                          }
+                          onChange={handleRoleChange}
+                          placeholder="Chọn vai trò"
+                          noOptionsMessage={() => "Không có lựa chọn"}
                         />
 
                         {errors.role && (
-                          <small className="text-danger">
+                          <small className="text-danger d-block mt-1">
                             {errors.role}
                           </small>
                         )}
                       </div>
                     </div>
 
+                    <div className="col-lg-6">
+                      <div className="input-blocks">
+                        <label>Trạng thái</label>
+
+                        <Select
+                          className="select"
+                          options={statusOptions}
+                          value={
+                            statusOptions.find(
+                              (option) => option.value === formData.isActive
+                            ) || null
+                          }
+                          onChange={handleStatusChange}
+                          placeholder="Chọn trạng thái"
+                          noOptionsMessage={() => "Không có lựa chọn"}
+                        />
+
+                        {errors.isActive && (
+                          <small className="text-danger d-block mt-1">
+                            {errors.isActive}
+                          </small>
+                        )}
+                      </div>
+                    </div>
+
+                    <InputField
+                      label="Địa chỉ mặc định"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      error={errors.address}
+                      placeholder="Nhập địa chỉ mặc định"
+                    />
+
+                    <InputField
+                      label="Đường dẫn ảnh đại diện"
+                      name="avatarUrl"
+                      value={formData.avatarUrl}
+                      onChange={handleChange}
+                      error={errors.avatarUrl}
+                      placeholder="Nhập đường dẫn ảnh, ví dụ: https://example.com/avatar.jpg"
+                    />
+
                     <InputField
                       label="Mật khẩu"
                       name="password"
                       type="password"
-                      value={
-                        formData.password
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      error={
-                        errors.password
-                      }
+                      value={formData.password}
+                      onChange={handleChange}
+                      error={errors.password}
                       placeholder="Nhập mật khẩu"
+                      required
                     />
 
                     <InputField
                       label="Xác nhận mật khẩu"
                       name="confirmPassword"
                       type="password"
-                      value={
-                        formData.confirmPassword
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      error={
-                        errors.confirmPassword
-                      }
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      error={errors.confirmPassword}
                       placeholder="Xác nhận mật khẩu"
+                      required
                     />
                   </div>
 
@@ -436,9 +496,7 @@ const AddUsers = ({ onCreated }) => {
                       className="btn btn-cancel me-2"
                       data-bs-dismiss="modal"
                       disabled={loading}
-                      onClick={
-                        handleClose
-                      }
+                      onClick={handleClose}
                     >
                       Hủy
                     </button>
@@ -448,9 +506,7 @@ const AddUsers = ({ onCreated }) => {
                       className="btn btn-submit"
                       disabled={loading}
                     >
-                      {loading
-                        ? "Đang tạo..."
-                        : "Tạo người dùng"}
+                      {loading ? "Đang tạo..." : "Tạo người dùng"}
                     </button>
                   </div>
                 </form>
@@ -473,16 +529,15 @@ const InputField = ({
   type = "text",
   inputMode,
   maxLength,
+  required = false,
+  readOnly = false,
 }) => {
   return (
     <div className="col-lg-6">
       <div className="input-blocks">
         <label>
           {label}
-          <span className="text-danger">
-            {" "}
-            *
-          </span>
+          {required && <span className="text-danger ms-1">*</span>}
         </label>
 
         <input
@@ -493,13 +548,11 @@ const InputField = ({
           inputMode={inputMode}
           maxLength={maxLength}
           placeholder={placeholder}
+          readOnly={readOnly}
+          className={error ? "is-invalid" : ""}
         />
 
-        {error && (
-          <small className="text-danger">
-            {error}
-          </small>
-        )}
+        {error && <small className="text-danger d-block mt-1">{error}</small>}
       </div>
     </div>
   );

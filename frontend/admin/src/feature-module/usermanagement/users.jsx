@@ -25,9 +25,10 @@ import { setToogleHeader } from "../../core/redux/action";
 import AddUsers from "../../core/modals/usermanagement/addusers";
 import EditUser from "../../core/modals/usermanagement/edituser";
 import ViewUser from "../../core/modals/usermanagement/viewuser";
+import { API_BASE } from '../../environment';
 
 const API_URL =
-  "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/users/";
+  `${API_BASE}/api/v1/users/`;
 
 const PAGE_SIZE = 20;
 

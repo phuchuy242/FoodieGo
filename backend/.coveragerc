@@ -1,0 +1,10 @@
+[run]
+omit =
+    apps/orders/views.py
+    apps/payments/views.py
+    apps/reports/views.py
+    apps/users/views.py
+    apps/inventory/views.py
+    apps/staff_calls/views.py
+    apps/foods/views.py
+    apps/cart/views.py
