@@ -88,4 +88,4 @@ Toàn bộ hệ thống API được xây dựng theo chuẩn RESTful. Format tr
 | Thống kê trạng thái Đơn | `GET` | `/api/v1/reports/order-status/` | Admin |
 
 ---
-**Ghi chú:** Các API cần quyền đều yêu cầu Header `Authorization: Bearer <token>`. Đọc file Collection Postman để xem chi tiết JSON Request Body cụ thể cho từng Endpoint.
+**Ghi chú:** Các API cần quyền đều yêu cầu Header `Authorization: Bearer <token>`. Đọc file Collection Postman để xem chi tiết JSON Request Body cụ thể cho từng Endpoint. <!-- Clean CI -->
