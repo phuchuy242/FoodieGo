@@ -18,7 +18,7 @@ from core.mixins import FilterSortMixin, StandardResponseMixin
 
 class CategoryViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet):
     """ViewSet for Category CRUD operations - Public Read and Admin/Dev Write"""
-    queryset = Category.objects.all()
+    queryset = Category.objects.filter(is_deleted=False)
     serializer_class = CategorySerializer
     pagination_class = StandardResultsSetPagination
     search_fields = ['name', 'description']
@@ -47,10 +47,19 @@ class CategoryViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelView
             data={ "id": category.id, "is_available": is_available, "is_active": is_available }
         )
 
+    def destroy(self, request, *args, **kwargs):
+        from django.utils import timezone
+        instance = self.get_object()
+        instance.is_active = False
+        instance.is_deleted = True
+        instance.deleted_at = timezone.now()
+        instance.save(update_fields=['is_active', 'is_deleted', 'deleted_at'])
+        return success_response(msg="Đã xóa (vô hiệu hóa) danh mục thành công")
+
 
 class ProductViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet):
     """ViewSet for Product CRUD operations - Public Read and Admin/Dev Write"""
-    queryset = Product.objects.all()
+    queryset = Product.objects.filter(is_deleted=False)
     pagination_class = StandardResultsSetPagination
     search_fields = ['name', 'description']
 
@@ -63,6 +72,15 @@ class ProductViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewS
         """Allow flexible read/write access for admin and dev testing"""
         permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
+
+    def destroy(self, request, *args, **kwargs):
+        from django.utils import timezone
+        instance = self.get_object()
+        instance.is_active = False
+        instance.is_deleted = True
+        instance.deleted_at = timezone.now()
+        instance.save(update_fields=['is_active', 'is_deleted', 'deleted_at'])
+        return success_response(msg="Đã xóa (vô hiệu hóa) món ăn thành công")
 
     @action(detail=False, methods=['get'], url_path='by-category', permission_classes=[AllowAny])
     def by_category(self, request):

@@ -64,7 +64,8 @@ class UserViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet)
         return UserSerializer
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        # Base filter: Only get active/non-deleted users (unless requested differently)
+        queryset = User.objects.filter(is_deleted=False)
         
         # Filter by role
         role = self.request.query_params.get('role')
@@ -99,7 +100,12 @@ class UserViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet)
                 msg="Bạn không thể tự xóa hoặc vô hiệu hóa tài khoản của chính mình",
                 code=status.HTTP_400_BAD_REQUEST
             )
-        return super().destroy(request, *args, **kwargs)
+        from django.utils import timezone
+        instance.is_active = False
+        instance.is_deleted = True
+        instance.deleted_at = timezone.now()
+        instance.save(update_fields=['is_active', 'is_deleted', 'deleted_at'])
+        return success_response(msg="Đã xóa (vô hiệu hóa) tài khoản thành công")
 
     @action(detail=False, methods=['post'])
     def register(self, request):

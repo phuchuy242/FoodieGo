@@ -10,7 +10,6 @@ from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user_name', read_only=True)
-    role = serializers.SerializerMethodField()
     points = serializers.SerializerMethodField()
     membership_tier = serializers.SerializerMethodField()
     avatar = serializers.CharField(source='avatar_url', read_only=True)
@@ -42,8 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
-    def get_role(self, obj):
-        return 'admin' if obj.is_staff else 'customer'
+
 
     def get_points(self, obj):
         return getattr(obj, 'points', 0)
@@ -271,7 +269,7 @@ class PasswordChangeSerializer(serializers.Serializer):
 class UserCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating a new user via Admin CRUD."""
     password = serializers.CharField(write_only=True, min_length=8, required=False, allow_blank=True)
-    role = serializers.CharField(write_only=True, required=False, default='customer')
+
     username = serializers.CharField(source='user_name', required=False, allow_blank=True, allow_null=True)
 
     class Meta:
@@ -299,7 +297,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
-        role = validated_data.pop('role', 'customer')
+        role = validated_data.get('role', 'customer')
         
         # Set is_staff based on role if is_staff is not explicitly provided in validated_data
         if 'is_staff' not in validated_data:
@@ -320,7 +318,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     """Serializer for updating an existing user via Admin CRUD."""
     password = serializers.CharField(write_only=True, min_length=8, required=False, allow_blank=True)
-    role = serializers.CharField(write_only=True, required=False)
+
     username = serializers.CharField(source='user_name', required=False, allow_blank=True, allow_null=True)
 
     class Meta:
@@ -348,9 +346,9 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
-        role = validated_data.pop('role', None)
-
-        if role is not None and 'is_staff' not in validated_data:
+        role = validated_data.get('role', instance.role)
+        
+        if 'role' in validated_data and 'is_staff' not in validated_data:
             validated_data['is_staff'] = (role in ['admin', 'staff'])
 
         for attr, value in validated_data.items():

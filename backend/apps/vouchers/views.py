@@ -10,7 +10,7 @@ class VoucherViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Voucher management conforming to 55+ API spec
     """
-    queryset = Voucher.objects.filter(is_active=True)
+    queryset = Voucher.objects.all()
     serializer_class = VoucherSerializer
     permission_classes = [AllowAny]
     search_fields = ['code', 'description']

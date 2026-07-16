@@ -15,6 +15,7 @@ const MySwal = withReactContent(Swal);
 const VariantAttributes = () => {
     const [variants, setVariants] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const [selectedSort, setSelectedSort] = useState({ value: 'id_asc', label: 'Sắp xếp theo ID (Tăng dần)' });
 
     const fetchVariants = async () => {
@@ -107,7 +108,16 @@ const VariantAttributes = () => {
         { value: 'price_desc', label: 'Giá (Cao đến thấp)' }
     ];
 
-    const sortedData = [...variants].sort((a, b) => {
+    const filteredVariants = variants.filter(variant => {
+        if (!searchQuery) return true;
+        const query = searchQuery.toLowerCase();
+        const idMatch = variant.id?.toString().includes(query);
+        const nameMatch = variant.product_name?.toLowerCase().includes(query);
+        const sizeMatch = variant.size?.toLowerCase().includes(query) || variant.size_display?.toLowerCase().includes(query);
+        return idMatch || nameMatch || sizeMatch;
+    });
+
+    const sortedData = [...filteredVariants].sort((a, b) => {
         if (!selectedSort) return 0;
         switch (selectedSort.value) {
             case 'id_asc':
@@ -253,8 +263,10 @@ const VariantAttributes = () => {
                                 <div className="search-input">
                                     <input
                                         type="text"
-                                        placeholder="Tìm kiếm..."
+                                        placeholder="Tìm kiếm (ID, Tên món, Size)..."
                                         className="form-control form-control-sm formsearch"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                 </div>
                             </div>

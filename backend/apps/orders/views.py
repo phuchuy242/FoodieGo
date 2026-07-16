@@ -14,7 +14,7 @@ from core.mixins import FilterSortMixin, StandardResponseMixin
 
 class OrderViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet):
     """ViewSet for Order CRUD operations - PUBLIC (Customers scan QR at table)"""
-    queryset = Order.objects.all()
+    queryset = Order.objects.filter(is_deleted=False)
     pagination_class = StandardResultsSetPagination
     search_fields = ['table__table_number', 'notes']
 
@@ -34,7 +34,7 @@ class OrderViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet
         return OrderSerializer
 
     def get_queryset(self):
-        queryset = Order.objects.select_related('table', 'user').prefetch_related('items')
+        queryset = Order.objects.filter(is_deleted=False).select_related('table', 'user').prefetch_related('items')
 
         # Filter by status
         status = self.request.query_params.get('status')
@@ -216,29 +216,28 @@ class OrderViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet
         )
 
     def destroy(self, request, *args, **kwargs):
-        """Delete an order - only allowed for pending or cancelled orders"""
+        """Soft delete an order by marking it as cancelled"""
         order = self.get_object()
-
-        # Only allow deletion of pending or cancelled orders
-        if order.status not in ['pending', 'cancelled']:
-            return error_response(
-                msg=f'Cannot delete order with status "{order.get_status_display()}". Only pending or cancelled orders can be deleted.',
-                code=400
-            )
 
         # Check if order has associated payment
         if hasattr(order, 'payment') and order.payment.payment_status == 'paid':
             return error_response(
-                msg='Cannot delete order with completed payment',
+                msg='Cannot cancel order with completed payment',
                 code=400
             )
 
         order_id = order.id
         pay_code = order.pay_code
-        self.perform_destroy(order)
+        
+        # Soft delete logic
+        from django.utils import timezone
+        order.status = 'cancelled'
+        order.is_deleted = True
+        order.deleted_at = timezone.now()
+        order.save(update_fields=['status', 'is_deleted', 'deleted_at'])
 
         return success_response(
-            msg=f'Order #{order_id} (pay_code: {pay_code}) deleted successfully'
+            msg=f'Order #{order_id} (pay_code: {pay_code}) cancelled successfully'
         )
 
 
@@ -355,9 +354,26 @@ class OrderItemToppingViewSet(FilterSortMixin, StandardResponseMixin, viewsets.M
 
 class AdminOrderViewSet(viewsets.ModelViewSet):
     """Admin POS Order endpoints conforming to Section 11 of 55+ API Spec"""
-    queryset = Order.objects.all()
+    queryset = Order.objects.filter(is_deleted=False)
     serializer_class = OrderListSerializer
     permission_classes = [AllowAny]
+
+    def destroy(self, request, *args, **kwargs):
+        """Soft delete an order by marking it as cancelled (Admin)"""
+        order = self.get_object()
+        order_id = order.id
+        pay_code = order.pay_code
+        
+        # Soft delete logic
+        from django.utils import timezone
+        order.status = 'cancelled'
+        order.is_deleted = True
+        order.deleted_at = timezone.now()
+        order.save(update_fields=['status', 'is_deleted', 'deleted_at'])
+
+        return success_response(
+            msg=f'Order #{order_id} (pay_code: {pay_code}) cancelled successfully'
+        )
 
     @action(detail=True, methods=['post', 'patch', 'put'], url_path='confirm')
     def confirm(self, request, pk=None):

@@ -1,7 +1,9 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { Pagination } from "antd";
+import { itemRender } from "../../core/pagination/pagination";
 
 const BASE_URL = "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/";
 const ADMIN_ORDERS_API = `${BASE_URL}admin/orders/`;
@@ -107,7 +109,7 @@ const styles = {
         border: "1px solid #eef0f3",
         height: "fit-content",
         position: "sticky",
-        top: "16px",
+        top: "70px",
         overflow: "hidden",
     },
     detailPanelHeader: {
@@ -1002,33 +1004,15 @@ const OrderList = () => {
                             </div>
                             <div className="card-footer d-flex justify-content-between align-items-center bg-white">
                                 <small className="text-muted">Tổng {total} đơn hàng</small>
-                                <div className="d-flex align-items-center gap-2">
-                                    <button
-                                        type="button"
-                                        className="btn btn-sm btn-light rounded-circle d-flex align-items-center justify-content-center"
-                                        style={{ width: 32, height: 32, border: "1px solid #e9ecef" }}
-                                        disabled={page <= 1 || loading}
-                                        onClick={() => loadOrders(page - 1)}
-                                    >
-                                        ‹
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-sm rounded-circle d-flex align-items-center justify-content-center"
-                                        style={{ width: 32, height: 32, border: "1.5px solid #f5f5f5", color: "#000000", backgroundColor: "transparent", fontWeight: 700 }}
-                                        disabled
-                                    >
-                                        {page}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-sm btn-light rounded-circle d-flex align-items-center justify-content-center"
-                                        style={{ width: 32, height: 32, border: "1px solid #e9ecef" }}
-                                        disabled={page >= totalPages || loading}
-                                        onClick={() => loadOrders(page + 1)}
-                                    >
-                                        ›
-                                    </button>
+                                <div className="d-flex align-items-center gap-2 custom-pagination">
+                                    <Pagination
+                                        current={page}
+                                        total={total}
+                                        pageSize={limit}
+                                        onChange={(newPage) => loadOrders(newPage)}
+                                        itemRender={itemRender}
+                                        showSizeChanger={false}
+                                    />
                                 </div>
                             </div>
                         </div>

@@ -54,17 +54,6 @@ export const SidebarData = [
         ]
       },
       {
-        label: "Purchases",
-        submenuOpen: true,
-        submenuHdr: "Purchases",
-        showSubRoute: false,
-        submenuItems: [
-          { label: "Purchases", link: "/purchase-list", icon:  <Icon.ShoppingBag />,showSubRoute: false,submenu: false },
-          { label: "Purchase Order", link: "/purchase-order-report", icon:  <Icon.FileMinus />,showSubRoute: false ,submenu: false},
-          { label: "Purchase Return", link: "/purchase-returns", icon:  <Icon.RefreshCw />,showSubRoute: false,submenu: false }
-        ]
-      },
-      {
         label: "User Management",
         submenuOpen: true,
         showSubRoute: false,

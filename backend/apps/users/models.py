@@ -60,6 +60,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
+
+    ROLE_CHOICES = (
+        ('admin', 'Admin'),
+        ('staff', 'Staff'),
+        ('shipper', 'Shipper'),
+        ('customer', 'Customer'),
+    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='customer')
 
     last_login_at = models.DateTimeField(null=True, blank=True)
     locked_until = models.DateTimeField(null=True, blank=True)

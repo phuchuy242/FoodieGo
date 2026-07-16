@@ -38,6 +38,8 @@ class Order(models.Model):
     confirmed_at = models.DateTimeField(null=True, blank=True)
     served_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "orders"
