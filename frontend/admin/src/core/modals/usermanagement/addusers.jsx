@@ -47,9 +47,27 @@ const AddUsers = ({ onCreated }) => {
   function handleChange(event) {
     const { name, value } = event.target;
 
+    let nextValue = value;
+
+    if (name === "phoneNumber") {
+      // allow digits only
+      const digitsOnly = value.replace(/\D/g, "");
+
+      // ensure leading zero and limit to 10 digits
+      let normalized = digitsOnly;
+      if (normalized.length > 0) {
+        normalized =
+          normalized[0] === "0"
+            ? normalized
+            : `0${normalized.slice(0, 9)}`;
+      }
+
+      nextValue = normalized.slice(0, 10);
+    }
+
     setFormData((previousData) => ({
       ...previousData,
-      [name]: value,
+      [name]: nextValue,
     }));
 
     setErrors((previousErrors) => ({
@@ -78,45 +96,48 @@ const AddUsers = ({ onCreated }) => {
 
     if (!formData.username.trim()) {
       validationErrors.username =
-        "User name is required.";
+        "Tên người dùng là bắt buộc.";
     }
 
     if (!formData.email.trim()) {
       validationErrors.email =
-        "Email is required.";
+        "Email là bắt buộc.";
     } else if (
       !/\S+@\S+\.\S+/.test(
         formData.email
       )
     ) {
       validationErrors.email =
-        "Email address is invalid.";
+        "Địa chỉ email không hợp lệ.";
     }
 
     if (!formData.phoneNumber.trim()) {
       validationErrors.phoneNumber =
-        "Phone number is required.";
+        "Số điện thoại là bắt buộc.";
+    } else if (!/^0\d{9}$/.test(formData.phoneNumber.trim())) {
+      validationErrors.phoneNumber =
+        "Số điện thoại phải có 10 chữ số và bắt đầu bằng 0.";
     }
 
     if (!formData.password) {
       validationErrors.password =
-        "Password is required.";
+        "Mật khẩu là bắt buộc.";
     } else if (
       formData.password.length < 8
     ) {
       validationErrors.password =
-        "Password must be at least 8 characters.";
+        "Mật khẩu phải có ít nhất 8 ký tự.";
     }
 
     if (!formData.confirmPassword) {
       validationErrors.confirmPassword =
-        "Confirm password is required.";
+        "Xác nhận mật khẩu là bắt buộc.";
     } else if (
       formData.password !==
       formData.confirmPassword
     ) {
       validationErrors.confirmPassword =
-        "Passwords do not match.";
+        "Mật khẩu không khớp.";
     }
 
     return validationErrors;
@@ -143,7 +164,7 @@ const AddUsers = ({ onCreated }) => {
     if (!token) {
       setErrors({
         general:
-          "Access token not found. Please sign in again.",
+          "Không tìm thấy token truy cập. Vui lòng đăng nhập lại.",
       });
 
       return;
@@ -182,8 +203,8 @@ const AddUsers = ({ onCreated }) => {
 
       await Swal.fire({
         icon: "success",
-        title: "Created",
-        text: "User created successfully.",
+        title: "Đã tạo",
+        text: "Tạo người dùng thành công.",
         customClass: {
           confirmButton:
             "btn btn-submit",
@@ -265,11 +286,10 @@ const AddUsers = ({ onCreated }) => {
             <div className="content">
               <div className="modal-header border-0 custom-modal-header">
                 <div className="page-title">
-                  <h4>Add New User</h4>
+                  <h4>Thêm người dùng mới</h4>
 
                   <p className="mb-0 text-muted">
-                    Create a new user
-                    account from Admin
+                    Tạo tài khoản người dùng mới
                   </p>
                 </div>
 
@@ -298,7 +318,7 @@ const AddUsers = ({ onCreated }) => {
 
                   <div className="row">
                     <InputField
-                      label="User Name"
+                      label="Tên người dùng"
                       name="username"
                       value={
                         formData.username
@@ -309,7 +329,7 @@ const AddUsers = ({ onCreated }) => {
                       error={
                         errors.username
                       }
-                      placeholder="Enter user name"
+                      placeholder="Nhập tên người dùng"
                     />
 
                     <InputField
@@ -323,22 +343,22 @@ const AddUsers = ({ onCreated }) => {
                         handleChange
                       }
                       error={errors.email}
-                      placeholder="Enter email address"
+                      placeholder="Nhập địa chỉ email"
                     />
 
                     <InputField
-                      label="Phone Number"
+                      label="Số điện thoại"
                       name="phoneNumber"
                       value={
                         formData.phoneNumber
                       }
-                      onChange={
-                        handleChange
-                      }
+                      onChange={handleChange}
+                      inputMode="numeric"
+                      maxLength={10}
                       error={
                         errors.phoneNumber
                       }
-                      placeholder="Enter phone number"
+                      placeholder="Nhập số điện thoại"
                     />
 
                     <div className="col-lg-6">
@@ -378,7 +398,7 @@ const AddUsers = ({ onCreated }) => {
                     </div>
 
                     <InputField
-                      label="Password"
+                      label="Mật khẩu"
                       name="password"
                       type="password"
                       value={
@@ -390,11 +410,11 @@ const AddUsers = ({ onCreated }) => {
                       error={
                         errors.password
                       }
-                      placeholder="Enter password"
+                      placeholder="Nhập mật khẩu"
                     />
 
                     <InputField
-                      label="Confirm Password"
+                      label="Xác nhận mật khẩu"
                       name="confirmPassword"
                       type="password"
                       value={
@@ -406,7 +426,7 @@ const AddUsers = ({ onCreated }) => {
                       error={
                         errors.confirmPassword
                       }
-                      placeholder="Confirm password"
+                      placeholder="Xác nhận mật khẩu"
                     />
                   </div>
 
@@ -420,7 +440,7 @@ const AddUsers = ({ onCreated }) => {
                         handleClose
                       }
                     >
-                      Cancel
+                      Hủy
                     </button>
 
                     <button
@@ -429,8 +449,8 @@ const AddUsers = ({ onCreated }) => {
                       disabled={loading}
                     >
                       {loading
-                        ? "Creating..."
-                        : "Create User"}
+                        ? "Đang tạo..."
+                        : "Tạo người dùng"}
                     </button>
                   </div>
                 </form>
@@ -451,6 +471,8 @@ const InputField = ({
   error,
   placeholder,
   type = "text",
+  inputMode,
+  maxLength,
 }) => {
   return (
     <div className="col-lg-6">
@@ -468,6 +490,8 @@ const InputField = ({
           name={name}
           value={value}
           onChange={onChange}
+          inputMode={inputMode}
+          maxLength={maxLength}
           placeholder={placeholder}
         />
 

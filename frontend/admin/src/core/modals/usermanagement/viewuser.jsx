@@ -9,7 +9,7 @@ const ViewUser = ({
 
   function formatDateTime(value) {
     if (!value) {
-      return "Not provided";
+      return "Chưa có";
     }
 
     const normalizedValue = value.includes("T")
@@ -36,11 +36,10 @@ const ViewUser = ({
             <div className="content">
               <div className="modal-header border-0 custom-modal-header">
                 <div className="page-title">
-                  <h4>User Profile Details</h4>
+                  <h4>Chi tiết hồ sơ người dùng</h4>
 
                   <p className="mb-0 text-muted">
-                    View personal and account
-                    information
+                    Xem thông tin cá nhân và tài khoản
                   </p>
                 </div>
 
@@ -64,18 +63,17 @@ const ViewUser = ({
                       role="status"
                     >
                       <span className="visually-hidden">
-                        Loading...
+                        Đang tải...
                       </span>
                     </div>
 
                     <p className="mt-3 mb-0">
-                      Loading user details...
+                      Đang tải thông tin người dùng...
                     </p>
                   </div>
                 ) : !selectedUser ? (
                   <div className="alert alert-warning mb-0">
-                    User information is
-                    unavailable.
+                    Không có thông tin người dùng.
                   </div>
                 ) : (
                   <>
@@ -93,22 +91,22 @@ const ViewUser = ({
 
                       <h5 className="mb-1">
                         {user.fullName ||
-                          "Not provided"}
+                          "Chưa có"}
                       </h5>
 
                       <p className="text-muted mb-2">
                         @
                         {user.username ||
-                          "unknown"}
+                          "không xác định"}
                       </p>
 
                       {user.isActive ? (
                         <span className="badge badge-linesuccess">
-                          Active
+                          Hoạt động
                         </span>
                       ) : (
                         <span className="badge badge-linedanger">
-                          Inactive
+                          Không hoạt động
                         </span>
                       )}
                     </div>
@@ -117,33 +115,33 @@ const ViewUser = ({
                       <div className="card-body">
                         <div className="row">
                           <ProfileItem
-                            label="User ID"
+                            label="Mã người dùng"
                             value={user.id}
                           />
 
                           <ProfileItem
-                            label="User Name"
+                            label="Tên đăng nhập"
                             value={
                               user.username
                             }
                           />
 
                           <ProfileItem
-                            label="First Name"
+                            label="Tên"
                             value={
                               user.firstName
                             }
                           />
 
                           <ProfileItem
-                            label="Last Name"
+                            label="Họ"
                             value={
                               user.lastName
                             }
                           />
 
                           <ProfileItem
-                            label="Full Name"
+                            label="Họ và tên"
                             value={
                               user.fullName
                             }
@@ -155,57 +153,57 @@ const ViewUser = ({
                           />
 
                           <ProfileItem
-                            label="Phone Number"
+                            label="Số điện thoại"
                             value={user.phone}
                           />
 
                           <ProfileItem
-                            label="Role"
+                            label="Vai trò"
                             value={user.role}
                             capitalize
                           />
 
                           <ProfileItem
-                            label="Membership Tier"
+                            label="Hạng thành viên"
                             value={
                               user.membershipTier
                             }
                           />
 
                           <ProfileItem
-                            label="Points"
+                            label="Điểm"
                             value={
                               user.points ?? 0
                             }
                           />
 
                           <ProfileItem
-                            label="Verified"
+                            label="Đã xác minh"
                             value={
                               user.isVerified
-                                ? "Yes"
-                                : "No"
+                                ? "Có"
+                                : "Không"
                             }
                           />
 
                           <ProfileItem
-                            label="Staff Account"
+                            label="Tài khoản nhân viên"
                             value={
                               user.isStaff
-                                ? "Yes"
-                                : "No"
+                                ? "Có"
+                                : "Không"
                             }
                           />
 
                           <ProfileItem
-                            label="Created On"
+                            label="Ngày tạo"
                             value={formatDateTime(
                               user.createdon
                             )}
                           />
 
                           <ProfileItem
-                            label="Updated On"
+                            label="Cập nhật"
                             value={formatDateTime(
                               user.updatedAt
                             )}
@@ -214,12 +212,12 @@ const ViewUser = ({
                           <div className="col-lg-12">
                             <div className="mb-0">
                               <p className="text-muted mb-1">
-                                Default Address
+                                Địa chỉ mặc định
                               </p>
 
                               <h6 className="mb-0">
                                 {user.address ||
-                                  "Not provided"}
+                                  "Chưa có"}
                               </h6>
                             </div>
                           </div>
@@ -235,7 +233,7 @@ const ViewUser = ({
                     className="btn btn-cancel"
                     data-bs-dismiss="modal"
                   >
-                    Close
+                    Đóng
                   </button>
 
                   <button
@@ -249,7 +247,7 @@ const ViewUser = ({
                       !selectedUser
                     }
                   >
-                    Edit Profile
+                    Chỉnh sửa hồ sơ
                   </button>
                 </div>
               </div>
@@ -270,7 +268,7 @@ const ProfileItem = ({
     value === null ||
     value === undefined ||
     value === ""
-      ? "Not provided"
+      ? "Chưa có"
       : value;
 
   return (
