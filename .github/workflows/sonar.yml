@@ -25,6 +25,7 @@ jobs:
         run: |
           cd backend
           pip install -r requirements.txt
+          pip install coverage
           coverage run --source='apps' manage.py test
           coverage xml -o coverage.xml
           
