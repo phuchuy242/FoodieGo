@@ -10,7 +10,7 @@ Do Frontend được cấu hình gọi API thông qua một public URL, hệ th�
 
 ## ✨ Chức năng nổi bật
 - **Admin Dashboard:** Quản lý Người dùng, Đơn hàng, Thực đơn, Khuyến mãi (Vouchers), Kho (Inventory), và Báo cáo Doanh thu theo thời gian thực.
-- **Khách hàng E-Menu:** Xem thực đơn trực quan, đặt món tại bàn, theo dõi trạng thái đơn hàng và gọi nhân viên phục vụ.
+- **Khách hàng E-Menu:** Xem thực đơn trực quan, đặt hàng online, theo dõi trạng thái đơn hàng và thanh toán tiện lợi.
 - **Bảo mật & Hiệu suất:** Hệ thống phân quyền chặt chẽ (Role-Based Access Control) với JWT Token, hỗ trợ lọc và phân trang dữ liệu chuẩn RESTful.
 
 ---
@@ -89,6 +89,91 @@ npm install
 npm start 
 # hoặc: npm run dev
 ```
+
+---
+
+## 📈 Sơ đồ quy trình (Process Diagram)
+Dưới đây là sơ đồ luồng nghiệp vụ cơ bản của hệ thống FoodieGo:
+
+```mermaid
+flowchart TD
+    %% Định nghĩa Style màu sắc rực rỡ
+    classDef customer fill:#ff9a9e,stroke:#333,stroke-width:2px,color:#000,rx:10
+    classDef system fill:#a1c4fd,stroke:#333,stroke-width:2px,color:#000,rx:10
+    classDef staff fill:#fbc2eb,stroke:#333,stroke-width:2px,color:#000,rx:10
+    classDef kitchen fill:#84fab0,stroke:#333,stroke-width:2px,color:#000,rx:10
+    classDef database fill:#e0c3fc,stroke:#333,stroke-width:2px,color:#000
+
+    %% Phân luồng các tác nhân
+    subgraph Khách Hàng
+        K1(Truy cập Website & Xem E-Menu):::customer
+        K2(Chọn món & Đặt hàng Online):::customer
+        K3(Quét mã QR Thanh toán Auto-Confirm):::customer
+        K4(Nhận hàng):::customer
+    end
+
+    subgraph Hệ thống FoodieGo
+        S1{Hệ thống Xử lý Đơn}:::system
+        S2[(Cơ sở dữ liệu MySQL)]:::database
+        S3{Máy chủ Điều phối}:::system
+        S4{Webhook: Tự động xác nhận Thanh toán}:::system
+    end
+
+    subgraph Nhân Viên Phục Vụ
+        N1(Nhận thông báo & Duyệt Đơn):::staff
+        N2(Chuẩn bị & Giao hàng):::staff
+    end
+
+    subgraph Bộ Phận Bếp
+        B1(Nhận danh sách món cần làm):::kitchen
+        B2(Chế biến & Cập nhật Nấu xong):::kitchen
+    end
+
+    %% Mũi tên luồng quy trình
+    K1 --> K2
+    K2 -->|Gửi Data| S1
+    S1 <-->|Lưu & Đọc| S2
+    S1 -->|Push Notification| N1
+    N1 -->|Cập nhật trạng thái| S3
+    
+    S3 -->|Đồng bộ Dữ liệu| B1
+    B1 --> B2
+    B2 -->|Đổi trạng thái| S3
+    
+    S3 -->|Ping Notification| N2
+    
+    K2 -. Chuyển hướng .-> K3
+    K3 -->|Giao dịch thành công| S4
+    S4 -->|Cập nhật Đã thanh toán| S2
+    
+    S4 -->|Báo In Bill| N2
+    N2 -. Giao hàng .-> K4
+```
+
+---
+
+## 📖 Tài liệu API (API Documentation)
+Toàn bộ API được thiết kế theo chuẩn RESTful, trả về dữ liệu dạng JSON và sử dụng JWT (JSON Web Token) để xác thực.
+
+Hệ thống FoodieGo cung cấp hơn 30+ endpoints hỗ trợ đầy đủ các tính năng cho Khách hàng, Nhân viên và Quản lý.
+
+👉 **[Xem chi tiết toàn bộ Tài liệu API tại đây (API_DOCS.md)](API_DOCS.md)**
+
+Trong tài liệu trên, bạn sẽ tìm thấy cấu trúc JSON (Body/Params), Phương thức (GET/POST/PUT/PATCH), Endpoint và Phân quyền (Role) chi tiết của:
+- Auth & Users (Đăng nhập, đăng ký, JWT)
+- Foods & Categories (Quản lý món ăn)
+- Orders (Tạo đơn, duyệt đơn)
+- Tables (Quản lý và lấy QR Bàn)
+- Payments & Webhook (Thanh toán tự động)
+- Staff Calls (Gọi nhân viên)
+- Reports (Báo cáo doanh thu)
+
+---
+
+## 🛡 Quản lý Chất lượng Mã nguồn (SonarQube)
+Dự án được quét phân tích tĩnh (Static Analysis) bằng SonarCloud/SonarQube thông qua CI/CD GitHub Actions nhằm đảm bảo không có lỗ hổng bảo mật và tuân thủ các chuẩn mực Clean Code.
+
+![alt text](image.png)
 
 ---
 
