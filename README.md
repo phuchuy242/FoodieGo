@@ -201,4 +201,4 @@ coverage html
 ```
 
 ---
-*Cảm ơn Thầy/Cô đã dành thời gian kiểm tra đồ án!*
+*Cảm ơn Thầy/Cô đã dành thời gian kiểm tra đồ án! <!-- Trigger pipeline -->*
