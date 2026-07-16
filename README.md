@@ -55,7 +55,6 @@ ngrok http 8000
 > 2. **Dự án Admin:**
 >    - Mở file: `frontend/admin/src/environment.jsx`
 >    - Sửa biến: `export const API_BASE = "URL_NGROK_CỦA_BẠN";`
->    - *Chú ý:* Do một số API chưa được đưa vào biến môi trường, có thể bạn sẽ cần tìm kiếm (Ctrl+Shift+F) chuỗi `https://untaut-wickedly-amina.ngrok-free.dev` trong thư mục `frontend/admin/src` và thay thế toàn bộ (Replace All) bằng URL ngrok mới của bạn.
 
 ### Bước 3: Khởi chạy Frontend (Terminal 3)
 Hệ thống Frontend chia làm 2 phân hệ. Bạn có thể chọn chạy 1 trong 2 hoặc chạy cả 2 (cần mở thêm Terminal).

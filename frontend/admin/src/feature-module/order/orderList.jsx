@@ -4,8 +4,9 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { Pagination } from "antd";
 import { itemRender } from "../../core/pagination/pagination";
+import { API_BASE } from '../../environment';
 
-const BASE_URL = "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/";
+const BASE_URL = `${API_BASE}/api/v1/`;
 const ADMIN_ORDERS_API = `${BASE_URL}admin/orders/`;
 const ORDER_DETAIL_API = (id) => `${BASE_URL}orders/${id}/`;
 

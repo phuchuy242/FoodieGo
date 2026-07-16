@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import ImageWithBasePath from "../../../core/img/imagewithbasebath";
 import { all_routes } from "../../../Router/all_routes";
 import axios from "axios";
+import { API_BASE } from '../../../environment';
 
 const Signin = () => {
   const route = all_routes;
@@ -53,15 +54,25 @@ const Signin = () => {
 
   try {
     const res = await axios.post(
-      "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/users/login/",
+      `${API_BASE}/api/v1/users/login/`,
       {
         email,
         password,
       }
     );
 
-    const { access_token, refresh_token } = res.data.data;
+    const { access_token, refresh_token, user } = res.data.data;
 
+    // Chặn tài khoản khách hàng (customer) đăng nhập vào trang quản trị
+    if (!user || user.role === 'customer') {
+      throw {
+        response: {
+          data: {
+            message: "Tài khoản khách hàng không có quyền truy cập vào hệ thống quản trị."
+          }
+        }
+      };
+    }
     localStorage.setItem("token", access_token);
     localStorage.setItem("refresh_token", refresh_token);
 

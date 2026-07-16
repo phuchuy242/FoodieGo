@@ -3,6 +3,7 @@ import ImageWithBasePath from "../../../core/img/imagewithbasebath";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { all_routes } from "../../../Router/all_routes";
+import { API_BASE } from '../../../environment';
 
 const Register = () => {
   const route = all_routes;
@@ -73,7 +74,7 @@ const Register = () => {
 
     try {
       const res = await axios.post(
-        "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/users/register/",
+        `${API_BASE}/api/v1/users/register/`,
         {
           username,
           email,

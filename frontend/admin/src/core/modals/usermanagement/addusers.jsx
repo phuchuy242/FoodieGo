@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Swal from "sweetalert2";
+import { API_BASE } from '../../../environment';
 
-const API_URL = "https://untaut-wickedly-amina.ngrok-free.dev/api/v1/users/";
+const API_URL = `${API_BASE}/api/v1/users/`;
 
 const initialFormData = {
   username: "",
