@@ -50,11 +50,6 @@ export default function Payment({
                 if (status === 'completed' || status === 'paid') {
                     clearInterval(pollRef.current);
                     setPaidSuccess(true);
-                    setTimeout(() => {
-                        setPaidSuccess(false);
-                        setQrData(null);
-                        onSubmit('transfer');
-                    }, 2500);
                 }
             } catch { /* ignore */ }
         }, 10000);
@@ -74,10 +69,31 @@ export default function Payment({
             setSubmitting(true);
             setQrError('');
             try {
+                let shipping_fee = 0;
+                let discount_amount = 0;
+                let voucher_code = '';
+                try {
+                    const lastOrderStr = localStorage.getItem('lastOrder');
+                    if (lastOrderStr) {
+                        const lastOrder = JSON.parse(lastOrderStr);
+                        if (lastOrder && (String(lastOrder.paycode) === String(pay_code) || String(lastOrder.id) === String(pay_code) || !lastOrder.paycode)) {
+                            shipping_fee = Number(lastOrder.shippingFee || lastOrder.shipping_fee || 0);
+                            discount_amount = Number(lastOrder.voucherDiscount || lastOrder.discount_amount || 0);
+                            voucher_code = lastOrder.selectedVoucher?.code || lastOrder.voucher_code || '';
+                        }
+                    }
+                } catch (e) { /* ignore */ }
+
                 const res = await apiFetch(`${API_BASE}/api/v1/payments/create_with_qr/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ pay_code, payment_method: 'bank_transfer' }),
+                    body: JSON.stringify({
+                        pay_code,
+                        payment_method: 'bank_transfer',
+                        shipping_fee,
+                        discount_amount,
+                        voucher_code
+                    }),
                 });
                 const json = await res.json();
 
@@ -88,7 +104,7 @@ export default function Payment({
                     ) || json?.errors?.pay_code?.some?.((m) =>
                         String(m).toLowerCase().includes('already exists')
                     ) || (json.msg && json.msg.toLowerCase().includes('already exists'));
-                    
+
                     if (alreadyExists) {
                         const getRes = await apiFetch(`${API_BASE}/api/v1/payments/by_pay_code/?pay_code=${encodeURIComponent(pay_code)}`);
                         const getData = await getRes.json();
@@ -114,7 +130,7 @@ export default function Payment({
 
     const handleCancelQr = async () => {
         const pay_code = localStorage.getItem('paycode') || '';
-        if (!pay_code) { setQrData(null); return; }
+        if (!pay_code) { setQrData(null); onClose(); return; }
         setCancelling(true);
         try {
             await apiFetch(`${API_BASE}/api/v1/payments/cancel-by-paycode/`, {
@@ -126,11 +142,12 @@ export default function Payment({
             setCancelling(false);
             setQrData(null);
             setQrError('');
+            onClose();
         }
     };
 
     return (
-        <div className="rm-payment-overlay" role="dialog" aria-modal="true" onClick={(e) => { if (e.target === e.currentTarget) { onClose(); setQrData(null); setQrError(''); } }}>
+        <div className="rm-payment-overlay" role="dialog" aria-modal="true" onClick={(e) => { if (e.target === e.currentTarget) { if (paidSuccess) { setPaidSuccess(false); setQrData(null); onSubmit('transfer'); } else { onClose(); setQrData(null); setQrError(''); } } }}>
             <div className="rm-payment-card">
                 <div className="rm-payment-grip" aria-hidden />
                 <div className="rm-payment-header">
@@ -140,10 +157,21 @@ export default function Payment({
 
                 {/* Paid success screen */}
                 {paidSuccess ? (
-                    <div className="rm-payment-qr">
-                        <div className="rm-qr-success-icon">✓</div>
-                        <p className="rm-qr-amount"><strong>Thanh toán thành công!</strong></p>
-                        <p className="rm-qr-bank">Đơn hàng của bạn đã được xác nhận.</p>
+                    <div className="rm-payment-qr" style={{ padding: '24px 16px', textAlign: 'center' }}>
+                        <div className="rm-qr-success-icon" style={{ fontSize: '48px', color: '#10b981', margin: '0 auto 12px' }}>✓</div>
+                        <p className="rm-qr-amount" style={{ fontSize: '20px', color: '#111827', marginBottom: '8px' }}><strong>Thanh toán thành công! 🎉</strong></p>
+                        <p className="rm-qr-bank" style={{ color: '#4b5563', marginBottom: '24px' }}>Hệ thống đã nhận được tiền chuyển khoản.<br />Đơn hàng của bạn đã được xác nhận và chuyển vào bếp!</p>
+                        <button
+                            className="rm-payment-submit"
+                            style={{ width: '100%', padding: '14px', borderRadius: '12px', background: '#10b981', color: '#fff', fontSize: '16px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
+                            onClick={() => {
+                                setPaidSuccess(false);
+                                setQrData(null);
+                                onSubmit('transfer');
+                            }}
+                        >
+                            Đồng ý / Hoàn tất
+                        </button>
                     </div>
                 ) : qrData ? (
                     <div className="rm-payment-qr">
@@ -151,7 +179,37 @@ export default function Payment({
                             <img src={qrData.qr_code_url || qrData.qr_data} alt="QR chuyển khoản" className="rm-qr-img" />
                         )}
                         {qrData.amount && (
-                            <p className="rm-qr-amount">Số tiền: <strong>{Number(qrData.amount).toLocaleString('vi-VN')}đ</strong></p>
+                            <div className="rm-qr-amount-box" style={{ margin: '12px 0', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', width: '100%' }}>
+                                {(() => {
+                                    let sub = 0;
+                                    let ship = 0;
+                                    let disc = 0;
+                                    try {
+                                        const lastOrderStr = localStorage.getItem('lastOrder');
+                                        if (lastOrderStr) {
+                                            const lastOrder = JSON.parse(lastOrderStr);
+                                            sub = Number(lastOrder.subtotal || 0);
+                                            ship = Number(lastOrder.shippingFee || lastOrder.shipping_fee || 0);
+                                            disc = Number(lastOrder.voucherDiscount || lastOrder.discount_amount || 0);
+                                        }
+                                    } catch (e) { }
+                                    return (
+                                        <>
+                                            {(ship > 0 || disc > 0) && (
+                                                <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                                    {sub > 0 && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Tạm tính món:</span><span>{Number(sub).toLocaleString('vi-VN')}đ</span></div>}
+                                                    {ship > 0 && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Phí giao hàng:</span><span>+{Number(ship).toLocaleString('vi-VN')}đ</span></div>}
+                                                    {disc > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', color: '#10b981', fontWeight: 600 }}><span>Voucher giảm giá:</span><span>-{Number(disc).toLocaleString('vi-VN')}đ</span></div>}
+                                                </div>
+                                            )}
+                                            <div style={{ fontSize: '18px', color: '#ff5200', borderTop: (ship > 0 || disc > 0) ? '1px dashed #cbd5e1' : 'none', paddingTop: (ship > 0 || disc > 0) ? '8px' : '0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span>Số tiền thanh toán:</span>
+                                                <strong>{Number(qrData.amount).toLocaleString('vi-VN')}đ</strong>
+                                            </div>
+                                        </>
+                                    );
+                                })()}
+                            </div>
                         )}
                         {qrData.bank_name && (
                             <p className="rm-qr-bank"><strong>{qrData.bank_name}</strong> — {qrData.bank_account_number}</p>

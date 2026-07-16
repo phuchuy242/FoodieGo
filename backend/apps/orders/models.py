@@ -28,12 +28,18 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     pay_code = models.CharField(max_length=50, unique=True, null=True, blank=True)
     notes = models.TextField(blank=True, null=True)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    shipping_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    voucher_code = models.CharField(max_length=50, blank=True, null=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     confirmed_at = models.DateTimeField(null=True, blank=True)
     served_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "orders"
@@ -58,11 +64,34 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
     def calculate_total(self):
-        """Calculate total amount from order items"""
-        total = sum(item.get_total_price() for item in self.items.all())
-        self.total_amount = total
-        self.save(update_fields=['total_amount'])
-        return total
+        """Calculate subtotal, apply shipping fee and discount, then save total amount"""
+        item_sum = sum(item.get_total_price() for item in self.items.all())
+        self.subtotal = item_sum
+
+        ship = self.shipping_fee or 0
+        discount = self.discount_amount or 0
+
+        if self.voucher_code and not discount:
+            try:
+                from apps.vouchers.models import Voucher
+                voucher = Voucher.objects.filter(code=self.voucher_code, is_active=True).first()
+                if voucher and voucher.is_valid() and item_sum >= voucher.min_order_amount:
+                    if voucher.discount_type == 'percentage':
+                        discount = (item_sum * voucher.discount_value) / 100
+                    else:
+                        discount = voucher.discount_value
+                    self.discount_amount = discount
+            except Exception:
+                pass
+
+        final_total = item_sum + ship - discount
+        if final_total < 0:
+            final_total = 0
+
+        self.total_amount = final_total
+        if self.pk:
+            self.save(update_fields=['subtotal', 'shipping_fee', 'discount_amount', 'voucher_code', 'total_amount'])
+        return final_total
 
 
 class OrderItem(models.Model):

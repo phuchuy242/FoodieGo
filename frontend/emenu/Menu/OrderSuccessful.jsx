@@ -73,7 +73,7 @@ export default function OrderSuccessful() {
                 {/* Khối Thông Tin Giao Hàng */}
                 <div className="rm-summary-card" style={{ marginBottom: '16px', background: '#f9fafb', border: '1px solid #e5e7eb' }}>
                     <div className="rm-summary-head" style={{ borderBottom: '1px solid #e5e7eb', paddingBottom: '10px' }}>
-                        <h2 style={{ fontSize: '16px', color: '#111827' }}>📍 Thông tin nhận hàng</h2>
+                        <h2 style={{ fontSize: '16px', color: '#111827' }}> Thông tin nhận hàng</h2>
                     </div>
                     <div style={{ padding: '14px 16px', fontSize: '14px', lineHeight: '1.7', color: '#374151' }}>
                         <div>👤 <strong>Người nhận:</strong> {order?.deliveryInfo?.name || localStorage.getItem('customerName')} • <strong>SĐT:</strong> {order?.deliveryInfo?.phone || localStorage.getItem('customerPhone') || 'Chưa có SĐT'}</div>
@@ -122,7 +122,7 @@ export default function OrderSuccessful() {
 
                 <div className="rm-order-actions">
                     <button className="rm-btn-primary" onClick={() => navigate('/history')}>
-                        Theo dõi trạng thái đơn hàng 🚀
+                        Theo dõi trạng thái đơn hàng
                     </button>
                     <button className="rm-btn-ghost" onClick={() => { localStorage.removeItem('cart'); navigate('/'); }}>
                         Quay về Trang Chủ

@@ -1,35 +1,49 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from django.utils import timezone
+from django.db.models import Q
 from rest_framework_simplejwt.tokens import RefreshToken as SimpleJWTRefreshToken
-from core.responses import success_response, error_response
+from core.responses import (
+    success_response,
+    error_response,
+    created_response,
+    deleted_response,
+    StandardResultsSetPagination,
+)
+from core.mixins import FilterSortMixin, StandardResponseMixin
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
     UserSerializer,
     PasswordChangeSerializer,
     RefreshTokenSerializer,
+    UserCreateSerializer,
+    UserUpdateSerializer,
 )
 from .models import User, RefreshToken
 import jwt
 import hashlib
 
 
-class UserViewSet(viewsets.GenericViewSet):
+class UserViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet):
     """
-    ViewSet for User Authentication and Profile Management.
-    Combines Auth and User Profile features into one consistent ViewSet.
+    ViewSet for User Authentication, Profile Management, and Admin CRUD operations.
+    Combines Auth, Self-service Profile, and Admin User management into one consistent ViewSet.
     """
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('-created_at')
     serializer_class = UserSerializer
+    pagination_class = StandardResultsSetPagination
+    search_fields = ['email', 'phone_number', 'user_name', 'first_name', 'last_name']
 
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
         """
-        if self.action in ['register', 'login', 'refresh_token', 'forgot_password', 'verify_otp']:
+        if self.action in ['register', 'login', 'refresh_token', 'forgot_password', 'verify_otp', 'reset_password']:
             permission_classes = [AllowAny]
+        elif self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
+            permission_classes = [IsAuthenticated, IsAdminUser]
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
@@ -43,7 +57,55 @@ class UserViewSet(viewsets.GenericViewSet):
             return RefreshTokenSerializer
         elif self.action == 'change_password':
             return PasswordChangeSerializer
+        elif self.action == 'create':
+            return UserCreateSerializer
+        elif self.action in ['update', 'partial_update']:
+            return UserUpdateSerializer
         return UserSerializer
+
+    def get_queryset(self):
+        # Base filter: Only get active/non-deleted users (unless requested differently)
+        queryset = User.objects.filter(is_deleted=False)
+        
+        # Filter by role
+        role = self.request.query_params.get('role')
+        if role:
+            if role in ['admin', 'staff']:
+                queryset = queryset.filter(is_staff=True)
+            elif role == 'customer':
+                queryset = queryset.filter(is_staff=False)
+                
+        # Filter by active status
+        is_active = self.request.query_params.get('is_active')
+        if is_active is not None:
+            if is_active.lower() in ['true', '1']:
+                queryset = queryset.filter(is_active=True)
+            elif is_active.lower() in ['false', '0']:
+                queryset = queryset.filter(is_active=False)
+
+        # Keyword / search filter support
+        search = self.request.query_params.get('search')
+        if search and not self.request.query_params.get('keyword'):
+            q_objects = Q()
+            for field in self.search_fields:
+                q_objects |= Q(**{f'{field}__icontains': search})
+            queryset = queryset.filter(q_objects)
+            
+        return queryset
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.id == request.user.id:
+            return error_response(
+                msg="Bạn không thể tự xóa hoặc vô hiệu hóa tài khoản của chính mình",
+                code=status.HTTP_400_BAD_REQUEST
+            )
+        from django.utils import timezone
+        instance.is_active = False
+        instance.is_deleted = True
+        instance.deleted_at = timezone.now()
+        instance.save(update_fields=['is_active', 'is_deleted', 'deleted_at'])
+        return success_response(msg="Đã xóa (vô hiệu hóa) tài khoản thành công")
 
     @action(detail=False, methods=['post'])
     def register(self, request):
@@ -304,19 +366,68 @@ class UserViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['post'], url_path='forgot-password', permission_classes=[AllowAny])
     def forgot_password(self, request):
-        phone_number = request.data.get('phone_number', '')
+        identifier = request.data.get('phone_number') or request.data.get('email') or request.data.get('identifier') or ''
+        if not identifier:
+            return error_response(
+                msg="Vui lòng nhập số điện thoại hoặc email",
+                code=status.HTTP_400_BAD_REQUEST
+            )
+        user = User.objects.filter(
+            Q(phone_number=identifier) | Q(email=identifier) | Q(user_name=identifier)
+        ).first()
+        if not user:
+            return error_response(
+                msg="Không tìm thấy tài khoản trong hệ thống",
+                code=status.HTTP_404_NOT_FOUND
+            )
         return success_response(
-            msg=f'Mã OTP đã được gửi đến số điện thoại {phone_number}',
+            msg=f'Mã OTP đã được gửi đến {identifier}',
             code=status.HTTP_200_OK,
             otp_id='OTP8899'
         )
 
     @action(detail=False, methods=['post'], url_path='verify-otp', permission_classes=[AllowAny])
     def verify_otp(self, request):
+        otp = request.data.get('otp', '')
+        if not otp:
+            return error_response(
+                msg="Vui lòng nhập mã OTP",
+                code=status.HTTP_400_BAD_REQUEST
+            )
         return success_response(
             msg='Xác thực OTP thành công',
             code=status.HTTP_200_OK,
             reset_token='TKN_RESET_99'
+        )
+
+    @action(detail=False, methods=['post'], url_path='reset-password', permission_classes=[AllowAny])
+    def reset_password(self, request):
+        identifier = request.data.get('phone_number') or request.data.get('email') or request.data.get('identifier')
+        new_password = request.data.get('new_password') or request.data.get('password')
+
+        if not identifier or not new_password:
+            return error_response(
+                msg="Vui lòng cung cấp số điện thoại/email và mật khẩu mới",
+                code=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = User.objects.filter(
+            Q(phone_number=identifier) | Q(email=identifier) | Q(user_name=identifier)
+        ).first()
+        if not user:
+            return error_response(
+                msg="Không tìm thấy tài khoản với thông tin đã nhập",
+                code=status.HTTP_404_NOT_FOUND
+            )
+
+        user.set_password(new_password)
+        user.save(update_fields=['password'])
+
+        RefreshToken.objects.filter(user=user, revoked=False).update(revoked=True)
+
+        return success_response(
+            msg="Đặt lại mật khẩu mới thành công. Vui lòng đăng nhập lại.",
+            code=status.HTTP_200_OK
         )
 
     @action(detail=False, methods=['get'], url_path='loyalty-history')

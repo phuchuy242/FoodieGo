@@ -10,7 +10,6 @@ from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user_name', read_only=True)
-    role = serializers.SerializerMethodField()
     points = serializers.SerializerMethodField()
     membership_tier = serializers.SerializerMethodField()
     avatar = serializers.CharField(source='avatar_url', read_only=True)
@@ -42,8 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
-    def get_role(self, obj):
-        return 'admin' if obj.is_staff else 'customer'
+
 
     def get_points(self, obj):
         return getattr(obj, 'points', 0)
@@ -248,7 +246,6 @@ class PasswordChangeSerializer(serializers.Serializer):
     """Serializer for changing password."""
     old_password = serializers.CharField(required=True, write_only=True)
     new_password = serializers.CharField(required=True, write_only=True, min_length=8)
-    new_password_confirm = serializers.CharField(required=True, write_only=True)
 
     def validate_old_password(self, value):
         """Validate old password is correct."""
@@ -258,11 +255,6 @@ class PasswordChangeSerializer(serializers.Serializer):
         return value
 
     def validate(self, attrs):
-        """Validate new password confirmation."""
-        if attrs['new_password'] != attrs['new_password_confirm']:
-            raise serializers.ValidationError({
-                "new_password_confirm": "Password confirmation does not match."
-            })
         return attrs
 
     def save(self):
@@ -271,3 +263,103 @@ class PasswordChangeSerializer(serializers.Serializer):
         user.set_password(self.validated_data['new_password'])
         user.save(update_fields=['password'])
         return user
+
+
+# USER CRUD SERIALIZERS (Admin / Staff management)
+class UserCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating a new user via Admin CRUD."""
+    password = serializers.CharField(write_only=True, min_length=8, required=False, allow_blank=True)
+
+    username = serializers.CharField(source='user_name', required=False, allow_blank=True, allow_null=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'id', 'uuid', 'username', 'user_name', 'email', 'phone_number',
+            'first_name', 'last_name', 'password', 'role', 'avatar_url',
+            'is_active', 'is_verified', 'is_staff'
+        )
+
+    def validate_email(self, value):
+        if value and User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email này đã được sử dụng.")
+        return value or None
+
+    def validate_phone_number(self, value):
+        if value and User.objects.filter(phone_number=value).exists():
+            raise serializers.ValidationError("Số điện thoại này đã được sử dụng.")
+        return value or None
+
+    def validate_user_name(self, value):
+        if value and User.objects.filter(user_name=value).exists():
+            raise serializers.ValidationError("Tên đăng nhập (username) này đã được sử dụng.")
+        return value or None
+
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        role = validated_data.get('role', 'customer')
+        
+        # Set is_staff based on role if is_staff is not explicitly provided in validated_data
+        if 'is_staff' not in validated_data:
+            validated_data['is_staff'] = (role in ['admin', 'staff'])
+            
+        user = User(**validated_data)
+        if password:
+            user.set_password(password)
+        else:
+            user.set_unusable_password()
+        user.save()
+        return user
+
+    def to_representation(self, instance):
+        return UserSerializer(instance, context=self.context).data
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for updating an existing user via Admin CRUD."""
+    password = serializers.CharField(write_only=True, min_length=8, required=False, allow_blank=True)
+
+    username = serializers.CharField(source='user_name', required=False, allow_blank=True, allow_null=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'id', 'uuid', 'username', 'user_name', 'email', 'phone_number',
+            'first_name', 'last_name', 'password', 'role', 'avatar_url',
+            'is_active', 'is_verified', 'is_staff'
+        )
+
+    def validate_email(self, value):
+        if value and User.objects.filter(email=value).exclude(pk=self.instance.pk).exists():
+            raise serializers.ValidationError("Email này đã được sử dụng bởi người dùng khác.")
+        return value or None
+
+    def validate_phone_number(self, value):
+        if value and User.objects.filter(phone_number=value).exclude(pk=self.instance.pk).exists():
+            raise serializers.ValidationError("Số điện thoại này đã được sử dụng bởi người dùng khác.")
+        return value or None
+
+    def validate_user_name(self, value):
+        if value and User.objects.filter(user_name=value).exclude(pk=self.instance.pk).exists():
+            raise serializers.ValidationError("Tên đăng nhập này đã được sử dụng bởi người dùng khác.")
+        return value or None
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        role = validated_data.get('role', instance.role)
+        
+        if 'role' in validated_data and 'is_staff' not in validated_data:
+            validated_data['is_staff'] = (role in ['admin', 'staff'])
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if password:
+            instance.set_password(password)
+
+        instance.save()
+        return instance
+
+    def to_representation(self, instance):
+        return UserSerializer(instance, context=self.context).data
+

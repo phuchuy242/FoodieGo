@@ -23,20 +23,20 @@ const Permissions = () => {
     };
 
     const role = [
-        { value: 'Choose Role', label: 'Choose Role' },
-        { value: 'Admin', label: 'Admin' },
-        { value: 'Shop Owner', label: 'Shop Owner' },
+        { value: 'all', label: 'Tất cả vai trò' },
+        { value: 'admin', label: 'Quản trị viên' },
+        { value: 'shop-owner', label: 'Chủ cửa hàng' },
     ];
    
 
     const oldandlatestvalue = [
-        { value: 'date', label: 'Sort by Date' },
-        { value: 'newest', label: 'Newest' },
-        { value: 'oldest', label: 'Oldest' },
+        { value: 'date', label: 'Sắp xếp theo ngày' },
+        { value: 'newest', label: 'Mới nhất' },
+        { value: 'oldest', label: 'Cũ nhất' },
     ];
     const renderTooltip = (props) => (
         <Tooltip id="pdf-tooltip" {...props}>
-            Pdf
+            PDF
         </Tooltip>
     );
     const renderExcelTooltip = (props) => (
@@ -46,17 +46,17 @@ const Permissions = () => {
     );
     const renderPrinterTooltip = (props) => (
         <Tooltip id="printer-tooltip" {...props}>
-            Printer
+            In
         </Tooltip>
     );
     const renderRefreshTooltip = (props) => (
         <Tooltip id="refresh-tooltip" {...props}>
-            Refresh
+            Làm mới
         </Tooltip>
     );
     const renderCollapseTooltip = (props) => (
         <Tooltip id="refresh-tooltip" {...props}>
-            Collapse
+            Thu gọn
         </Tooltip>
     )
     return (
@@ -66,8 +66,8 @@ const Permissions = () => {
                     <div className="page-header">
                         <div className="add-item d-flex">
                             <div className="page-title">
-                                <h4>Permission</h4>
-                                <h6>Manage your permissions</h6>
+                                <h4>Phân quyền</h4>
+                                <h6>Quản lý quyền truy cập</h6>
                             </div>
                         </div>
                         <ul className="table-top-head">
@@ -124,7 +124,7 @@ const Permissions = () => {
                                     <div className="search-input">
                                         <input
                                             type="text"
-                                            placeholder="Search"
+                                            placeholder="Tìm kiếm"
                                             className="form-control form-control-sm formsearch"
                                         />
                                         <Link to className="btn btn-searchset">
@@ -180,7 +180,7 @@ const Permissions = () => {
                                                         type="date"
                                                         className="filterdatepicker"
                                                         dateFormat="dd-MM-yyyy"
-                                                        placeholder='Choose Date'
+                                                        placeholder='Chọn ngày'
                                                     />
                                                 </div>
                                             </div>
@@ -190,7 +190,7 @@ const Permissions = () => {
                                                 <a className="btn btn-filters ms-auto">
                                                     {" "}
                                                     <i data-feather="search" className="feather-search" />{" "}
-                                                    Search{" "}
+                                                    Tìm kiếm{" "}
                                                 </a>
                                             </div>
                                         </div>
@@ -208,12 +208,12 @@ const Permissions = () => {
                                                     <span className="checkmarks" />
                                                 </label>
                                             </th>
-                                            <th>Modules</th>
-                                            <th>Create</th>
-                                            <th>Edit</th>
-                                            <th>Delete</th>
-                                            <th>View</th>
-                                            <th className="no-sort">Allow all</th>
+                                            <th>Module</th>
+                                            <th>Tạo</th>
+                                            <th>Chỉnh sửa</th>
+                                            <th>Xóa</th>
+                                            <th>Xem</th>
+                                            <th className="no-sort">Cho phép tất cả</th>
                                         </tr>
                                     </thead>
                                     <tbody>

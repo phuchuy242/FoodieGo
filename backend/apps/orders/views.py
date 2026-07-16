@@ -14,7 +14,7 @@ from core.mixins import FilterSortMixin, StandardResponseMixin
 
 class OrderViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet):
     """ViewSet for Order CRUD operations - PUBLIC (Customers scan QR at table)"""
-    queryset = Order.objects.all()
+    queryset = Order.objects.filter(is_deleted=False)
     pagination_class = StandardResultsSetPagination
     search_fields = ['table__table_number', 'notes']
 
@@ -34,7 +34,7 @@ class OrderViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet
         return OrderSerializer
 
     def get_queryset(self):
-        queryset = Order.objects.select_related('table', 'user').prefetch_related('items')
+        queryset = Order.objects.filter(is_deleted=False).select_related('table', 'user').prefetch_related('items')
 
         # Filter by status
         status = self.request.query_params.get('status')
@@ -65,8 +65,13 @@ class OrderViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet
 
     @action(detail=False, methods=['get'])
     def active(self, request):
-        """Get all active orders (not completed or cancelled)"""
+        """Get active orders"""
         orders = self.get_queryset().exclude(status__in=['completed', 'cancelled'])
+        if not (request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)):
+            if request.user.is_authenticated:
+                orders = orders.filter(user=request.user)
+            else:
+                orders = Order.objects.none()
         serializer = OrderListSerializer(orders, many=True)
         return success_response(data=serializer.data, msg='Active orders retrieved successfully')
 
@@ -85,8 +90,11 @@ class OrderViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet
     def history(self, request):
         """Get order history"""
         orders = self.get_queryset().filter(status__in=['completed', 'cancelled'])
-        if request.user.is_authenticated:
-            orders = orders.filter(user=request.user)
+        if not (request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)):
+            if request.user.is_authenticated:
+                orders = orders.filter(user=request.user)
+            else:
+                orders = Order.objects.none()
         serializer = OrderListSerializer(orders, many=True)
         return success_response(data=serializer.data)
 
@@ -98,7 +106,7 @@ class OrderViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet
             return error_response(msg="Đơn hàng không thể hủy ở trạng thái hiện tại", code=400)
         order.status = 'cancelled'
         order.save(update_fields=['status'])
-        return success_response(msg="Hủy đơn hàng thành công", data={"id": order.id, "status": "cancelled"})
+        return success_response(msg="Hủy đơn hàng thành công", data={"id": order.id, "pay_code": order.pay_code, "paycode": order.pay_code, "status": "cancelled", "status_display": order.get_status_display()})
 
     @action(detail=True, methods=['post'], url_path='rate', permission_classes=[AllowAny])
     def rate(self, request, pk=None):
@@ -152,7 +160,7 @@ class OrderViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet
         except Order.DoesNotExist:
             return error_response(msg='Order not found with this pay_code', code=404)
 
-    @action(detail=True, methods=['patch'], url_path='update-status')
+    @action(detail=True, methods=['patch', 'post', 'put'], url_path='update-status')
     def update_status(self, request, pk=None):
         """Update order status"""
         order = self.get_object()
@@ -174,30 +182,62 @@ class OrderViewSet(FilterSortMixin, StandardResponseMixin, viewsets.ModelViewSet
         response_serializer = OrderSerializer(order)
         return success_response(data=response_serializer.data, msg='Order status updated successfully')
 
-    def destroy(self, request, *args, **kwargs):
-        """Delete an order - only allowed for pending or cancelled orders"""
+    @action(detail=True, methods=['post', 'patch', 'put'], url_path='confirm')
+    def confirm(self, request, pk=None):
         order = self.get_object()
+        order.status = 'cooking'
+        if not order.confirmed_at:
+            order.confirmed_at = timezone.now()
+        order.save(update_fields=['status', 'confirmed_at'])
+        return success_response(
+            msg="Đã duyệt đơn! Chuyển sang bếp làm món.",
+            data={ "id": order.id, "status": "cooking" }
+        )
 
-        # Only allow deletion of pending or cancelled orders
-        if order.status not in ['pending', 'cancelled']:
-            return error_response(
-                msg=f'Cannot delete order with status "{order.get_status_display()}". Only pending or cancelled orders can be deleted.',
-                code=400
-            )
+    @action(detail=True, methods=['post', 'patch', 'put'], url_path='ready')
+    def ready(self, request, pk=None):
+        order = self.get_object()
+        order.status = 'ready'
+        order.save(update_fields=['status'])
+        return success_response(
+            msg="Món đã xong! Đang gọi Tài xế tới lấy.",
+            data={ "id": order.id, "status": "ready" }
+        )
+
+    @action(detail=True, methods=['post', 'patch', 'put'], url_path='assign-shipper')
+    def assign_shipper(self, request, pk=None):
+        order = self.get_object()
+        shipper_id = request.data.get('shipper_id')
+        order.status = 'delivering'
+        order.save(update_fields=['status'])
+        return success_response(
+            msg=f"Đã gán đơn cho tài xế",
+            data={ "order_id": order.id, "status": "delivering" }
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        """Soft delete an order by marking it as cancelled"""
+        order = self.get_object()
 
         # Check if order has associated payment
         if hasattr(order, 'payment') and order.payment.payment_status == 'paid':
             return error_response(
-                msg='Cannot delete order with completed payment',
+                msg='Cannot cancel order with completed payment',
                 code=400
             )
 
         order_id = order.id
         pay_code = order.pay_code
-        self.perform_destroy(order)
+        
+        # Soft delete logic
+        from django.utils import timezone
+        order.status = 'cancelled'
+        order.is_deleted = True
+        order.deleted_at = timezone.now()
+        order.save(update_fields=['status', 'is_deleted', 'deleted_at'])
 
         return success_response(
-            msg=f'Order #{order_id} (pay_code: {pay_code}) deleted successfully'
+            msg=f'Order #{order_id} (pay_code: {pay_code}) cancelled successfully'
         )
 
 
@@ -314,11 +354,28 @@ class OrderItemToppingViewSet(FilterSortMixin, StandardResponseMixin, viewsets.M
 
 class AdminOrderViewSet(viewsets.ModelViewSet):
     """Admin POS Order endpoints conforming to Section 11 of 55+ API Spec"""
-    queryset = Order.objects.all()
+    queryset = Order.objects.filter(is_deleted=False)
     serializer_class = OrderListSerializer
     permission_classes = [AllowAny]
 
-    @action(detail=True, methods=['patch'], url_path='confirm')
+    def destroy(self, request, *args, **kwargs):
+        """Soft delete an order by marking it as cancelled (Admin)"""
+        order = self.get_object()
+        order_id = order.id
+        pay_code = order.pay_code
+        
+        # Soft delete logic
+        from django.utils import timezone
+        order.status = 'cancelled'
+        order.is_deleted = True
+        order.deleted_at = timezone.now()
+        order.save(update_fields=['status', 'is_deleted', 'deleted_at'])
+
+        return success_response(
+            msg=f'Order #{order_id} (pay_code: {pay_code}) cancelled successfully'
+        )
+
+    @action(detail=True, methods=['post', 'patch', 'put'], url_path='confirm')
     def confirm(self, request, pk=None):
         order = self.get_object()
         order.status = 'cooking'
@@ -331,7 +388,7 @@ class AdminOrderViewSet(viewsets.ModelViewSet):
             data={ "id": order.id, "status": "cooking" }
         )
 
-    @action(detail=True, methods=['patch'], url_path='ready')
+    @action(detail=True, methods=['post', 'patch', 'put'], url_path='ready')
     def ready(self, request, pk=None):
         order = self.get_object()
         order.status = 'ready'
@@ -341,7 +398,7 @@ class AdminOrderViewSet(viewsets.ModelViewSet):
             data={ "id": order.id, "status": "ready" }
         )
 
-    @action(detail=True, methods=['post'], url_path='assign-shipper')
+    @action(detail=True, methods=['post', 'patch', 'put'], url_path='assign-shipper')
     def assign_shipper(self, request, pk=None):
         order = self.get_object()
         shipper_id = request.data.get('shipper_id')

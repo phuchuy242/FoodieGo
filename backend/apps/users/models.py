@@ -60,6 +60,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
+
+    ROLE_CHOICES = (
+        ('admin', 'Admin'),
+        ('staff', 'Staff'),
+        ('shipper', 'Shipper'),
+        ('customer', 'Customer'),
+    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='customer')
 
     last_login_at = models.DateTimeField(null=True, blank=True)
     locked_until = models.DateTimeField(null=True, blank=True)
@@ -85,6 +94,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
+
+    def save(self, *args, **kwargs):
+        if self.user_name is not None and not str(self.user_name).strip():
+            self.user_name = None
+        if self.email is not None and not str(self.email).strip():
+            self.email = None
+        if self.phone_number is not None and not str(self.phone_number).strip():
+            self.phone_number = None
+        super().save(*args, **kwargs)
 
 
 

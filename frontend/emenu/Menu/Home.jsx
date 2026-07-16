@@ -5,7 +5,7 @@ import { IoLocationSharp, IoPartlySunnyOutline, IoPencilOutline } from 'react-ic
 import { FaGift as GiftIcon, FaCreditCard as CardIcon, FaShoppingCart as CartIcon, FaStar as StarIcon, FaArrowRight as ArrowIcon, FaTag as TagIcon } from 'react-icons/fa';
 import '../styles/home-full.scss';
 import HERO from '../public/images/home.png';
-import LanguageSwitcher from './LanguageSwitcher';
+
 import LoginOtp from './LoginPhone';
 import Payment from './Payment';
 import AddressModal from './AddressModal';
@@ -45,7 +45,7 @@ export default function Home() {
             try {
                 const saved = JSON.parse(localStorage.getItem('deliveryInfo') || 'null');
                 if (saved?.address) setDeliveryAddress(saved.address);
-            } catch (e) {}
+            } catch (e) { }
         };
 
         window.addEventListener('auth-updated', syncAuth);
@@ -71,7 +71,7 @@ export default function Home() {
     const saveName = () => {
         const v = (tempName || '').trim() || 'Khách hàng';
         setName(v);
-        try { localStorage.setItem('customerName', v); } catch (e) {}
+        try { localStorage.setItem('customerName', v); } catch (e) { }
         setEditing(false);
     };
 
@@ -90,9 +90,6 @@ export default function Home() {
                             <span className="rm-hf-icon"><IoLocationSharp /></span>
                             <p className="rm-hf-location-text">Giao đến: {deliveryAddress}</p>
                         </div>
-                    </div>
-                    <div className="rm-hf-flag">
-                        <LanguageSwitcher />
                     </div>
                 </div>
             </header>
@@ -113,27 +110,7 @@ export default function Home() {
 
             <div className="rm-hf-card-top">
                 <div className="rm-hf-greet">
-                    <div className="rm-hf-greet-inner">
-                        <span className="rm-hf-sun"><IoPartlySunnyOutline /></span>
-                        {editing ? (
-                            <input
-                                ref={inputRef}
-                                className="rm-hf-greet-input"
-                                value={tempName}
-                                onChange={(e) => setTempName(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') saveName();
-                                    if (e.key === 'Escape') setEditing(false);
-                                }}
-                                onBlur={saveName}
-                            />
-                        ) : (
-                            <p className="rm-hf-greet-text" onClick={() => setEditing(true)} style={{ cursor: 'pointer' }}>
-                                Xin chào, <span className="rm-hf-blue">{name}</span> 👋
-                            </p>
-                        )}
-                        <button className="rm-hf-edit" onClick={() => setEditing(true)}><IoPencilOutline /></button>
-                    </div>
+
 
                     {/* Thay thế chọn Bàn bằng chọn Địa chỉ Giao Hàng */}
                     <div className="rm-hf-table" style={{ position: 'relative' }}>
@@ -144,7 +121,7 @@ export default function Home() {
                             title="Bấm để đổi địa chỉ giao hàng"
                             style={{ background: '#fff7ed', color: '#ff7a18', borderColor: '#ff7a18' }}
                         >
-                            📍 {deliveryAddress.length > 25 ? `${deliveryAddress.substring(0, 25)}...` : deliveryAddress}
+                            {deliveryAddress.length > 25 ? `${deliveryAddress.substring(0, 25)}...` : deliveryAddress}
                             <IoPencilOutline style={{ marginLeft: 6, fontSize: 13 }} />
                         </span>
                     </div>
@@ -165,18 +142,12 @@ export default function Home() {
                         Mã Giảm Giá
                         <div className="rm-hf-feature-ico"><TagIcon /></div>
                     </div>
-                    <div className="rm-hf-feature" role="button" tabIndex={0} onClick={() => setShowPayment(true)}>
-                        {t('payment.title') || 'Thanh toán'}
-                        <div className="rm-hf-feature-ico"><CardIcon /></div>
-                    </div>
+
                     <div className="rm-hf-feature" role="button" tabIndex={0} onClick={() => navigate('/history')}>
                         {t('history.title') || 'Đơn hàng'}
                         <div className="rm-hf-stars"><CartIcon /></div>
                     </div>
-                    <div className="rm-hf-feature" role="button" tabIndex={0} onClick={() => navigate('/history')}>
-                        Đánh giá món
-                        <div className="rm-hf-stars flex"><StarIcon /><StarIcon /><StarIcon /></div>
-                    </div>
+
                 </div>
 
                 <div className="rm-hf-cta">

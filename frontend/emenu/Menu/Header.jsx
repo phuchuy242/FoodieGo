@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/header.scss';
-import LanguageSwitcher from './LanguageSwitcher';
+
 import AddressModal from './AddressModal';
 
 export default function Header({ address, onBack, query, onQueryChange }) {
@@ -46,7 +46,7 @@ export default function Header({ address, onBack, query, onQueryChange }) {
             try {
                 const saved = JSON.parse(localStorage.getItem('deliveryInfo') || 'null');
                 if (saved && saved.address) setDeliveryAddress(saved.address);
-            } catch (e) {}
+            } catch (e) { }
         };
 
         updateCart();
@@ -81,7 +81,7 @@ export default function Header({ address, onBack, query, onQueryChange }) {
                         </svg>
                     </button>
                     <div className="rm-address" onClick={() => setShowAddressModal(true)} style={{ cursor: 'pointer' }}>
-                        <div className="rm-subtitle">Giao đến 📍</div>
+                        <div className="rm-subtitle">Giao đến </div>
                         <div className="rm-address-line">
                             <span className="rm-address-text">{deliveryAddress}</span>
                             <svg className="rm-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -115,7 +115,6 @@ export default function Header({ address, onBack, query, onQueryChange }) {
                         </svg>
                         {localCartCount > 0 && <span className="rm-badge">{localCartCount}</span>}
                     </button>
-                    <LanguageSwitcher />
                 </div>
             </header>
 

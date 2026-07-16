@@ -4,10 +4,11 @@ from .models import Category, Product, ProductVariant, Topping
 
 class CategorySerializer(serializers.ModelSerializer):
     products_count = serializers.SerializerMethodField()
+    is_available = serializers.BooleanField(source='is_active', required=False)
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'description', 'slug', 'is_active',
+        fields = ['id', 'name', 'description', 'slug', 'is_active', 'is_available',
                   'created_at', 'updated_at', 'products_count']
         read_only_fields = ['id', 'slug', 'created_at', 'updated_at']
 
@@ -28,30 +29,56 @@ class ProductVariantSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    """Serializer for Product model"""
+    """Serializer for Product model - supports both category/category_id, image/image_url, and is_active/is_available"""
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), required=False)
+    category_id = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), source='category', required=False, write_only=True)
     category_name = serializers.CharField(source='category.name', read_only=True)
+    image = serializers.CharField(source='image_url', required=False, allow_blank=True, allow_null=True)
+    is_available = serializers.BooleanField(source='is_active', required=False)
     variants = ProductVariantSerializer(many=True, read_only=True)
     variants_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['id', 'category', 'category_name', 'name', 'description', 'image_url',
-                  'is_active', 'created_at', 'updated_at', 'variants', 'variants_count']
+        fields = ['id', 'category', 'category_id', 'category_name', 'name', 'description', 'price',
+                  'image_url', 'image', 'is_active', 'is_available', 'created_at', 'updated_at',
+                  'variants', 'variants_count']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def get_variants_count(self, obj):
         return obj.variants.filter(is_active=True).count()
 
+    def validate(self, attrs):
+        # If neither category nor category_id (which sets attrs['category']) is provided during creation, check
+        if not self.instance and 'category' not in attrs:
+            first_cat = Category.objects.first()
+            if first_cat:
+                attrs['category'] = first_cat
+            else:
+                default_cat = Category.objects.create(name="Món chính", description="Danh mục mặc định")
+                attrs['category'] = default_cat
+        return attrs
+
 
 class ProductListSerializer(serializers.ModelSerializer):
     """Simplified serializer for product listing"""
     category_name = serializers.CharField(source='category.name', read_only=True)
+    category_id = serializers.IntegerField(source='category.id', read_only=True)
+    image = serializers.CharField(source='image_url', read_only=True)
+    is_available = serializers.BooleanField(source='is_active', read_only=True)
+    variants = ProductVariantSerializer(many=True, read_only=True)
+    variants_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['id', 'category', 'category_name', 'name', 'description', 'image_url',
-                  'is_active', 'created_at', 'updated_at']
+        fields = ['id', 'category', 'category_id', 'category_name', 'name', 'description', 'price',
+                  'image_url', 'image', 'is_active', 'is_available', 'created_at', 'updated_at',
+                  'variants', 'variants_count']
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_variants_count(self, obj):
+        return obj.variants.filter(is_active=True).count()
+
 
 
 class ToppingSerializer(serializers.ModelSerializer):
@@ -66,10 +93,11 @@ class ToppingSerializer(serializers.ModelSerializer):
 class CategoryDetailSerializer(serializers.ModelSerializer):
     """Detailed serializer for Category with products"""
     products = ProductListSerializer(many=True, read_only=True)
+    is_available = serializers.BooleanField(source='is_active', required=False)
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'description', 'slug', 'is_active',
+        fields = ['id', 'name', 'description', 'slug', 'is_active', 'is_available',
                   'created_at', 'updated_at', 'products']
         read_only_fields = ['id', 'slug', 'created_at', 'updated_at']
 

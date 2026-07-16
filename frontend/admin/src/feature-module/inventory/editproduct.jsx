@@ -1,126 +1,143 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { all_routes } from "../../Router/all_routes";
-import { DatePicker } from "antd";
-import Addunits from "../../core/modals/inventory/addunits";
-import AddCategory from "../../core/modals/inventory/addcategory";
-import AddBrand from "../../core/modals/addbrand";
-import {
-  ArrowLeft,
-  Calendar,
-  ChevronDown,
-  ChevronUp,
-  Info,
-  LifeBuoy,
-  List,
-  PlusCircle,
-  Trash2,
-  X,
-} from "feather-icons-react/build/IconComponents";
+import { ArrowLeft, ChevronUp, Info } from "feather-icons-react/build/IconComponents";
 import { useDispatch, useSelector } from "react-redux";
 import { setToogleHeader } from "../../core/redux/action";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
+import axios from "axios";
+import { API_BASE } from "../../environment";
+import Swal from "sweetalert2";
 
 const EditProduct = () => {
   const route = all_routes;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const data = useSelector((state) => state.toggle_header);
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
+  const [productId, setProductId] = useState(null);
+  const [productName, setProductName] = useState("");
+  const [sku, setSku] = useState("");
+  const [categoriesList, setCategoriesList] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedUnit, setSelectedUnit] = useState({ value: "Phần", label: "Phần" });
+  const [description, setDescription] = useState("");
+  const [quantity, setQuantity] = useState("100");
+  const [price, setPrice] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchCategoriesAndProduct = async () => {
+      try {
+        const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
+        const headers = { "ngrok-skip-browser-warning": "true" };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        let opts = [];
+        try {
+          const resCat = await axios.get(`${API_BASE}/api/v1/admin/menu/categories/`, { headers });
+          const listCat = resCat.data?.data?.results || resCat.data?.data || resCat.data || [];
+          if (Array.isArray(listCat)) {
+            opts = listCat.map((c) => ({ value: c.id, label: c.name }));
+            setCategoriesList(opts);
+          }
+        } catch (catErr) {
+          console.error("Error fetching categories in EditProduct:", catErr);
+        }
+
+        const stored = localStorage.getItem("selected_product_edit");
+        if (stored) {
+          const p = JSON.parse(stored);
+          setProductId(p.id);
+          setProductName(p.name || p.product || "");
+          setSku(p.sku || "");
+          setDescription(p.description || "");
+          setQuantity(String(p.stock_quantity !== undefined ? p.stock_quantity : (p.qty !== undefined ? p.qty : 100)));
+          
+          let pPrice = p.price;
+          if (typeof pPrice === "string") {
+            pPrice = pPrice.replace(/[^0-9.-]+/g, "");
+          }
+          setPrice(pPrice !== undefined && pPrice !== null ? String(pPrice) : "");
+          setImageUrl(p.image_url || p.productImage || p.image || "");
+
+          if (p.unit) {
+            setSelectedUnit({ value: p.unit, label: p.unit });
+          }
+
+          if (p.category_id && opts.length > 0) {
+            const foundCat = opts.find((o) => o.value === p.category_id);
+            if (foundCat) setSelectedCategory(foundCat);
+          } else if (p.category) {
+            const catName = typeof p.category === "object" ? p.category.name : p.category;
+            const foundCat = opts.find((o) => o.label === catName || o.value === p.category_id);
+            setSelectedCategory(foundCat || { value: p.category_id || 0, label: catName });
+          }
+        }
+      } catch (err) {
+        console.error("Error loading product edit data:", err);
+      }
+    };
+    fetchCategoriesAndProduct();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!productId) {
+      Swal.fire({ title: "Lỗi", text: "Không tìm thấy ID sản phẩm để cập nhật!", icon: "error" });
+      return;
+    }
+    if (!productName.trim()) {
+      Swal.fire({ title: "Thiếu thông tin", text: "Vui lòng nhập Tên sản phẩm!", icon: "warning" });
+      return;
+    }
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
+      const headers = { "ngrok-skip-browser-warning": "true" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const payload = {
+        name: productName.trim(),
+        sku: sku.trim() || `SP_${productId}`,
+        category_id: selectedCategory ? selectedCategory.value : null,
+        price: Number(price) || 0,
+        unit: selectedUnit ? selectedUnit.value : "Phần",
+        description: description.trim(),
+        stock_quantity: Number(quantity) || 0,
+        image_url: imageUrl.trim() || "assets/img/products/product1.jpg",
+        is_active: true
+      };
+
+      await axios.put(`${API_BASE}/api/v1/admin/menu/products/${productId}/`, payload, { headers });
+      Swal.fire({ title: "Thành công", text: "Đã cập nhật sản phẩm thành công!", icon: "success" });
+      navigate(route.productlist);
+    } catch (err) {
+      console.error("Error updating product:", err);
+      Swal.fire({ title: "Lỗi", text: err?.response?.data?.message || "Không thể cập nhật sản phẩm!", icon: "error" });
+    } finally {
+      setLoading(false);
+    }
   };
-  const [selectedDate1, setSelectedDate1] = useState(new Date());
-  const handleDateChange1 = (date) => {
-    setSelectedDate1(date);
-  };
+
   const renderCollapseTooltip = (props) => (
     <Tooltip id="refresh-tooltip" {...props}>
       Collapse
     </Tooltip>
   );
-  const store = [
-    { value: "choose", label: "Choose" },
-    { value: "thomas", label: "Thomas" },
-    { value: "rasmussen", label: "Rasmussen" },
-    { value: "fredJohn", label: "Fred John" },
-  ];
-  const warehouse = [
-    { value: "choose", label: "Choose" },
-    { value: "legendary", label: "Legendary" },
-    { value: "determined", label: "Determined" },
-    { value: "sincere", label: "Sincere" },
-  ];
-  const category = [
-    { value: "choose", label: "Choose" },
-    { value: "lenovo", label: "Lenovo" },
-    { value: "electronics", label: "Electronics" },
-  ];
-  const subcategory = [
-    { value: "choose", label: "Choose" },
-    { value: "lenovo", label: "Lenovo" },
-    { value: "electronics", label: "Electronics" },
-  ];
-  const subsubcategories = [
-    { value: "Fruits", label: "Fruits" },
-    { value: "Computer", label: "Computer" },
-    { value: "Shoes", label: "Shoes" },
-  ];
-  const brand = [
-    { value: "choose", label: "Choose" },
-    { value: "nike", label: "Nike" },
-    { value: "bolt", label: "Bolt" },
-  ];
-  const unit = [
-    { value: "choose", label: "Choose" },
-    { value: "kg", label: "Kg" },
-    { value: "pc", label: "Pc" },
-  ];
-  const sellingtype = [
-    { value: "choose", label: "Choose" },
-    { value: "transactionalSelling", label: "Transactional selling" },
-    { value: "solutionSelling", label: "Solution selling" },
-  ];
-  const barcodesymbol = [
-    { value: "choose", label: "Choose" },
-    { value: "code34", label: "Code34" },
-    { value: "code35", label: "Code35" },
-    { value: "code36", label: "Code36" },
-  ];
-  const taxtype = [
-    { value: "exclusive", label: "Exclusive" },
-    { value: "salesTax", label: "Sales Tax" },
-  ];
-  const discounttype = [
-    { value: "choose", label: "Choose" },
-    { value: "percentage", label: "Percentage" },
-    { value: "cash", label: "Cash" },
-  ];
-  const discounttype1 = [
-    { value: "choose", label: "Choose" },
-    { value: "percentage", label: "Percentage" },
-    { value: "cash", label: "Cash" },
-  ];
-  const [isImageVisible, setIsImageVisible] = useState(true);
 
-  const handleRemoveProduct = () => {
-    setIsImageVisible(false);
-  };
-  const [isImageVisible1, setIsImageVisible1] = useState(true);
-
-  const handleRemoveProduct1 = () => {
-    setIsImageVisible1(false);
-  };
   return (
     <div className="page-wrapper">
       <div className="content">
         <div className="page-header">
           <div className="add-item d-flex">
             <div className="page-title">
-              <h4>Edit Product</h4>
+              <h4>Chỉnh sửa sản phẩm</h4>
+              <h6>Chỉnh sửa thông tin món ăn / sản phẩm (Đã tối ưu trường nhập)</h6>
             </div>
           </div>
           <ul className="table-top-head">
@@ -128,7 +145,7 @@ const EditProduct = () => {
               <div className="page-btn">
                 <Link to={route.productlist} className="btn btn-secondary">
                   <ArrowLeft className="me-2" />
-                  Back to Product
+                  Quay lại danh sách
                 </Link>
               </div>
             </li>
@@ -137,7 +154,7 @@ const EditProduct = () => {
                 <Link
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
-                  title="Collapse"
+                  title="Thu gọn"
                   id="collapse-header"
                   className={data ? "active" : ""}
                   onClick={() => {
@@ -150,861 +167,146 @@ const EditProduct = () => {
             </li>
           </ul>
         </div>
-        {/* /add */}
-        <form>
-          <div className="card">
-            <div className="card-body add-product pb-0">
-              <div
-                className="accordion-card-one accordion"
-                id="accordionExample"
-              >
-                <div className="accordion-item">
-                  <div className="accordion-header" id="headingOne">
-                    <div
-                      className="accordion-button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapseOne"
-                      aria-controls="collapseOne"
-                    >
-                      <div className="addproduct-icon">
-                        <h5>
-                          <Info className="add-info" />
 
-                          <span>Product Information</span>
-                        </h5>
-                        <Link to="#">
-                          <ChevronDown className="chevron-down-add" />
-                        </Link>
+        <form onSubmit={handleSubmit}>
+          <div className="card">
+            <div className="card-header bg-light d-flex align-items-center">
+              <Info className="add-info me-2 text-primary" style={{ width: "20px", height: "20px" }} />
+              <h5 className="card-title mb-0 font-weight-bold">Thông tin bắt buộc & cần thiết #{productId}</h5>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-lg-6 col-sm-12 mb-3">
+                  <label className="form-label font-weight-bold">
+                    Tên sản phẩm / Món ăn <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Nhập tên món ăn..."
+                    value={productName}
+                    onChange={(e) => setProductName(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="col-lg-6 col-sm-12 mb-3">
+                  <label className="form-label font-weight-bold">
+                    Danh mục món ăn <span className="text-danger">*</span>
+                  </label>
+                  <Select
+                    classNamePrefix="react-select"
+                    options={categoriesList}
+                    value={selectedCategory}
+                    onChange={(option) => setSelectedCategory(option)}
+                    placeholder="Chọn danh mục..."
+                  />
+                </div>
+
+                <div className="col-lg-4 col-sm-6 mb-3">
+                  <label className="form-label font-weight-bold">Mã SKU</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Mã SKU"
+                    value={sku}
+                    onChange={(e) => setSku(e.target.value)}
+                  />
+                </div>
+
+                <div className="col-lg-4 col-sm-6 mb-3">
+                  <label className="form-label font-weight-bold">Đơn vị tính</label>
+                  <Select
+                    classNamePrefix="react-select"
+                    options={[
+                      { value: "Phần", label: "Phần" },
+                      { value: "Ly", label: "Ly" },
+                      { value: "Đĩa", label: "Đĩa" },
+                      { value: "Cái", label: "Cái" },
+                      { value: "Hộp", label: "Hộp" },
+                    ]}
+                    value={selectedUnit}
+                    onChange={(option) => setSelectedUnit(option)}
+                  />
+                </div>
+
+                <div className="col-lg-4 col-sm-6 mb-3">
+                  <label className="form-label font-weight-bold">Số lượng tồn kho</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="100"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                  />
+                </div>
+
+                <div className="col-lg-6 col-sm-12 mb-3">
+                  <label className="form-label font-weight-bold">Giá bán cơ bản (VNĐ)</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="0 (Nếu giá nằm ở biến thể thì để 0 hoặc để trống)"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  />
+                </div>
+
+                <div className="col-lg-6 col-sm-12 mb-3">
+                  <label className="form-label font-weight-bold">Link hình ảnh (Image URL)</label>
+                  <div className="d-flex align-items-center">
+                    <input
+                      type="text"
+                      className="form-control me-2"
+                      placeholder="https://... hoặc /media/..."
+                      value={imageUrl}
+                      onChange={(e) => setImageUrl(e.target.value)}
+                    />
+                    {imageUrl && (
+                      <div
+                        style={{
+                          width: "42px",
+                          height: "42px",
+                          minWidth: "42px",
+                          overflow: "hidden",
+                          borderRadius: "6px",
+                          border: "1px solid #ddd"
+                        }}
+                      >
+                        <ImageWithBasePath
+                          src={imageUrl}
+                          alt="prev"
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
                       </div>
-                    </div>
-                  </div>
-                  <div
-                    id="collapseOne"
-                    className="accordion-collapse collapse show"
-                    aria-labelledby="headingOne"
-                    data-bs-parent="#accordionExample"
-                  >
-                    <div className="accordion-body">
-                      <div className="row">
-                        <div className="col-lg-4 col-sm-6 col-12">
-                          <div className="mb-3 add-product">
-                            <label className="form-label">Store</label>
-                            <Select
-                              className="select"
-                              options={store}
-                              placeholder="Choose"
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-4 col-sm-6 col-12">
-                          <div className="mb-3 add-product">
-                            <label className="form-label">Warehouse</label>
-                            <Select
-                              className="select"
-                              options={warehouse}
-                              placeholder="Legendary"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-lg-4 col-sm-6 col-12">
-                          <div className="mb-3 add-product">
-                            <label className="form-label">Product Name</label>
-                            <input type="text" className="form-control" />
-                          </div>
-                        </div>
-                        <div className="col-lg-4 col-sm-6 col-12">
-                          <div className="mb-3 add-product">
-                            <label className="form-label">Slug</label>
-                            <input type="text" className="form-control" />
-                          </div>
-                        </div>
-                        <div className="col-lg-4 col-sm-6 col-12">
-                          <div className="input-blocks add-product list">
-                            <label>SKU</label>
-                            <input
-                              type="text"
-                              className="form-control list"
-                              placeholder="Enter SKU"
-                            />
-                            <Link
-                              to={route.addproduct}
-                              className="btn btn-primaryadd"
-                            >
-                              Generate Code
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="addservice-info">
-                        <div className="row">
-                          <div className="col-lg-4 col-sm-6 col-12">
-                            <div className="mb-3 add-product">
-                              <div className="add-newplus">
-                                <label className="form-label">Category</label>
-                                <Link
-                                  to="#"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#add-units-category"
-                                >
-                                  <PlusCircle className="plus-down-add" />
-                                  <span>Add New</span>
-                                </Link>
-                              </div>
-                              <Select
-                                className="select"
-                                options={category}
-                                placeholder="Lenovo"
-                              />
-                            </div>
-                          </div>
-                          <div className="col-lg-4 col-sm-6 col-12">
-                            <div className="mb-3 add-product">
-                              <label className="form-label">Sub Category</label>
-                              <Select
-                                className="select"
-                                options={subcategory}
-                                placeholder="Lenovo"
-                              />
-                            </div>
-                          </div>
-                          <div className="col-lg-4 col-sm-6 col-12">
-                            <div className="mb-3 add-product">
-                              <label className="form-label">
-                                Sub Sub Category
-                              </label>
-                              <Select
-                                className="select"
-                                options={subsubcategories}
-                                placeholder="Computer"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="add-product-new">
-                        <div className="row">
-                          <div className="col-lg-4 col-sm-6 col-12">
-                            <div className="mb-3 add-product">
-                              <div className="add-newplus">
-                                <label className="form-label">Brand</label>
-                                <Link
-                                  to="#"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#add-units-brand"
-                                >
-                                  <PlusCircle className="plus-down-add" />
-                                  <span>Add New</span>
-                                </Link>
-                              </div>
-                              <Select
-                                className="select"
-                                options={brand}
-                                placeholder="Nike"
-                              />
-                            </div>
-                          </div>
-                          <div className="col-lg-4 col-sm-6 col-12">
-                            <div className="mb-3 add-product">
-                              <div className="add-newplus">
-                                <label className="form-label">Unit</label>
-                                <Link
-                                  to="#"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#add-unit"
-                                >
-                                  <PlusCircle className="plus-down-add" />
-                                  <span>Add New</span>
-                                </Link>
-                              </div>
-                              <Select
-                                className="select"
-                                options={unit}
-                                placeholder="Kg"
-                              />
-                            </div>
-                          </div>
-                          <div className="col-lg-4 col-sm-6 col-12">
-                            <div className="mb-3 add-product">
-                              <label className="form-label">Selling Type</label>
-                              <Select
-                                className="select"
-                                options={sellingtype}
-                                placeholder="Solution selling"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-lg-6 col-sm-6 col-12">
-                          <div className="mb-3 add-product">
-                            <label className="form-label">
-                              Barcode Symbology
-                            </label>
-                            <Select
-                              className="select"
-                              options={barcodesymbol}
-                              placeholder="Code34"
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-6 col-sm-6 col-12">
-                          <div className="input-blocks add-product list">
-                            <label>Item Code</label>
-                            <input
-                              type="text"
-                              className="form-control list"
-                              placeholder="Please Enter Item Code"
-                            />
-                            <Link
-                              to={route.addproduct}
-                              className="btn btn-primaryadd"
-                            >
-                              Generate Code
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                      {/* Editor */}
-                      <div className="col-lg-12">
-                        <div className="input-blocks summer-description-box transfer mb-3">
-                          <label>Description</label>
-                          <textarea
-                            className="form-control h-100"
-                            rows={5}
-                            defaultValue={""}
-                          />
-                          <p className="mt-1">Maximum 60 Characters</p>
-                        </div>
-                      </div>
-                      {/* /Editor */}
-                    </div>
+                    )}
                   </div>
                 </div>
-              </div>
-              <div
-                className="accordion-card-one accordion"
-                id="accordionExample2"
-              >
-                <div className="accordion-item">
-                  <div className="accordion-header" id="headingTwo">
-                    <div
-                      className="accordion-button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapseTwo"
-                      aria-controls="collapseTwo"
-                    >
-                      <div className="text-editor add-list">
-                        <div className="addproduct-icon list icon">
-                          <h5>
-                            <LifeBuoy className="add-info" />
-                            <span>Pricing &amp; Stocks</span>
-                          </h5>
-                          <Link to="#">
-                            <ChevronDown className="chevron-down-add" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    id="collapseTwo"
-                    className="accordion-collapse collapse show"
-                    aria-labelledby="headingTwo"
-                    data-bs-parent="#accordionExample2"
-                  >
-                    <div className="accordion-body">
-                      <div className="input-blocks add-products">
-                        <label className="d-block">Product Type</label>
-                        <div className="single-pill-product">
-                          <ul
-                            className="nav nav-pills"
-                            id="pills-tab1"
-                            role="tablist"
-                          >
-                            <li className="nav-item" role="presentation">
-                              <span
-                                className="custom_radio me-4 mb-0 active"
-                                id="pills-home-tab"
-                                data-bs-toggle="pill"
-                                data-bs-target="#pills-home"
-                                role="tab"
-                                aria-controls="pills-home"
-                                aria-selected="true"
-                              >
-                                <input
-                                  type="radio"
-                                  className="form-control"
-                                  name="payment"
-                                />
-                                <span className="checkmark" /> Single Product
-                              </span>
-                            </li>
-                            <li className="nav-item" role="presentation">
-                              <span
-                                className="custom_radio me-2 mb-0"
-                                id="pills-profile-tab"
-                                data-bs-toggle="pill"
-                                data-bs-target="#pills-profile"
-                                role="tab"
-                                aria-controls="pills-profile"
-                                aria-selected="false"
-                              >
-                                <input
-                                  type="radio"
-                                  className="form-control"
-                                  name="sign"
-                                />
-                                <span className="checkmark" /> Variable Product
-                              </span>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="tab-content" id="pills-tabContent">
-                        <div
-                          className="tab-pane fade show active"
-                          id="pills-home"
-                          role="tabpanel"
-                          aria-labelledby="pills-home-tab"
-                        >
-                          <div className="row">
-                            <div className="col-lg-4 col-sm-6 col-12">
-                              <div className="input-blocks add-product">
-                                <label>Quantity</label>
-                                <input type="text" className="form-control" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-sm-6 col-12">
-                              <div className="input-blocks add-product">
-                                <label>Price</label>
-                                <input type="text" className="form-control" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-sm-6 col-12">
-                              <div className="input-blocks add-product">
-                                <label>Tax Type</label>
-                                <Select
-                                  className="select"
-                                  options={taxtype}
-                                  placeholder="Select Option"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="row">
-                            <div className="col-lg-4 col-sm-6 col-12">
-                              <div className="input-blocks add-product">
-                                <label>Discount Type</label>
-                                <Select
-                                  className="select"
-                                  options={discounttype}
-                                  placeholder="Choose"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-sm-6 col-12">
-                              <div className="input-blocks add-product">
-                                <label>Discount Value</label>
-                                <input type="text" placeholder="Choose" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-sm-6 col-12">
-                              <div className="input-blocks add-product">
-                                <label>Quantity Alert</label>
-                                <input type="text" className="form-control" />
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            className="accordion-card-one accordion"
-                            id="accordionExample3"
-                          >
-                            <div className="accordion-item">
-                              <div
-                                className="accordion-header"
-                                id="headingThree"
-                              >
-                                <div
-                                  className="accordion-button"
-                                  data-bs-toggle="collapse"
-                                  data-bs-target="#collapseThree"
-                                  aria-controls="collapseThree"
-                                >
-                                  <div className="addproduct-icon list">
-                                    <h5>
-                                      <i
-                                        data-feather="image"
-                                        className="add-info"
-                                      />
-                                      <span>Images</span>
-                                    </h5>
-                                    <Link to="#">
-                                      <ChevronDown className="chevron-down-add" />
-                                    </Link>
-                                  </div>
-                                </div>
-                              </div>
-                              <div
-                                id="collapseThree"
-                                className="accordion-collapse collapse show"
-                                aria-labelledby="headingThree"
-                                data-bs-parent="#accordionExample3"
-                              >
-                                <div className="accordion-body">
-                                  <div className="text-editor add-list add">
-                                    <div className="col-lg-12">
-                                      <div className="add-choosen">
-                                        <div className="input-blocks">
-                                          <div className="image-upload">
-                                            <input type="file" />
-                                            <div className="image-uploads">
-                                              <PlusCircle className="plus-down-add me-0" />
-                                              <h4>Add Images</h4>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        {isImageVisible1 && (
-                                          <div className="phone-img">
-                                            <ImageWithBasePath
-                                              src="assets/img/products/phone-add-2.png"
-                                              alt="image"
-                                            />
-                                            <Link to="#">
-                                              <X
-                                                className="x-square-add remove-product"
-                                                onClick={handleRemoveProduct1}
-                                              />
-                                            </Link>
-                                          </div>
-                                        )}
-                                        {isImageVisible && (
-                                          <div className="phone-img">
-                                            <ImageWithBasePath
-                                              src="assets/img/products/phone-add-1.png"
-                                              alt="image"
-                                            />
-                                            <Link to="#">
-                                              <X
-                                                className="x-square-add remove-product"
-                                                onClick={handleRemoveProduct}
-                                              />
-                                            </Link>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          className="tab-pane fade"
-                          id="pills-profile"
-                          role="tabpanel"
-                          aria-labelledby="pills-profile-tab"
-                        >
-                          <div className="row select-color-add">
-                            <div className="col-lg-6 col-sm-6 col-12">
-                              <div className="input-blocks add-product">
-                                <label>Variant Attribute</label>
-                                <div className="row">
-                                  <div className="col-lg-10 col-sm-10 col-10">
-                                    <select
-                                      className="form-control variant-select select-option"
-                                      id="colorSelect"
-                                    >
-                                      <option>Choose</option>
-                                      <option>Color</option>
-                                      <option value="red">Red</option>
-                                      <option value="black">Black</option>
-                                    </select>
-                                  </div>
-                                  <div className="col-lg-2 col-sm-2 col-2 ps-0">
-                                    <div className="add-icon tab">
-                                      <Link
-                                        className="btn btn-filter"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#add-units"
-                                      >
-                                        <PlusCircle className="feather feather-plus-circle" />
-                                      </Link>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div
-                                className="selected-hide-color"
-                                id="input-show"
-                              >
-                                <div className="row align-items-center">
-                                  <div className="col-sm-10">
-                                    <div className="input-blocks">
-                                      <input
-                                        className="input-tags form-control"
-                                        id="inputBox"
-                                        type="text"
-                                        data-role="tagsinput"
-                                        name="specialist"
-                                        defaultValue="red, black"
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="col-lg-2">
-                                    <div className="input-blocks ">
-                                      <Link to="#" className="remove-color">
-                                        <Trash2 />
-                                      </Link>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            className="modal-body-table variant-table"
-                            id="variant-table"
-                          >
-                            <div className="table-responsive">
-                              <table className="table">
-                                <thead>
-                                  <tr>
-                                    <th>Variantion</th>
-                                    <th>Variant Value</th>
-                                    <th>SKU</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                    <th className="no-sort">Action</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr>
-                                    <td>
-                                      <div className="add-product">
-                                        <input
-                                          type="text"
-                                          className="form-control"
-                                          defaultValue="color"
-                                        />
-                                      </div>
-                                    </td>
-                                    <td>
-                                      <div className="add-product">
-                                        <input
-                                          type="text"
-                                          className="form-control"
-                                          defaultValue="red"
-                                        />
-                                      </div>
-                                    </td>
-                                    <td>
-                                      <div className="add-product">
-                                        <input
-                                          type="text"
-                                          className="form-control"
-                                          defaultValue={1234}
-                                        />
-                                      </div>
-                                    </td>
-                                    <td>
-                                      <div className="product-quantity">
-                                        <span className="quantity-btn">
-                                          <i
-                                            data-feather="minus-circle"
-                                            className="feather-search"
-                                          />
-                                        </span>
-                                        <input
-                                          type="text"
-                                          className="quntity-input"
-                                          defaultValue={2}
-                                        />
-                                        <span className="quantity-btn">
-                                          +
-                                          <i
-                                            data-feather="plus-circle"
-                                            className="plus-circle"
-                                          />
-                                        </span>
-                                      </div>
-                                    </td>
-                                    <td>
-                                      <div className="add-product">
-                                        <input
-                                          type="text"
-                                          className="form-control"
-                                          defaultValue={50000}
-                                        />
-                                      </div>
-                                    </td>
-                                    <td className="action-table-data">
-                                      <div className="edit-delete-action">
-                                        <div className="input-block add-lists">
-                                          <label className="checkboxs">
-                                            <input
-                                              type="checkbox"
-                                              defaultChecked=""
-                                            />
-                                            <span className="checkmarks" />
-                                          </label>
-                                        </div>
-                                        <Link
-                                          className="me-2 p-2"
-                                          to="#"
-                                          data-bs-toggle="modal"
-                                          data-bs-target="#add-variation"
-                                        >
-                                          <i
-                                            data-feather="plus"
-                                            className="feather-edit"
-                                          />
-                                        </Link>
-                                        <Link
-                                          className="confirm-text p-2"
-                                          to="#"
-                                        >
-                                          <i
-                                            data-feather="trash-2"
-                                            className="feather-trash-2"
-                                          />
-                                        </Link>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td>
-                                      <div className="add-product">
-                                        <input
-                                          type="text"
-                                          className="form-control"
-                                          defaultValue="color"
-                                        />
-                                      </div>
-                                    </td>
-                                    <td>
-                                      <div className="add-product">
-                                        <input
-                                          type="text"
-                                          className="form-control"
-                                          defaultValue="black"
-                                        />
-                                      </div>
-                                    </td>
-                                    <td>
-                                      <div className="add-product">
-                                        <input
-                                          type="text"
-                                          className="form-control"
-                                          defaultValue={2345}
-                                        />
-                                      </div>
-                                    </td>
-                                    <td>
-                                      <div className="product-quantity">
-                                        <span className="quantity-btn">
-                                          <i
-                                            data-feather="minus-circle"
-                                            className="feather-search"
-                                          />
-                                        </span>
-                                        <input
-                                          type="text"
-                                          className="quntity-input"
-                                          defaultValue={3}
-                                        />
-                                        <span className="quantity-btn">
-                                          +
-                                          <i
-                                            data-feather="plus-circle"
-                                            className="plus-circle"
-                                          />
-                                        </span>
-                                      </div>
-                                    </td>
-                                    <td>
-                                      <div className="add-product">
-                                        <input
-                                          type="text"
-                                          className="form-control"
-                                          defaultValue={50000}
-                                        />
-                                      </div>
-                                    </td>
-                                    <td className="action-table-data">
-                                      <div className="edit-delete-action">
-                                        <div className="input-block add-lists">
-                                          <label className="checkboxs">
-                                            <input
-                                              type="checkbox"
-                                              defaultChecked=""
-                                            />
-                                            <span className="checkmarks" />
-                                          </label>
-                                        </div>
-                                        <Link
-                                          className="me-2 p-2"
-                                          to="#"
-                                          data-bs-toggle="modal"
-                                          data-bs-target="#edit-units"
-                                        >
-                                          <i
-                                            data-feather="plus"
-                                            className="feather-edit"
-                                          />
-                                        </Link>
-                                        <Link
-                                          className="confirm-text p-2"
-                                          to="#"
-                                        >
-                                          <i
-                                            data-feather="trash-2"
-                                            className="feather-trash-2"
-                                          />
-                                        </Link>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                className="accordion-card-one accordion"
-                id="accordionExample4"
-              >
-                <div className="accordion-item">
-                  <div className="accordion-header" id="headingFour">
-                    <div
-                      className="accordion-button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapseFour"
-                      aria-controls="collapseFour"
-                    >
-                      <div className="text-editor add-list">
-                        <div className="addproduct-icon list">
-                          <h5>
-                            <List className="add-info" />
-                            <span>Custom Fields</span>
-                          </h5>
-                          <Link to="#">
-                            <ChevronDown className="chevron-down-add" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    id="collapseFour"
-                    className="accordion-collapse collapse show"
-                    aria-labelledby="headingFour"
-                    data-bs-parent="#accordionExample4"
-                  >
-                    <div className="accordion-body">
-                      <div className="text-editor add-list add">
-                        <div className="custom-filed">
-                          <div className="input-block add-lists">
-                            <label className="checkboxs">
-                              <input type="checkbox" />
-                              <span className="checkmarks" />
-                              Warranties
-                            </label>
-                            <label className="checkboxs">
-                              <input type="checkbox" />
-                              <span className="checkmarks" />
-                              Manufacturer
-                            </label>
-                            <label className="checkboxs">
-                              <input type="checkbox" />
-                              <span className="checkmarks" />
-                              Expiry
-                            </label>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-lg-4 col-sm-6 col-12">
-                            <div className="input-blocks add-product">
-                              <label>Discount Type</label>
-                              <Select
-                                className="select"
-                                options={discounttype1}
-                                placeholder="Choose"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-lg-4 col-sm-6 col-12">
-                            <div className="input-blocks add-product">
-                              <label>Quantity Alert</label>
-                              <input type="text" className="form-control" />
-                            </div>
-                          </div>
-                          <div className="col-lg-4 col-sm-6 col-12">
-                            <div className="input-blocks">
-                              <label>Manufactured Date</label>
-                              <div className="input-groupicon calender-input">
-                                <Calendar className="info-img" />
-                                <DatePicker
-                                  selected={selectedDate}
-                                  onChange={handleDateChange}
-                                  type="date"
-                                  className="datetimepicker"
-                                  dateFormat="dd-MM-yyyy"
-                                  placeholder="Choose Date"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="col-lg-4 col-sm-6 col-12">
-                            <div className="input-blocks">
-                              <label>Expiry On</label>
-                              <div className="input-groupicon calender-input">
-                                <Calendar className="info-img" />
-                                <DatePicker
-                                  selected={selectedDate1}
-                                  onChange={handleDateChange1}
-                                  type="date"
-                                  className="datetimepicker"
-                                  dateFormat="dd-MM-yyyy"
-                                  placeholder="Choose Date"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+
+                <div className="col-lg-12 mb-3">
+                  <label className="form-label font-weight-bold">Mô tả sản phẩm</label>
+                  <textarea
+                    className="form-control"
+                    rows={3}
+                    placeholder="Mô tả ngắn gọn về món ăn..."
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
                 </div>
               </div>
             </div>
           </div>
-          <div className="col-lg-12">
-            <div className="btn-addproduct mb-4">
-              <button type="button" className="btn btn-cancel me-2">
-                Cancel
-              </button>
-              <Link to={route.addproduct} className="btn btn-submit">
-                Save Product
-              </Link>
-            </div>
+
+          <div className="btn-addproduct mb-4 d-flex justify-content-end">
+            <Link to={route.productlist} className="btn btn-cancel me-2">
+              Hủy
+            </Link>
+            <button type="submit" className="btn btn-submit" disabled={loading}>
+              {loading ? "Đang cập nhật..." : "Cập nhật sản phẩm"}
+            </button>
           </div>
         </form>
-        {/* /add */}
       </div>
-      <Addunits />
-      <AddCategory />
-      <AddBrand />
     </div>
   );
 };
